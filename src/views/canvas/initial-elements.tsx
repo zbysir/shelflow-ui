@@ -1,11 +1,37 @@
-import { MarkerType, Position } from 'reactflow';
+import {MarkerType, Position} from 'reactflow';
+
+// interface Anchor {
+//     id: string;
+//     label: string;
+//     name: string;
+//     type: string;
+//     list?: boolean
+// }
+
 
 export const nodes = [
     {
-        id:'0',
+        id: '0',
         type: 'customCard',
-        data: {},
-        position: { x: 0, y: 0 },
+        data: {
+            label: 'Custom Node',
+            id: '1',
+            name: 'CustomNode',
+            category: 'Agents',
+            description: '',
+            inputAnchors: [
+                {
+                    id: 'input-1',
+                    label: 'Input 1',
+                    name: 'input1',
+                    type: 'Tool',
+                    list: false
+                }
+            ],
+            inputParams: [],
+            outputAnchors: []
+        },
+        position: {x: 0, y: 0},
     },
     {
         id: '1',

@@ -7,7 +7,7 @@ import theme from './theme/index.ts'
 
 
 function App() {
-    return <ThemeProvider theme={theme}><RouterProvider router={router}/></ThemeProvider>
+    return <ThemeProvider theme={theme({isDarkMode: false})}><RouterProvider router={router}/></ThemeProvider>
 }
 
 export default App

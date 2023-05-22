@@ -9,6 +9,7 @@ import ReactFlow, {
 } from 'reactflow';
 
 import {nodes as initialNodes, edges as initialEdges} from './initial-elements';
+import CanvasNode from './CanvasNode';
 import CustomNode from '../ui-components/CustomNode';
 
 import 'reactflow/dist/style.css';
@@ -16,6 +17,7 @@ import './overview.css';
 
 const nodeTypes = {
     custom: CustomNode,
+    customCard: CanvasNode,
 };
 
 const minimapStyle = {

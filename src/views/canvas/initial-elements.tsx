@@ -2,6 +2,12 @@ import { MarkerType, Position } from 'reactflow';
 
 export const nodes = [
     {
+        id:'0',
+        type: 'customCard',
+        data: {},
+        position: { x: 0, y: 0 },
+    },
+    {
         id: '1',
         type: 'input',
         data: {

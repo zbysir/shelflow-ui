@@ -3,15 +3,16 @@ import {Box, Typography, Tooltip} from "@mui/material";
 import {useTheme, styled} from '@mui/material/styles'
 import {tooltipClasses} from '@mui/material/Tooltip'
 import {Handle, Position, useUpdateNodeInternals} from 'reactflow'
-import {useState, useEffect, useRef, useContext} from 'react'
+import {useState, useEffect, useRef} from 'react'
+import {Input} from '../ui-components/input/Index'
 
-const CustomWidthTooltip = styled(({className, ...props}) => <Tooltip {...props} classes={{popper: className}}/>)({
+const CustomWidthTooltip = styled(({className, ...props}:any) => <Tooltip {...props} classes={{popper: className}}/>)({
     [`& .${tooltipClasses.tooltip}`]: {
         maxWidth: 500
     }
 })
 
-function NodeInputHandler({inputAnchor, data}) {
+function NodeInputHandler({inputAnchor, data, disabled = false, inputParam}) {
     const theme = useTheme()
     const [position, setPosition] = useState(0)
     const ref = useRef(null)
@@ -48,6 +49,32 @@ function NodeInputHandler({inputAnchor, data}) {
                 </Box>
             </>
         )}
+        {
+            inputParam && !inputParam.additionalParams && (
+                <>
+                    <Box sx={{p: 2}}>
+                        <div style={{display: 'flex', flexDirection: 'row'}}>
+                            <Typography>
+                                {inputParam.label}
+                                {!inputParam.optional && <span style={{color: 'red'}}>&nbsp;*</span>}
+                            </Typography>
+                            <div style={{flexGrow: 1}}></div>
+
+                        </div>
+
+                        {(inputParam.type === 'string' || inputParam.type === 'password' || inputParam.type === 'number') && (
+                            <Input
+                                disabled={disabled}
+                                inputParam={inputParam}
+                                onChange={(newValue) => (data.inputs[inputParam.name] = newValue)}
+                                value={data.inputs[inputParam.name] ?? inputParam.default ?? ''}
+                            />
+                        )}
+
+
+                    </Box>
+                </>
+            )}
     </div>
 }
 

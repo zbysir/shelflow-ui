@@ -3,6 +3,7 @@ import MainCard from "../ui-components/card/MainCard";
 import PropTypes from 'prop-types'
 import {Typography, Divider, Box} from '@mui/material'
 import NodeInputHandler from "./NodeInputHandler";
+import NodeOutputHandler from "./NodeOutputHandler";
 
 const CardWrapper = styled(MainCard)(({theme}) => ({
     background: theme.palette.card.main,
@@ -58,6 +59,24 @@ export default function CanvasNode({data}: { data: Node }) {
         )}
         {data.inputAnchors.map((inputAnchor, index) => (
             <NodeInputHandler key={index} inputAnchor={inputAnchor} data={data}/>
+        ))}
+        {data.inputParams.map((inputParam, index) => (
+            <NodeInputHandler key={index} inputParam={inputParam} data={data}/>
+        ))}
+        <Divider/>
+        <Box sx={{background: theme.palette.asyncSelect.main, p: 1}}>
+            <Typography
+                sx={{
+                    fontWeight: 500,
+                    textAlign: 'center'
+                }}
+            >
+                Output
+            </Typography>
+        </Box>
+        <Divider/>
+        {data.outputAnchors && data.outputAnchors.map((outputAnchor, index) => (
+            <NodeOutputHandler key={index} outputAnchor={outputAnchor} data={data}/>
         ))}
     </CardWrapper>
 }

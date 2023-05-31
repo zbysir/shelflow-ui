@@ -1,4 +1,4 @@
-import {createBrowserRouter} from "react-router-dom";
+import {createBrowserRouter, redirect} from "react-router-dom";
 import Layout from "../views/Layout";
 import Canvas from "../views/canvas/index";
 
@@ -8,7 +8,7 @@ const router = createBrowserRouter([
         element: <Layout/>,
         children: [
             {
-                path: "canvas",
+                path: "/canvas",
                 element: <Canvas/>,
             },
         ],

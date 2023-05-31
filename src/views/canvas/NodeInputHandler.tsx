@@ -55,8 +55,7 @@ function NodeInputHandler({inputAnchor, data, disabled = false, inputParam}) {
                     <Box sx={{p: 2}}>
                         <div style={{display: 'flex', flexDirection: 'row'}}>
                             <Typography>
-                                {inputParam.label}
-                                {!inputParam.optional && <span style={{color: 'red'}}>&nbsp;*</span>}
+                                {inputParam.name['en']}
                             </Typography>
                             <div style={{flexGrow: 1}}></div>
 

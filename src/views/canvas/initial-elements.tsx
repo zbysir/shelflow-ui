@@ -11,92 +11,40 @@ import {MarkerType, Position} from 'reactflow';
 
 export const nodes = [
     {
-        id: '0',
-        type: 'customCard',
-        data: {
-            label: 'Custom Node',
-            id: '1',
-            name: 'CustomNode',
-            category: 'Agents',
-            description: '',
-            inputs: {
-                input1: '',
-                input2: ''
-            },
-            inputAnchors: [
-                {
-                    id: 'lmr',
-                    label: 'Input 1',
-                    name: 'input1',
-                    type: 'Tool',
-                    list: false
-                }
-            ],
-            inputParams: [
-                {
-                    id: 'lmr2',
-                    label: 'Input 2',
-                    name: 'input2',
-                    type: 'string',
-                    list: false
-                }
-            ],
-            outputAnchors: [
-                {
-                    id: 'lmr3',
-                    label: 'Output 1',
-                    name: 'output1',
-                    type: 'Tool',
-                    list: false
-                }
-            ]
+        "id": "echo_1",
+        "type": "customNode",
+        "width": 100,
+        "height": 50,
+        "position": {
+            "x": 40,
+            "y": 40
         },
-        position: {x: 0, y: 0},
-    },
-    {
-        id: 'ac',
-        type: 'customCard',
-        data: {
-            label: 'Custom Node1',
-            id: '1',
-            name: 'CustomNode1',
-            category: 'Agents',
-            description: '',
-            inputs: {
-                input1: '',
-                input2: ''
+        "data": {
+            "id": "echo_1",
+            "type": "echo",
+            "name": {
+                "en": "Echo"
             },
-            inputAnchors: [
+            "source": {
+                "type": "builtin"
+            },
+            "input_params": [
+
                 {
-                    id: 'input-b',
-                    label: 'Input b',
-                    name: 'input1',
-                    type: 'Tool',
-                    list: false
+                    id: 'xx',
+                    "name": {
+                        "en": "Message"
+                    },
+                    "key": "message",
+                    "type": "string"
                 }
             ],
-            inputParams: [
-                {
-                    id: 'input-c',
-                    label: 'Input c',
-                    name: 'input2',
-                    type: 'string',
-                    list: false
-                }
-            ],
-            outputAnchors: [
-                {
-                    id: 'output-d',
-                    label: 'Output 1',
-                    name: 'output1',
-                    type: 'Tool',
-                    list: false
-                }
-            ]
-        },
-        position: {x: 300, y: 0},
-    },
-];
+            "inputs": {
+                "message": "Hello"
+            }
+        }
+    }
+]
 
 export const edges = [
 ];

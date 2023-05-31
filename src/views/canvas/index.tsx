@@ -3,20 +3,14 @@ import ReactFlow, {addEdge, Controls, Background, useNodesState, useEdgesState} 
 
 import {nodes as initialNodes, edges as initialEdges} from './initial-elements';
 import CanvasNode from './CanvasNode';
-import CustomNode from '../ui-components/CustomNode';
 
 import 'reactflow/dist/style.css';
 import './overview.css';
 
 const nodeTypes = {
-    custom: CustomNode,
-    customCard: CanvasNode,
+    customNode: CanvasNode
 };
 
-
-const minimapStyle = {
-    height: 120,
-};
 
 const onInit = (reactFlowInstance: any) => console.log('flow loaded:', reactFlowInstance);
 

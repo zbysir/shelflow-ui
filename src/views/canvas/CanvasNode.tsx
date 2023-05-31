@@ -37,11 +37,11 @@ export default function CanvasNode({data}: { data: Node }) {
             borderColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary
         }}
         border={false}>
-        <Box>
-            <Typography>{data.label}</Typography>
+        <Box sx={{padding: 1}}>
+            <Typography>{data.name['en']}</Typography>
         </Box>
 
-        {(data.inputAnchors.length > 0 || data.inputParams.length > 0) && (
+        {(data.inputAnchors && data.inputAnchors.length > 0 || data.input_params && data.input_params.length > 0) && (
             <>
                 <Divider/>
                 <Box sx={{background: theme.palette.asyncSelect.main, p: 1}}>
@@ -57,10 +57,10 @@ export default function CanvasNode({data}: { data: Node }) {
                 <Divider/>
             </>
         )}
-        {data.inputAnchors.map((inputAnchor, index) => (
+        { data.inputAnchors && data.inputAnchors.map((inputAnchor, index) => (
             <NodeInputHandler key={index} inputAnchor={inputAnchor} data={data}/>
         ))}
-        {data.inputParams.map((inputParam, index) => (
+        {data.input_params && data.input_params.map((inputParam, index) => (
             <NodeInputHandler key={index} inputParam={inputParam} data={data}/>
         ))}
         <Divider/>

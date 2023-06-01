@@ -65,8 +65,8 @@ function NodeInputHandler({inputAnchor, data, disabled = false, inputParam}) {
                             <Input
                                 disabled={disabled}
                                 inputParam={inputParam}
-                                onChange={(newValue) => (data.inputs[inputParam.name] = newValue)}
-                                value={data.inputs[inputParam.name] ?? inputParam.default ?? ''}
+                                onChange={(newValue) => (data.inputs[inputParam.key] = newValue)}
+                                value={data.inputs[inputParam.key] ?? inputParam.default ?? ''}
                             />
                         )}
 

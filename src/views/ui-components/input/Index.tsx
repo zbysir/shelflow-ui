@@ -33,7 +33,7 @@ export const Input = ({
     return <>
         <FormControl sx={{mt: 1, width: '100%'}} size='small'>
             <OutlinedInput
-                id={inputParam.name}
+                id={inputParam.id}
                 size='small'
                 disabled={disabled}
                 value={myValue}

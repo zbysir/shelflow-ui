@@ -10,7 +10,7 @@ export default (apiFunc: any) => {
         try {
             const result = await apiFunc(...args)
             setData(result.data)
-        } catch (err) {
+        } catch (err: any) {
             setError(err || 'Unexpected Error!')
         } finally {
             setLoading(false)

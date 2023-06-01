@@ -29,7 +29,6 @@ export const nodes = [
                 "type": "builtin"
             },
             "input_params": [
-
                 {
                     id: 'xx',
                     "name": {

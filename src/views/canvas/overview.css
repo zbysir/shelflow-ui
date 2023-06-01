@@ -59,3 +59,7 @@
     margin-top: 5px;
     font-size: 10px;
 }
+
+.reactflow-wrapper {
+    height: 100%;
+}

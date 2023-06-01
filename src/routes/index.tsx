@@ -11,6 +11,10 @@ const router = createBrowserRouter([
                 path: "/canvas",
                 element: <Canvas/>,
             },
+            {
+                path: '/canvas/:id',
+                element: <Canvas />
+            },
         ],
     },
 ]);

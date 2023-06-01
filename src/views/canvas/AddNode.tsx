@@ -24,7 +24,7 @@ const AddNode = ({nodes}) => {
             aria-describedby={id}
             style={{position: 'absolute'}}
             sx={{zIndex: 100}}
-            className={'left-4 top-4'}
+            className={'left-4 top-20'}
             variant="outlined"
             onClick={handleClick}
         >

@@ -1,11 +1,13 @@
 import {useCallback, useEffect, useState, useRef} from 'react';
+import {useParams} from 'react-router-dom';
 // react-flow
 import ReactFlow, {addEdge, Controls, Background, useNodesState, useEdgesState, Panel} from 'reactflow'
 
 import 'reactflow/dist/style.css';
 import './overview.css';
 //  mui
-import {Button} from '@mui/material'
+import {Button, Box, AppBar, Toolbar, Typography} from '@mui/material'
+import {useTheme} from '@mui/material/styles'
 //  hooks
 import useApi from "../../hooks/useApi";
 // Api
@@ -23,10 +25,13 @@ import {nodeData} from './node.ts'
 let id = 0;
 const getId = () => `dndnode_${id++}`;
 const OverviewFlow = () => {
+    const theme = useTheme()
+    const params = useParams();
     const reactFlowWrapper = useRef(null);
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [rfInstance, setRfInstance] = useState(null);
+    const [detail, setDetail] = useState(null);
 
     const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), []);
 
@@ -92,42 +97,60 @@ const OverviewFlow = () => {
 
     // // =========|| useEffect ||======== //
     useEffect(() => {
-        getFlowApi.request(1)
+        if (params.id) {
+            getFlowApi.request(params.id)
+        }
     }, [])
 
     useEffect(() => {
             if (getFlowApi.data) {
-                console.log(getFlowApi.data)
+                console.log('flowDetail:', getFlowApi.data)
+                const data = getFlowApi.data;
+                setNodes(data.graph.nodes || [])
+                setEdges(data.graph.edges || [])
+                setDetail(data)
             }
         },
         [getFlowApi.data, getFlowApi.error])
 
-    return <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-        <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={nodeTypes}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            onInit={onInit}
-            onDragOver={onDragOver}
-            onDrop={onDrop}
-            fitView
-        >
-            <Controls style={{
-                display: 'flex',
-                flexDirection: 'row',
-                left: '50%',
-                transform: 'translate(-50%, -50%)'
-            }}/>
-            <Background color="#aaa" gap={16}/>
-            <Panel position="top-right">
+    return <Box className="h-full">
+        <AppBar
+            color='inherit'
+            elevation={1}
+            sx={{
+                bgcolor: theme.palette.background.default
+            }}>
+            <Toolbar>
+                <Box sx={{flexGrow: 1}}>
+                    <Typography>名称</Typography>
+                </Box>
                 <Button variant="contained" onClick={onSave}>save</Button>
-            </Panel>
-            <AddNode nodes={nodeData}></AddNode>
-        </ReactFlow>
-    </div>
+            </Toolbar>
+        </AppBar>
+        <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+            <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                nodeTypes={nodeTypes}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
+                onInit={onInit}
+                onDragOver={onDragOver}
+                onDrop={onDrop}
+                fitView
+            >
+                <Controls style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)'
+                }}/>
+                <Background color="#aaa" gap={16}/>
+                <AddNode nodes={nodeData}></AddNode>
+            </ReactFlow>
+        </div>
+    </Box>
 
 
 };

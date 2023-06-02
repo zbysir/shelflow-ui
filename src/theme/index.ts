@@ -3,11 +3,7 @@ import colors from '../assets/scss/_themes-vars.module.scss'
 
 import themePalette from './palette';
 import componentStyleOverrides from './compStyleOverride'
-console.log("colors:", colors)
-// const themeOption = {
-//     darkTextPrimary: colors.paper,
-//     darkTextSecondary: colors.grey500,
-// }
+import themeTypography from './typography'
 const theme = (customization: any) => {
     const color = colors
     const themeOption = customization.isDarkMode
@@ -51,6 +47,7 @@ const theme = (customization: any) => {
                 }
             }
         },
+        typography: themeTypography(themeOption)
     });
     themes.components = componentStyleOverrides(themeOption)
     return themes

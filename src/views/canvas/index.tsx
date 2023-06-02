@@ -15,6 +15,8 @@ import api from "../../api/index";
 //  customNode
 import CanvasNode from './CanvasNode';
 import AddNode from "./AddNode";
+// utils
+import {initNode, getUniqueNodeId} from '../../utils/genericHelper'
 
 const nodeTypes = {
     customNode: CanvasNode
@@ -63,12 +65,9 @@ const OverviewFlow = () => {
             x: event.clientX - reactFlowBounds.left,
             y: event.clientY - reactFlowBounds.top,
         });
-        const id = getId();
-        nodeData.id = id;
-        nodeData.inputs = {}
-        nodeData.input_params.forEach((item) => {
-            item.id = getId();
-        })
+
+        const id = getUniqueNodeId();
+        nodeData = initNode(nodeData, id)
         const newNode = {
             id: id,
             position,

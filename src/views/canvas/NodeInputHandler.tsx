@@ -31,8 +31,8 @@ function NodeInputHandler({inputAnchor, data, disabled = false, inputParam}) {
                     <Handle
                         type='target'
                         position={Position.Left}
-                        key={inputAnchor.id}
-                        id={inputAnchor.id}
+                        key={inputAnchor.key}
+                        id={inputAnchor.key}
                         style={{
                             height: 10,
                             width: 10,
@@ -43,7 +43,7 @@ function NodeInputHandler({inputAnchor, data, disabled = false, inputParam}) {
                 </CustomWidthTooltip>
                 <Box sx={{p: 2}}>
                     <Typography>
-                        {inputAnchor.label}
+                        {inputAnchor.name['en']}
                         {!inputAnchor.optional && <span style={{color: 'red'}}>&nbsp;*</span>}
                     </Typography>
                 </Box>

@@ -53,8 +53,8 @@ const NodeOutputHandler = ({ outputAnchor, data, disabled = false }) => {
                         <Handle
                             type='source'
                             position={Position.Right}
-                            key={outputAnchor.id}
-                            id={outputAnchor.id}
+                            key={outputAnchor.key}
+                            id={outputAnchor.key}
                             style={{
                                 height: 10,
                                 width: 10,
@@ -64,7 +64,7 @@ const NodeOutputHandler = ({ outputAnchor, data, disabled = false }) => {
                         />
                     </CustomWidthTooltip>
                     <Box sx={{ p: 2, textAlign: 'end' }}>
-                        <Typography>{outputAnchor.label}</Typography>
+                        <Typography>{outputAnchor.name['en']}</Typography>
                     </Box>
                 </>
             )}

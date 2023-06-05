@@ -11,6 +11,8 @@ export const getFlow = (id: string): Promise<any> => {
     return axios.get(`/flow_one`, {params: {id: id}})
 }
 
+export const editFlow = (data: any): Promise<any> => axios.put('/flow', data)
+
 export const addFlow = (data: any): Promise<any> => {
     return axios.post('/flow', data)
 }
@@ -19,5 +21,6 @@ export const addFlow = (data: any): Promise<any> => {
 export default {
     getFlowList,
     getFlow,
-    addFlow
+    addFlow,
+    editFlow
 }

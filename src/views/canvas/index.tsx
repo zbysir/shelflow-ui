@@ -11,7 +11,7 @@ import {useTheme} from '@mui/material/styles'
 //  hooks
 import useApi from "../../hooks/useApi";
 // Api
-import api from "../../api/index";
+import api, {editFlow} from "../../api/index";
 //  customNode
 import CanvasNode from './CanvasNode';
 import AddNode from "./AddNode";
@@ -23,9 +23,9 @@ const nodeTypes = {
 };
 // mockData
 import {nodeData} from './node.ts'
+import {elGR} from "@mui/material/locale";
 
-let id = 0;
-const getId = () => `dndnode_${id++}`;
+
 const OverviewFlow = () => {
     const theme = useTheme()
     const params = useParams();
@@ -41,6 +41,7 @@ const OverviewFlow = () => {
     // ===========|| flowApi ||=========== //
     const getFlowApi = useApi(api.getFlow)
     const addFlowApi = useApi(api.addFlow)
+    const editFlowApi = useApi(api.editFlow)
 
     const onInit = (reactFlowInstance: any) => console.log(
         setRfInstance(reactFlowInstance)
@@ -81,16 +82,38 @@ const OverviewFlow = () => {
     const onSave = () => {
         console.log('saveFlow:', rfInstance)
         if (rfInstance) {
-            const flow = rfInstance.toObject();
+            let flow = rfInstance.toObject();
             console.log(flow);
 
-            const data = {
-                name: 'first demo',
-                description: 'first demo',
-                graph: flow
-            }
 
-            addFlowApi.request(data)
+            flow.nodes = flow.nodes.map((node: any) => {
+                return {
+                    ...node,
+                    type: node.data.type,
+                }
+            })
+            // 解析边
+            flow.edges.forEach((edge: any) => {
+                const target = flow.nodes.find((node: any) => node.id === edge.target)
+                // target.data.inputs = {}
+                target.data.inputs[edge.targetHandle] = [edge.source, edge.sourceHandle].join('.')
+            })
+            if (params.id) {
+                const data = {
+                    ...detail,
+                    graph: flow
+                }
+                editFlowApi.request(data)
+
+            } else {
+                const data = {
+                    name: 'first demo',
+                    description: 'first demo',
+                    graph: flow
+                }
+
+                addFlowApi.request(data)
+            }
         }
     }
 
@@ -105,6 +128,41 @@ const OverviewFlow = () => {
             if (getFlowApi.data) {
                 console.log('flowDetail:', getFlowApi.data)
                 const data = getFlowApi.data;
+                let edges: any = []
+                data.graph.nodes = data.graph.nodes.map((node: any) => {
+                    if (node.data.input_anchors && node.data.inputs) {
+                        node.data.input_anchors.forEach(one => {
+                            const key = one.key;
+                            const item = node.data.inputs[key]
+                            console.log('key:', key, item);
+                            if(item){
+                                edges.push({
+                                    id: 'reactflow__edge-' + key.replace('.', '') + '-' + node.id + item.split('.')[0],
+                                    source: item.split('.')[0],
+                                    target: node.id,
+                                    sourceHandle: item.split('.')[1],
+                                    targetHandle: key
+                                })
+                            }
+                        })
+
+                    }
+                    return {
+                        ...node,
+                        type: 'customNode',
+                        data: {
+                            ...node.data,
+                            id: node.id,
+                            type: node.type
+                        }
+                    }
+
+
+                })
+                data.graph.edges = edges;
+                console.log('edges:', edges)
+                // 解析边框
+
                 setNodes(data.graph.nodes || [])
                 setEdges(data.graph.edges || [])
                 setDetail(data)

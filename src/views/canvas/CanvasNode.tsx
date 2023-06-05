@@ -38,10 +38,10 @@ export default function CanvasNode({data}: { data: Node }) {
         }}
         border={false}>
         <Box sx={{padding: 1}}>
-            <Typography>{data.name['en']}</Typography>
+            <Typography>{data.name['zh-CN']}</Typography>
         </Box>
 
-        {(data.inputAnchors && data.inputAnchors.length > 0 || data.input_params && data.input_params.length > 0) && (
+        {(data.input_anchors && data.input_anchors.length > 0 || data.input_params && data.input_params.length > 0) && (
             <>
                 <Divider/>
                 <Box sx={{background: theme.palette.asyncSelect.main, p: 1}}>
@@ -57,7 +57,7 @@ export default function CanvasNode({data}: { data: Node }) {
                 <Divider/>
             </>
         )}
-        { data.inputAnchors && data.inputAnchors.map((inputAnchor, index) => (
+        { data.input_anchors && data.input_anchors.map((inputAnchor, index) => (
             <NodeInputHandler key={index} inputAnchor={inputAnchor} data={data}/>
         ))}
         {data.input_params && data.input_params.map((inputParam, index) => (
@@ -75,7 +75,7 @@ export default function CanvasNode({data}: { data: Node }) {
             </Typography>
         </Box>
         <Divider/>
-        {data.outputAnchors && data.outputAnchors.map((outputAnchor, index) => (
+        {data.output_anchors && data.output_anchors.map((outputAnchor, index) => (
             <NodeOutputHandler key={index} outputAnchor={outputAnchor} data={data}/>
         ))}
     </CardWrapper>

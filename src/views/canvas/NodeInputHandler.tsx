@@ -6,11 +6,15 @@ import {Handle, Position, useUpdateNodeInternals} from 'reactflow'
 import {useState, useEffect, useRef} from 'react'
 import {Input} from '../ui-components/input/Index'
 
-const CustomWidthTooltip = styled(({className, ...props}:any) => <Tooltip {...props} classes={{popper: className}}/>)({
+const CustomWidthTooltip = styled(({className, ...props}: any) => <Tooltip {...props} classes={{popper: className}}/>)({
     [`& .${tooltipClasses.tooltip}`]: {
         maxWidth: 500
     }
 })
+
+
+//  labelComp
+import LabelComp from '../ui-components/label/Index'
 
 function NodeInputHandler({inputAnchor, data, disabled = false, inputParam}) {
     const theme = useTheme()
@@ -42,10 +46,7 @@ function NodeInputHandler({inputAnchor, data, disabled = false, inputParam}) {
                     />
                 </CustomWidthTooltip>
                 <Box sx={{p: 2}}>
-                    <Typography>
-                        {inputAnchor.name['en']}
-                        {!inputAnchor.optional && <span style={{color: 'red'}}>&nbsp;*</span>}
-                    </Typography>
+                    <LabelComp name={inputAnchor.name} defaultValue={inputAnchor.key}></LabelComp>
                 </Box>
             </>
         )}
@@ -54,23 +55,17 @@ function NodeInputHandler({inputAnchor, data, disabled = false, inputParam}) {
                 <>
                     <Box sx={{p: 2}}>
                         <div style={{display: 'flex', flexDirection: 'row'}}>
-                            <Typography>
-                                {inputParam.name['en']}
-                            </Typography>
+                            <LabelComp name={inputParam.name} defaultValue={inputParam.key}></LabelComp>
                             <div style={{flexGrow: 1}}></div>
 
                         </div>
 
-                        {(inputParam.type === 'string' || inputParam.type === 'password' || inputParam.type === 'number') && (
-                            <Input
-                                disabled={disabled}
-                                inputParam={inputParam}
-                                onChange={(newValue) => (data.inputs[inputParam.key] = newValue)}
-                                value={data.inputs[inputParam.key] ?? inputParam.default ?? ''}
-                            />
-                        )}
-
-
+                        { <Input
+                            disabled={disabled}
+                            inputParam={inputParam}
+                            onChange={(newValue) => (data.inputs[inputParam.key] = newValue)}
+                            value={data.inputs[inputParam.key] ?? inputParam.default ?? ''}
+                        />}
                     </Box>
                 </>
             )}

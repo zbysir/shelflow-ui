@@ -18,9 +18,16 @@ export const addFlow = (data: any): Promise<any> => {
 }
 
 
+export const getComps = (params: any): Promise<any> => {
+    return axios.get('/component', {
+        params
+    })
+}
+
 export default {
     getFlowList,
     getFlow,
     addFlow,
-    editFlow
+    editFlow,
+    getComps
 }

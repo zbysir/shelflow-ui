@@ -1,4 +1,4 @@
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 //  mui
 import {Box, CssBaseline, AppBar, Toolbar, ButtonBase, Card, Stack, Button, Grid} from '@mui/material'
 import {useTheme, styled} from '@mui/material/styles'
@@ -19,11 +19,18 @@ const Flows = () => {
     const theme = useTheme()
     console.log("Flows  theme:", theme);
 
+    const [isLoading, setIsLoading] = useState(true)
+
     // useEffect
     useEffect(() => {
         console.log('getListxxx')
         getFlowListApi.request()
     }, [])
+
+    useEffect(() => {
+        setIsLoading(getFlowListApi.loading)
+        console.log('isLoading：', isLoading, getFlowListApi.data)
+    }, [getFlowListApi.loading])
 
     return <Box sx={{display: 'flex'}}>
         <CssBaseline/>
@@ -60,7 +67,15 @@ const Flows = () => {
                     </Button>
                 </Stack>
                 <Grid container spacing={3}>
-
+                    {
+                        !isLoading && getFlowListApi.data && getFlowListApi.data.list.map((item, index) => {
+                            <Grid key={index} item lg={3} md={4} sm={6} xs={12}>
+                                <Card>
+                                    {item.name}
+                                </Card>
+                            </Grid>
+                        })
+                    }
                 </Grid>
             </Card>
         </Main>

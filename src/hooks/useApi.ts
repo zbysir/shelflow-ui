@@ -13,6 +13,7 @@ export default (apiFunc: any) => {
         } catch (err: any) {
             setError(err || 'Unexpected Error!')
         } finally {
+            console.log('finally')
             setLoading(false)
         }
     }

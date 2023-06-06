@@ -19,6 +19,9 @@ const CardWrapper = styled(MainCard)(({theme}) => ({
     }
 }));
 
+//  labelComp
+import LabelComp from '../ui-components/label/Index'
+
 interface Node {
     label: string;
     description: string;
@@ -38,7 +41,8 @@ export default function CanvasNode({data}: { data: Node }) {
         }}
         border={false}>
         <Box sx={{padding: 1}}>
-            <Typography>{data.name['zh-CN']}</Typography>
+            {/*<Typography>{data.name['zh-CN']}</Typography>*/}
+            <LabelComp name={data.name}></LabelComp>
         </Box>
 
         {(data.input_anchors && data.input_anchors.length > 0 || data.input_params && data.input_params.length > 0) && (

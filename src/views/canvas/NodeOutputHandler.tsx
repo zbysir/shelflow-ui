@@ -1,13 +1,16 @@
 import PropTypes from 'prop-types'
-import { Handle, Position, useUpdateNodeInternals } from 'reactflow'
-import { useEffect, useRef, useState, useContext } from 'react'
+import {Handle, Position, useUpdateNodeInternals} from 'reactflow'
+import {useEffect, useRef, useState, useContext} from 'react'
 
 // material-ui
-import { useTheme, styled } from '@mui/material/styles'
-import { Box, Typography, Tooltip } from '@mui/material'
-import { tooltipClasses } from '@mui/material/Tooltip'
+import {useTheme, styled} from '@mui/material/styles'
+import {Box, Typography, Tooltip} from '@mui/material'
+import {tooltipClasses} from '@mui/material/Tooltip'
 
-const CustomWidthTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)({
+//  labelComp
+import LabelComp from '../ui-components/label/Index'
+
+const CustomWidthTooltip = styled(({className, ...props}) => <Tooltip {...props} classes={{popper: className}}/>)({
     [`& .${tooltipClasses.tooltip}`]: {
         maxWidth: 500
     }
@@ -15,7 +18,7 @@ const CustomWidthTooltip = styled(({ className, ...props }) => <Tooltip {...prop
 
 // ===========================|| NodeOutputHandler ||=========================== //
 
-const NodeOutputHandler = ({ outputAnchor, data, disabled = false }) => {
+const NodeOutputHandler = ({outputAnchor, data, disabled = false}) => {
     const theme = useTheme()
     const ref = useRef(null)
     const updateNodeInternals = useUpdateNodeInternals()
@@ -63,8 +66,10 @@ const NodeOutputHandler = ({ outputAnchor, data, disabled = false }) => {
                             }}
                         />
                     </CustomWidthTooltip>
-                    <Box sx={{ p: 2, textAlign: 'end' }}>
-                        <Typography>{outputAnchor.name['en']}</Typography>
+                    <Box sx={{p: 2, textAlign: 'end'}}>
+                        <LabelComp value={outputAnchor.name}
+                                   defaultValue={outputAnchor.key}></LabelComp>
+                        {/*<Typography>{outputAnchor.name && outputAnchor.name['en']}</Typography>*/}
                     </Box>
                 </>
             )}

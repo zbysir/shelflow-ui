@@ -2,7 +2,7 @@ import {createBrowserRouter} from "react-router-dom";
 import Layout from "../views/Layout";
 import Canvas from "../views/canvas/index";
 import Flows from '../views/flow/index'
-
+import {BASE_URL} from '../utils/const'
 const router = createBrowserRouter([
     {
         path: "/",
@@ -22,6 +22,8 @@ const router = createBrowserRouter([
             },
         ],
     },
-]);
+], {
+    basename: BASE_URL
+});
 
 export default router;

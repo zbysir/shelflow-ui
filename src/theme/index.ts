@@ -35,7 +35,9 @@ const theme = (customization: any) => {
             divider: color.grey200,
             customization
         }
+
     const themes = createTheme({
+        computed: undefined, methods: undefined, watch: undefined,
         direction: 'ltr',
         palette: themePalette(themeOption),
         mixins: {
@@ -47,6 +49,8 @@ const theme = (customization: any) => {
                 }
             }
         },
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         typography: themeTypography(themeOption)
     });
     themes.components = componentStyleOverrides(themeOption)

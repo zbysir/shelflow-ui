@@ -1,9 +1,17 @@
-import {Card, CardContent, CardHeader, Divider, Typography} from '@mui/material'
-import {forwardRef} from 'react'
+import {Card, CardContent, CardHeader, Divider} from '@mui/material'
+import {ForwardedRef, forwardRef} from 'react'
 import {useTheme} from '@mui/material/styles'
-import PropTypes from 'prop-types'
-const MainCard = forwardRef((props, ref) => {
-    const {title, content, border, contentSX, contentClass, children, ...other} = props
+
+const MainCard = forwardRef((props, ref: ForwardedRef<any>) => {
+    const {title, content, border, contentSX, contentClass, children, ...other}: {
+        title?: any,
+        content?: boolean,
+        border?: boolean,
+        contentSX?: any,
+        contentClass?: any,
+        children?: any,
+        [propName: string]: any;
+    } = props
     const theme = useTheme()
     return (
         <Card ref={ref} {...other} sx={{border: 'solid 1px', borderColor: theme.palette.text.secondary}}>
@@ -24,11 +32,5 @@ const MainCard = forwardRef((props, ref) => {
     )
 })
 
-MainCard.propTypes = {
-    title: PropTypes.oneOfType([PropTypes.node, PropTypes.string, PropTypes.object]),
-    children: PropTypes.node,
-    content: PropTypes.bool,
-    border: PropTypes.bool,
-}
 export default MainCard
 

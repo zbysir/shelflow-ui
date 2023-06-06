@@ -1,7 +1,16 @@
-import {useCallback, useEffect, useState, useRef} from 'react';
+import React, {useCallback, useEffect, useState, useRef} from 'react';
 import {useParams} from 'react-router-dom';
 // react-flow
-import ReactFlow, {addEdge, Controls, Background, useNodesState, useEdgesState} from 'reactflow'
+import ReactFlow, {
+    addEdge,
+    Controls,
+    Background,
+    useNodesState,
+    useEdgesState,
+    ReactFlowInstance,
+    Edge,
+    Node
+} from 'reactflow'
 
 import 'reactflow/dist/style.css';
 import './overview.css';
@@ -17,20 +26,21 @@ import CanvasNode from './CanvasNode';
 import AddNode from "./AddNode";
 // utils
 import {initNode, getUniqueNodeId, flowDetail, edgeToData} from '../../utils/genericHelper'
+//  custom types
+import {INode} from "../../custom_types";
 
 const nodeTypes = {
     customNode: CanvasNode
 };
 
 
-
 const OverviewFlow = () => {
     const theme = useTheme()
     const params = useParams();
     const reactFlowWrapper = useRef(null);
-    const [nodes, setNodes, onNodesChange] = useNodesState([]);
-    const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-    const [rfInstance, setRfInstance] = useState(null);
+    const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>([]);
+    const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
+    const [rfInstance, setRfInstance] = useState<ReactFlowInstance>()
     const [detail, setDetail] = useState({});
 
     const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), []);
@@ -42,25 +52,28 @@ const OverviewFlow = () => {
     const editFlowApi = useApi(api.editFlow)
     const getCompsApi = useApi(api.getComps)
 
-    const onInit = (reactFlowInstance: any) => console.log(
+    const onInit = (reactFlowInstance: ReactFlowInstance) => console.log(
         setRfInstance(reactFlowInstance)
     );
-    const onDragOver = useCallback((event) => {
+    const onDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
     }, []);
-    const onDrop = useCallback((event) => {
+    const onDrop = useCallback((event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
-        const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-        let nodeData = event.dataTransfer.getData('application/reactflow')
+        const reactFlowBounds = (reactFlowWrapper.current! as HTMLElement).getBoundingClientRect();
+        const nodeStr = event.dataTransfer.getData('application/reactflow')
 
-        if (typeof nodeData === 'undefined' || !nodeData) {
+        if (typeof nodeStr === 'undefined' || !nodeStr) {
             return
         }
 
-        nodeData = JSON.parse(nodeData)
+        const nodeData: INode = JSON.parse(nodeStr)
 
         console.log('nodeData:', nodeData);
+        if (!rfInstance) {
+            return
+        }
         const position = rfInstance.project({
             x: event.clientX - reactFlowBounds.left,
             y: event.clientY - reactFlowBounds.top,
@@ -76,6 +89,8 @@ const OverviewFlow = () => {
             data: data
         }
 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         setNodes((nds) => nds.concat(newNode));
     }, [rfInstance]);
 

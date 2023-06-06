@@ -10,8 +10,8 @@ import useApi from "../../hooks/useApi";
 // api
 import api from "../../api";
 
-const Main = styled('main', {shouldForwardProp: (prop) => prop !== 'open'})(({theme}) => ({
-    ...theme.typography.mainContent,
+const Main = styled('main', {shouldForwardProp: (prop) => prop !== 'open'})(({theme}: { theme: any }) => ({
+    ...theme?.typography?.mainContent,
 }))
 
 const Flows = () => {
@@ -68,13 +68,7 @@ const Flows = () => {
                 </Stack>
                 <Grid container spacing={3}>
                     {
-                        !isLoading && getFlowListApi.data && getFlowListApi.data.list.map((item, index) => {
-                            <Grid key={index} item lg={3} md={4} sm={6} xs={12}>
-                                <Card>
-                                    {item.name}
-                                </Card>
-                            </Grid>
-                        })
+
                     }
                 </Grid>
             </Card>

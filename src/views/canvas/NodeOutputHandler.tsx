@@ -1,36 +1,40 @@
 import PropTypes from 'prop-types'
 import {Handle, Position, useUpdateNodeInternals} from 'reactflow'
-import {useEffect, useRef, useState, useContext} from 'react'
+import {useEffect, useRef, useState} from 'react'
 
 // material-ui
 import {useTheme, styled} from '@mui/material/styles'
-import {Box, Typography, Tooltip} from '@mui/material'
+import {Box, Tooltip} from '@mui/material'
 import {tooltipClasses} from '@mui/material/Tooltip'
 
 //  labelComp
 import LabelComp from '../ui-components/label/Index'
+//  type
+import {INodeParams, INodeData} from '../../custom_types/index'
 
-const CustomWidthTooltip = styled(({className, ...props}) => <Tooltip {...props} classes={{popper: className}}/>)({
+const CustomWidthTooltip = styled(({className, ...props}: any) => <Tooltip {...props} classes={{popper: className}}/>)({
     [`& .${tooltipClasses.tooltip}`]: {
         maxWidth: 500
     }
 })
 
 // ===========================|| NodeOutputHandler ||=========================== //
-
-const NodeOutputHandler = ({outputAnchor, data, disabled = false}) => {
+const NodeOutputHandler = ({outputAnchor, data}: { outputAnchor: INodeParams, data: INodeData }) => {
     const theme = useTheme()
     const ref = useRef(null)
     const updateNodeInternals = useUpdateNodeInternals()
     const [position, setPosition] = useState(0)
-    const [dropdownValue, setDropdownValue] = useState(null)
+
 
     useEffect(() => {
-        if (ref.current && ref.current?.offsetTop && ref.current?.clientHeight) {
-            setTimeout(() => {
-                setPosition(ref.current?.offsetTop + ref.current?.clientHeight / 2)
-                updateNodeInternals(data.id)
-            }, 0)
+        if (ref.current) {
+            const dom = ref.current as HTMLElement
+            if (ref.current && dom.offsetTop && dom.clientHeight) {
+                setTimeout(() => {
+                    setPosition(dom.offsetTop + dom.clientHeight / 2)
+                    updateNodeInternals(data.id)
+                }, 0)
+            }
         }
     }, [data.id, ref, updateNodeInternals])
 
@@ -40,39 +44,29 @@ const NodeOutputHandler = ({outputAnchor, data, disabled = false}) => {
         }, 0)
     }, [data.id, position, updateNodeInternals])
 
-    useEffect(() => {
-        if (dropdownValue) {
-            setTimeout(() => {
-                updateNodeInternals(data.id)
-            }, 0)
-        }
-    }, [data.id, dropdownValue, updateNodeInternals])
-
     return (
         <div ref={ref}>
-            {outputAnchor.type !== 'options' && !outputAnchor.options && (
-                <>
-                    <CustomWidthTooltip placement='right' title={outputAnchor.type}>
-                        <Handle
-                            type='source'
-                            position={Position.Right}
-                            key={outputAnchor.key}
-                            id={outputAnchor.key}
-                            style={{
-                                height: 10,
-                                width: 10,
-                                // backgroundColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary,
-                                top: position
-                            }}
-                        />
-                    </CustomWidthTooltip>
-                    <Box sx={{p: 2, textAlign: 'end'}}>
-                        <LabelComp value={outputAnchor.name}
-                                   defaultValue={outputAnchor.key}></LabelComp>
-                        {/*<Typography>{outputAnchor.name && outputAnchor.name['en']}</Typography>*/}
-                    </Box>
-                </>
-            )}
+            <>
+                <CustomWidthTooltip placement='right' title={outputAnchor.type}>
+                    <Handle
+                        type='source'
+                        position={Position.Right}
+                        key={outputAnchor.key}
+                        id={outputAnchor.key}
+                        style={{
+                            height: 10,
+                            width: 10,
+                            backgroundColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary,
+                            top: position
+                        }}
+                    />
+                </CustomWidthTooltip>
+                <Box sx={{p: 2, textAlign: 'end'}}>
+                    <LabelComp
+                        name={outputAnchor.name}
+                        defaultValue={outputAnchor.key}></LabelComp>
+                </Box>
+            </>
         </div>
     )
 }

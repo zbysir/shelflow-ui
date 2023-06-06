@@ -1,10 +1,13 @@
+import {INodeParams, INodeData} from '../custom_types/index'
+import {ReactFlowJsonObject, Node, Edge} from 'reactflow'
+
 export const getUniqueNodeId = () => {
     return Math.random().toString(36).substr(2, 9);
 }
 
 
-export const initializeDefaultNodeData = (nodeParams: any[]) => {
-    const initialValues = {}
+export const initializeDefaultNodeData = (nodeParams: INodeParams[]) => {
+    const initialValues: { [propName: string]: any; } = {}
 
     for (let i = 0; i < nodeParams.length; i += 1) {
         const input = nodeParams[i]
@@ -16,7 +19,7 @@ export const initializeDefaultNodeData = (nodeParams: any[]) => {
 }
 
 
-export const initNode = (nodeData: any, id: string) => {
+export const initNode = (nodeData: INodeData, id: string) => {
     nodeData.id = id;
     if (nodeData.input_params) {
         nodeData.input_params.forEach((inputParam: any) => {
@@ -33,7 +36,7 @@ export const initNode = (nodeData: any, id: string) => {
 
 export const flowDetail = (data: any) => {
     const edges: any = []
-    data.graph.nodes = data.graph.nodes.map((node: any) => {
+    data.graph.nodes = data.graph.nodes.map((node: Node) => {
         if (node.data.input_anchors && node.data.inputs) {
             node.data.input_anchors.forEach((one: any) => {
                 const key = one.key;
@@ -68,17 +71,20 @@ export const flowDetail = (data: any) => {
 }
 
 
-export const edgeToData = (flow: any) => {
-    flow.nodes = flow.nodes.map((node: any) => {
+export const edgeToData = (flow: ReactFlowJsonObject) => {
+    flow.nodes = flow.nodes.map((node: Node) => {
         return {
             ...node,
             type: node.data.type,
         }
     })
-    flow.edges.forEach((edge: any) => {
-        const target = flow.nodes.find((node: any) => node.id === edge.target)
+    flow.edges.forEach((edge: Edge) => {
+        const target = flow.nodes.find((node: Node) => node.id === edge.target)
         // TODO:删除的边的情况需要处理
-        target.data.inputs[edge.targetHandle] = [edge.source, edge.sourceHandle].join('.')
+        if (target && edge.targetHandle) {
+            target.data.inputs[edge.targetHandle] = [edge.source, edge.sourceHandle].join('.')
+        }
+
     })
     return flow
 }

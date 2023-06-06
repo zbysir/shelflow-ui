@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import {Box, Typography, Tooltip} from "@mui/material";
+import {Box, Tooltip} from "@mui/material";
 import {useTheme, styled} from '@mui/material/styles'
 import {tooltipClasses} from '@mui/material/Tooltip'
 import {Handle, Position, useUpdateNodeInternals} from 'reactflow'
@@ -15,18 +15,30 @@ const CustomWidthTooltip = styled(({className, ...props}: any) => <Tooltip {...p
 
 //  labelComp
 import LabelComp from '../ui-components/label/Index'
+//  type
+import {INodeParams, INodeData} from '../../custom_types/index'
 
-function NodeInputHandler({inputAnchor, data, disabled = false, inputParam}) {
+function NodeInputHandler({inputAnchor, data, disabled = false, inputParam}: {
+    inputAnchor?: INodeParams,
+    data: INodeData,
+    disabled?: boolean,
+    inputParam?: INodeParams
+
+}) {
     const theme = useTheme()
     const [position, setPosition] = useState(0)
     const ref = useRef(null)
     const updateNodeInternals = useUpdateNodeInternals()
 
     useEffect(() => {
-        if (ref.current && ref.current.offsetTop && ref.current.clientHeight) {
-            setPosition(ref.current.offsetTop + ref.current.clientHeight / 2)
-            updateNodeInternals(data.id)
+        if (ref.current) {
+            const dom = ref.current as HTMLElement
+            if (dom.offsetTop && dom.clientHeight) {
+                setPosition(dom.offsetTop + dom.clientHeight / 2)
+                updateNodeInternals(data.id)
+            }
         }
+
     }, [data.id, ref, updateNodeInternals])
     return <div ref={ref}>
         {inputAnchor && (
@@ -50,25 +62,23 @@ function NodeInputHandler({inputAnchor, data, disabled = false, inputParam}) {
                 </Box>
             </>
         )}
-        {
-            inputParam && !inputParam.additionalParams && (
-                <>
-                    <Box sx={{p: 2}}>
-                        <div style={{display: 'flex', flexDirection: 'row'}}>
-                            <LabelComp name={inputParam.name} defaultValue={inputParam.key}></LabelComp>
-                            <div style={{flexGrow: 1}}></div>
+        {inputParam &&
+            <>
+                <Box sx={{p: 2}}>
+                    <div style={{display: 'flex', flexDirection: 'row'}}>
+                        <LabelComp name={inputParam.name} defaultValue={inputParam.key}></LabelComp>
+                        <div style={{flexGrow: 1}}></div>
 
-                        </div>
+                    </div>
 
-                        { <Input
-                            disabled={disabled}
-                            inputParam={inputParam}
-                            onChange={(newValue) => (data.inputs[inputParam.key] = newValue)}
-                            value={data.inputs[inputParam.key] ?? inputParam.default ?? ''}
-                        />}
-                    </Box>
-                </>
-            )}
+                    {<Input
+                        disabled={disabled}
+                        inputParam={inputParam}
+                        onChange={(newValue) => (data.inputs[inputParam.key] = newValue)}
+                        value={data.inputs[inputParam.key] ?? inputParam.default ?? ''}
+                    />}
+                </Box>
+            </>}
     </div>
 }
 

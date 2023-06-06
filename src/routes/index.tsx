@@ -1,4 +1,4 @@
-import {createBrowserRouter, useNavigate} from "react-router-dom";
+import {createBrowserRouter} from "react-router-dom";
 import Layout from "../views/Layout";
 import Canvas from "../views/canvas/index";
 import Flows from '../views/flow/index'

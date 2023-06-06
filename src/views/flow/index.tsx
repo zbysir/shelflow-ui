@@ -2,7 +2,6 @@ import {useEffect, useState} from "react";
 //  mui
 import {Box, CssBaseline, AppBar, Toolbar, ButtonBase, Card, Stack, Button, Grid} from '@mui/material'
 import {useTheme, styled} from '@mui/material/styles'
-import logo from '../../assets/images/logo.png'
 
 //  hooks
 import useApi from "../../hooks/useApi";
@@ -49,9 +48,7 @@ const Flows = () => {
                 }}>
                     <Box>
                         <ButtonBase>
-                            <img
-                                style={{objectFit: 'contain', height: 'auto', width: 150}}
-                                src={logo} alt="writeflow"/>
+                            writeFlow
                         </ButtonBase>
                     </Box>
                 </Box>

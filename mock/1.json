@@ -1,0 +1,41 @@
+{
+  "name": "demo",
+  "description": "First demo",
+  "graph": {
+    "nodes": [
+      {
+        "id":"echo_1",
+        "type": "customNode",
+        "width":100,
+        "height": 50,
+        "position":{
+          "x": 40,
+          "y": 40
+        },
+        "data":{
+          "id":"echo_1",
+          "type": "echo",
+          "name": {
+            "en":"Echo"
+          },
+          "source":{
+            "type": "builtin"
+          },
+          "input_params":[
+            {
+              "name":{
+                "en":"Message"
+              },
+              "key": "message",
+              "type":"string"
+            }
+          ],
+          "inputs": {
+            "message": "Hello"
+          }
+        }
+      }
+    ],
+    "output_node_id": "echo_1"
+  }
+}

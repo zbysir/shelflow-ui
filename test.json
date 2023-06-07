@@ -1,0 +1,515 @@
+{
+  "id": "542aba16-c094-42d6-9e2d-db372249b615",
+  "name": "merry",
+  "flowData": {
+    "nodes": [
+      {
+        "width": 300,
+        "height": 279,
+        "id": "mrklAgentLLM_0",
+        "position": {
+          "x": 1484.1011220440378,
+          "y": 360.3044525201228
+        },
+        "type": "customNode",
+        "data": {
+          "label": "MRKL Agent for LLMs",
+          "name": "mrklAgentLLM",
+          "type": "AgentExecutor",
+          "category": "Agents",
+          "icon": "C:/Users/merry/AppData/Roaming/nvm/v19.0.0/node_modules/flowise/node_modules/flowise-components/dist/nodes/agents/MRKLAgentLLM/agent.svg",
+          "description": "Agent that uses the ReAct Framework to decide what action to take, optimized to be used with LLMs",
+          "baseClasses": [
+            "AgentExecutor",
+            "BaseChain",
+            "BaseLangChain"
+          ],
+          "inputs": {
+            "tools": [
+              "{{serpAPI_0.data.instance}}"
+            ],
+            "model": "{{openAI_0.data.instance}}"
+          },
+          "filePath": "C:\\Users\\merry\\AppData\\Roaming\\nvm\\v19.0.0\\node_modules\\flowise\\node_modules\\flowise-components\\dist\\nodes\\agents\\MRKLAgentLLM\\MRKLAgentLLM.js",
+          "inputAnchors": [
+            {
+              "label": "Allowed Tools",
+              "name": "tools",
+              "type": "Tool",
+              "list": true,
+              "id": "mrklAgentLLM_0-input-tools-Tool"
+            },
+            {
+              "label": "LLM Model",
+              "name": "model",
+              "type": "BaseLLM",
+              "id": "mrklAgentLLM_0-input-model-BaseLLM"
+            }
+          ],
+          "inputParams": [],
+          "outputs": {},
+          "outputAnchors": [
+            {
+              "id": "mrklAgentLLM_0-output-mrklAgentLLM-AgentExecutor|BaseChain|BaseLangChain",
+              "name": "mrklAgentLLM",
+              "label": "AgentExecutor",
+              "type": "AgentExecutor | BaseChain | BaseLangChain"
+            }
+          ],
+          "id": "mrklAgentLLM_0",
+          "selected": false
+        },
+        "selected": false,
+        "positionAbsolute": {
+          "x": 1484.1011220440378,
+          "y": 360.3044525201228
+        },
+        "dragging": false
+      },
+      {
+        "width": 300,
+        "height": 277,
+        "id": "serpAPI_0",
+        "position": {
+          "x": 662.9437520142532,
+          "y": 223.17565892389214
+        },
+        "type": "customNode",
+        "data": {
+          "label": "Serp API",
+          "name": "serpAPI",
+          "type": "SerpAPI",
+          "icon": "C:/Users/merry/AppData/Roaming/nvm/v19.0.0/node_modules/flowise/node_modules/flowise-components/dist/nodes/tools/SerpAPI/serp.png",
+          "category": "Tools",
+          "description": "Wrapper around SerpAPI - a real-time API to access Google search results",
+          "inputs": {
+            "apiKey": ""
+          },
+          "baseClasses": [
+            "SerpAPI",
+            "Tool",
+            "StructuredTool",
+            "BaseLangChain"
+          ],
+          "filePath": "C:\\Users\\merry\\AppData\\Roaming\\nvm\\v19.0.0\\node_modules\\flowise\\node_modules\\flowise-components\\dist\\nodes\\tools\\SerpAPI\\SerpAPI.js",
+          "inputAnchors": [],
+          "inputParams": [
+            {
+              "label": "Serp Api Key",
+              "name": "apiKey",
+              "type": "password",
+              "id": "serpAPI_0-input-apiKey-password"
+            }
+          ],
+          "outputs": {},
+          "outputAnchors": [
+            {
+              "id": "serpAPI_0-output-serpAPI-SerpAPI|Tool|StructuredTool|BaseLangChain",
+              "name": "serpAPI",
+              "label": "SerpAPI",
+              "type": "SerpAPI | Tool | StructuredTool | BaseLangChain"
+            }
+          ],
+          "id": "serpAPI_0",
+          "selected": false
+        },
+        "selected": false,
+        "positionAbsolute": {
+          "x": 662.9437520142532,
+          "y": 223.17565892389214
+        },
+        "dragging": false
+      },
+      {
+        "width": 300,
+        "height": 523,
+        "id": "openAI_0",
+        "position": {
+          "x": 759.8672448702278,
+          "y": 616.9722206387221
+        },
+        "type": "customNode",
+        "data": {
+          "label": "OpenAI",
+          "name": "openAI",
+          "type": "OpenAI",
+          "icon": "C:/Users/merry/AppData/Roaming/nvm/v19.0.0/node_modules/flowise/node_modules/flowise-components/dist/nodes/llms/OpenAI/openai.png",
+          "category": "LLMs",
+          "description": "Wrapper around OpenAI large language models",
+          "baseClasses": [
+            "OpenAI",
+            "BaseLLM",
+            "BaseLanguageModel",
+            "BaseLangChain"
+          ],
+          "inputs": {
+            "openAIApiKey": "",
+            "modelName": "text-davinci-003",
+            "temperature": 0.7,
+            "maxTokens": "",
+            "topP": "",
+            "bestOf": "",
+            "frequencyPenalty": "",
+            "presencePenalty": "",
+            "batchSize": "",
+            "timeout": ""
+          },
+          "filePath": "C:\\Users\\merry\\AppData\\Roaming\\nvm\\v19.0.0\\node_modules\\flowise\\node_modules\\flowise-components\\dist\\nodes\\llms\\OpenAI\\OpenAI.js",
+          "inputAnchors": [],
+          "inputParams": [
+            {
+              "label": "OpenAI Api Key",
+              "name": "openAIApiKey",
+              "type": "password",
+              "id": "openAI_0-input-openAIApiKey-password"
+            },
+            {
+              "label": "Model Name",
+              "name": "modelName",
+              "type": "options",
+              "options": [
+                {
+                  "label": "text-davinci-003",
+                  "name": "text-davinci-003"
+                },
+                {
+                  "label": "text-davinci-002",
+                  "name": "text-davinci-002"
+                },
+                {
+                  "label": "text-curie-001",
+                  "name": "text-curie-001"
+                },
+                {
+                  "label": "text-babbage-001",
+                  "name": "text-babbage-001"
+                }
+              ],
+              "default": "text-davinci-003",
+              "optional": true,
+              "id": "openAI_0-input-modelName-options"
+            },
+            {
+              "label": "Temperature",
+              "name": "temperature",
+              "type": "number",
+              "default": 0.7,
+              "optional": true,
+              "id": "openAI_0-input-temperature-number"
+            },
+            {
+              "label": "Max Tokens",
+              "name": "maxTokens",
+              "type": "number",
+              "optional": true,
+              "additionalParams": true,
+              "id": "openAI_0-input-maxTokens-number"
+            },
+            {
+              "label": "Top Probability",
+              "name": "topP",
+              "type": "number",
+              "optional": true,
+              "additionalParams": true,
+              "id": "openAI_0-input-topP-number"
+            },
+            {
+              "label": "Best Of",
+              "name": "bestOf",
+              "type": "number",
+              "optional": true,
+              "additionalParams": true,
+              "id": "openAI_0-input-bestOf-number"
+            },
+            {
+              "label": "Frequency Penalty",
+              "name": "frequencyPenalty",
+              "type": "number",
+              "optional": true,
+              "additionalParams": true,
+              "id": "openAI_0-input-frequencyPenalty-number"
+            },
+            {
+              "label": "Presence Penalty",
+              "name": "presencePenalty",
+              "type": "number",
+              "optional": true,
+              "additionalParams": true,
+              "id": "openAI_0-input-presencePenalty-number"
+            },
+            {
+              "label": "Batch Size",
+              "name": "batchSize",
+              "type": "number",
+              "optional": true,
+              "additionalParams": true,
+              "id": "openAI_0-input-batchSize-number"
+            },
+            {
+              "label": "Timeout",
+              "name": "timeout",
+              "type": "number",
+              "optional": true,
+              "additionalParams": true,
+              "id": "openAI_0-input-timeout-number"
+            }
+          ],
+          "outputs": {},
+          "outputAnchors": [
+            {
+              "id": "openAI_0-output-openAI-OpenAI|BaseLLM|BaseLanguageModel|BaseLangChain",
+              "name": "openAI",
+              "label": "OpenAI",
+              "type": "OpenAI | BaseLLM | BaseLanguageModel | BaseLangChain"
+            }
+          ],
+          "id": "openAI_0",
+          "selected": false
+        },
+        "selected": false,
+        "positionAbsolute": {
+          "x": 759.8672448702278,
+          "y": 616.9722206387221
+        },
+        "dragging": false
+      },
+      {
+        "width": 300,
+        "height": 142,
+        "id": "calculator_0",
+        "position": {
+          "x": 1154.7407342834574,
+          "y": 209.71406269389553
+        },
+        "type": "customNode",
+        "data": {
+          "label": "Calculator",
+          "name": "calculator",
+          "type": "Calculator",
+          "icon": "C:/Users/merry/AppData/Roaming/nvm/v19.0.0/node_modules/flowise/node_modules/flowise-components/dist/nodes/tools/Calculator/calculator.svg",
+          "category": "Tools",
+          "description": "Perform calculations on response",
+          "baseClasses": [
+            "Calculator",
+            "Tool",
+            "StructuredTool",
+            "BaseLangChain"
+          ],
+          "filePath": "C:\\Users\\merry\\AppData\\Roaming\\nvm\\v19.0.0\\node_modules\\flowise\\node_modules\\flowise-components\\dist\\nodes\\tools\\Calculator\\Calculator.js",
+          "inputAnchors": [],
+          "inputParams": [],
+          "inputs": {},
+          "outputs": {},
+          "outputAnchors": [
+            {
+              "id": "calculator_0-output-calculator-Calculator|Tool|StructuredTool|BaseLangChain",
+              "name": "calculator",
+              "label": "Calculator",
+              "type": "Calculator | Tool | StructuredTool | BaseLangChain"
+            }
+          ],
+          "id": "calculator_0",
+          "selected": false
+        },
+        "selected": false,
+        "positionAbsolute": {
+          "x": 1154.7407342834574,
+          "y": 209.71406269389553
+        },
+        "dragging": false
+      },
+      {
+        "width": 300,
+        "height": 525,
+        "id": "github_0",
+        "position": {
+          "x": 2593.075841956216,
+          "y": -182.6349315823118
+        },
+        "type": "customNode",
+        "data": {
+          "label": "Github",
+          "name": "github",
+          "type": "Document",
+          "icon": "C:/Users/merry/AppData/Roaming/nvm/v19.0.0/node_modules/flowise/node_modules/flowise-components/dist/nodes/documentloaders/Github/github.png",
+          "category": "Document Loaders",
+          "description": "Load data from a GitHub repository",
+          "baseClasses": [
+            "Document"
+          ],
+          "inputs": {
+            "repoLink": "",
+            "branch": "main",
+            "accessToken": "",
+            "textSplitter": "{{characterTextSplitter_0.data.instance}}"
+          },
+          "filePath": "C:\\Users\\merry\\AppData\\Roaming\\nvm\\v19.0.0\\node_modules\\flowise\\node_modules\\flowise-components\\dist\\nodes\\documentloaders\\Github\\Github.js",
+          "inputAnchors": [
+            {
+              "label": "Text Splitter",
+              "name": "textSplitter",
+              "type": "TextSplitter",
+              "optional": true,
+              "id": "github_0-input-textSplitter-TextSplitter"
+            }
+          ],
+          "inputParams": [
+            {
+              "label": "Repo Link",
+              "name": "repoLink",
+              "type": "string",
+              "placeholder": "https://github.com/FlowiseAI/Flowise",
+              "id": "github_0-input-repoLink-string"
+            },
+            {
+              "label": "Branch",
+              "name": "branch",
+              "type": "string",
+              "default": "main",
+              "id": "github_0-input-branch-string"
+            },
+            {
+              "label": "Access Token",
+              "name": "accessToken",
+              "type": "password",
+              "placeholder": "<GITHUB_ACCESS_TOKEN>",
+              "optional": true,
+              "id": "github_0-input-accessToken-password"
+            }
+          ],
+          "outputs": {},
+          "outputAnchors": [
+            {
+              "id": "github_0-output-github-Document",
+              "name": "github",
+              "label": "Document",
+              "type": "Document"
+            }
+          ],
+          "id": "github_0",
+          "selected": false
+        },
+        "selected": false,
+        "positionAbsolute": {
+          "x": 2593.075841956216,
+          "y": -182.6349315823118
+        },
+        "dragging": false
+      },
+      {
+        "width": 300,
+        "height": 474,
+        "id": "characterTextSplitter_0",
+        "position": {
+          "x": 1914.2930768098263,
+          "y": -513.3327310853242
+        },
+        "type": "customNode",
+        "data": {
+          "label": "Character Text Splitter",
+          "name": "characterTextSplitter",
+          "type": "CharacterTextSplitter",
+          "icon": "C:/Users/merry/AppData/Roaming/nvm/v19.0.0/node_modules/flowise/node_modules/flowise-components/dist/nodes/textsplitters/CharacterTextSplitter/textsplitter.svg",
+          "category": "Text Splitters",
+          "description": "splits only on one type of character (defaults to \"\\n\\n\").",
+          "baseClasses": [
+            "CharacterTextSplitter",
+            "TextSplitter"
+          ],
+          "inputs": {
+            "separator": "",
+            "chunkSize": 1000,
+            "chunkOverlap": ""
+          },
+          "filePath": "C:\\Users\\merry\\AppData\\Roaming\\nvm\\v19.0.0\\node_modules\\flowise\\node_modules\\flowise-components\\dist\\nodes\\textsplitters\\CharacterTextSplitter\\CharacterTextSplitter.js",
+          "inputAnchors": [],
+          "inputParams": [
+            {
+              "label": "Separator",
+              "name": "separator",
+              "type": "string",
+              "optional": true,
+              "id": "characterTextSplitter_0-input-separator-string"
+            },
+            {
+              "label": "Chunk Size",
+              "name": "chunkSize",
+              "type": "number",
+              "default": 1000,
+              "optional": true,
+              "id": "characterTextSplitter_0-input-chunkSize-number"
+            },
+            {
+              "label": "Chunk Overlap",
+              "name": "chunkOverlap",
+              "type": "number",
+              "optional": true,
+              "id": "characterTextSplitter_0-input-chunkOverlap-number"
+            }
+          ],
+          "outputs": {},
+          "outputAnchors": [
+            {
+              "id": "characterTextSplitter_0-output-characterTextSplitter-CharacterTextSplitter|TextSplitter",
+              "name": "characterTextSplitter",
+              "label": "CharacterTextSplitter",
+              "type": "CharacterTextSplitter | TextSplitter"
+            }
+          ],
+          "id": "characterTextSplitter_0",
+          "selected": true
+        },
+        "selected": true,
+        "positionAbsolute": {
+          "x": 1914.2930768098263,
+          "y": -513.3327310853242
+        },
+        "dragging": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "serpAPI_0",
+        "sourceHandle": "serpAPI_0-output-serpAPI-SerpAPI|Tool|StructuredTool|BaseLangChain",
+        "target": "mrklAgentLLM_0",
+        "targetHandle": "mrklAgentLLM_0-input-tools-Tool",
+        "type": "buttonedge",
+        "id": "serpAPI_0-serpAPI_0-output-serpAPI-SerpAPI|Tool|StructuredTool|BaseLangChain-mrklAgentLLM_0-mrklAgentLLM_0-input-tools-Tool",
+        "data": {
+          "label": ""
+        }
+      },
+      {
+        "source": "openAI_0",
+        "sourceHandle": "openAI_0-output-openAI-OpenAI|BaseLLM|BaseLanguageModel|BaseLangChain",
+        "target": "mrklAgentLLM_0",
+        "targetHandle": "mrklAgentLLM_0-input-model-BaseLLM",
+        "type": "buttonedge",
+        "id": "openAI_0-openAI_0-output-openAI-OpenAI|BaseLLM|BaseLanguageModel|BaseLangChain-mrklAgentLLM_0-mrklAgentLLM_0-input-model-BaseLLM",
+        "data": {
+          "label": ""
+        }
+      },
+      {
+        "source": "characterTextSplitter_0",
+        "sourceHandle": "characterTextSplitter_0-output-characterTextSplitter-CharacterTextSplitter|TextSplitter",
+        "target": "github_0",
+        "targetHandle": "github_0-input-textSplitter-TextSplitter",
+        "type": "buttonedge",
+        "id": "characterTextSplitter_0-characterTextSplitter_0-output-characterTextSplitter-CharacterTextSplitter|TextSplitter-github_0-github_0-input-textSplitter-TextSplitter",
+        "data": {
+          "label": ""
+        }
+      }
+    ],
+    "viewport": {
+      "x": 938.5411933721493,
+      "y": 315.11628314358495,
+      "zoom": 0.25991521796401024
+    }
+  },
+  "apikeyid": null,
+  "deployed": false,
+  "createdDate": "2023-05-19T11:48:53.000Z",
+  "updatedDate": "2023-05-19T11:48:53.000Z"
+}

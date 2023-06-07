@@ -3,8 +3,10 @@ import {Box, Tooltip} from "@mui/material";
 import {useTheme, styled} from '@mui/material/styles'
 import {tooltipClasses} from '@mui/material/Tooltip'
 import {Handle, Position, useUpdateNodeInternals} from 'reactflow'
-import {useState, useEffect, useRef} from 'react'
+import {useState, useEffect, useRef, useContext} from 'react'
 import {Input} from '../ui-components/input/Index'
+import {flowContext} from "../../store/context/ReactFlowContext";
+import {isValidConnection} from '../../utils/genericHelper'
 
 const CustomWidthTooltip = styled(({className, ...props}: any) => <Tooltip {...props} classes={{popper: className}}/>)({
     [`& .${tooltipClasses.tooltip}`]: {
@@ -29,6 +31,7 @@ function NodeInputHandler({inputAnchor, data, disabled = false, inputParam}: {
     const [position, setPosition] = useState(0)
     const ref = useRef(null)
     const updateNodeInternals = useUpdateNodeInternals()
+    const {reactFlowInstance} = useContext(flowContext)
 
     useEffect(() => {
         if (ref.current) {
@@ -49,12 +52,14 @@ function NodeInputHandler({inputAnchor, data, disabled = false, inputParam}: {
                         position={Position.Left}
                         key={inputAnchor.key}
                         id={inputAnchor.key}
+                        isValidConnection={(connection) => isValidConnection(connection, inputAnchor, 'target', reactFlowInstance)}
                         style={{
                             height: 10,
                             width: 10,
                             backgroundColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary,
                             top: position
                         }}
+
                     />
                 </CustomWidthTooltip>
                 <Box sx={{p: 2}}>

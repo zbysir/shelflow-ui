@@ -88,3 +88,24 @@ export const edgeToData = (flow: ReactFlowJsonObject) => {
     })
     return flow
 }
+
+
+export const isValidConnection = (connection: any, inputAnchor: INodeParams, start: string, reactFlowInstance: any): boolean => {
+    if (inputAnchor.type === 'any') {
+        return true
+    }
+    const flow = reactFlowInstance.toObject();
+    let node = null, handle = null
+    if (start === 'source') {
+        node = flow.nodes.find((node: any) => node.id === connection.target);
+        handle = node?.data?.input_anchors?.find((anchor: any) => anchor.key === connection.targetHandle);
+    } else {
+        node = flow.nodes.find((node: any) => node.id === connection.source);
+        handle = node?.data?.output_anchors?.find((anchor: any) => anchor.key === connection.sourceHandle);
+    }
+
+    if (handle && handle.type === 'any') {
+        return true
+    }
+    return handle?.type === inputAnchor.type
+}

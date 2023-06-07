@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import {Handle, Position, useUpdateNodeInternals} from 'reactflow'
-import {useEffect, useRef, useState} from 'react'
+import {useContext, useEffect, useRef, useState} from 'react'
 
 // material-ui
 import {useTheme, styled} from '@mui/material/styles'
@@ -11,6 +11,8 @@ import {tooltipClasses} from '@mui/material/Tooltip'
 import LabelComp from '../ui-components/label/Index'
 //  type
 import {INodeParams, INodeData} from '../../custom_types/index'
+import {isValidConnection} from "../../utils/genericHelper";
+import {flowContext} from "../../store/context/ReactFlowContext";
 
 const CustomWidthTooltip = styled(({className, ...props}: any) => <Tooltip {...props} classes={{popper: className}}/>)({
     [`& .${tooltipClasses.tooltip}`]: {
@@ -24,7 +26,7 @@ const NodeOutputHandler = ({outputAnchor, data}: { outputAnchor: INodeParams, da
     const ref = useRef(null)
     const updateNodeInternals = useUpdateNodeInternals()
     const [position, setPosition] = useState(0)
-
+    const {reactFlowInstance} = useContext(flowContext)
 
     useEffect(() => {
         if (ref.current) {
@@ -53,6 +55,7 @@ const NodeOutputHandler = ({outputAnchor, data}: { outputAnchor: INodeParams, da
                         position={Position.Right}
                         key={outputAnchor.key}
                         id={outputAnchor.key}
+                        isValidConnection={(connection) => isValidConnection(connection, outputAnchor, 'source', reactFlowInstance)}
                         style={{
                             height: 10,
                             width: 10,

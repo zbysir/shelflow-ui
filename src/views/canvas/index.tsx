@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState, useRef} from 'react';
+import React, {useCallback, useEffect, useState, useRef, useContext} from 'react';
 import {useParams} from 'react-router-dom';
 // react-flow
 import ReactFlow, {
@@ -7,7 +7,6 @@ import ReactFlow, {
     Background,
     useNodesState,
     useEdgesState,
-    ReactFlowInstance,
     Edge,
     Node
 } from 'reactflow'
@@ -28,6 +27,8 @@ import AddNode from "./AddNode";
 import {initNode, getUniqueNodeId, flowDetail, edgeToData} from '../../utils/genericHelper'
 //  custom types
 import {INode} from "../../custom_types";
+// context
+import {flowContext} from "../../store/context/ReactFlowContext";
 
 const nodeTypes = {
     customNode: CanvasNode
@@ -40,7 +41,7 @@ const OverviewFlow = () => {
     const reactFlowWrapper = useRef(null);
     const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
-    const [rfInstance, setRfInstance] = useState<ReactFlowInstance>()
+    // const [rfInstance, setRfInstance] = useState<ReactFlowInstance>()
     const [detail, setDetail] = useState({});
 
     const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), []);
@@ -52,9 +53,13 @@ const OverviewFlow = () => {
     const editFlowApi = useApi(api.editFlow)
     const getCompsApi = useApi(api.getComps)
 
-    const onInit = (reactFlowInstance: ReactFlowInstance) => console.log(
-        setRfInstance(reactFlowInstance)
-    );
+
+    const {reactFlowInstance, setReactFlowInstance} = useContext(flowContext);
+
+    // const onInit = (reactFlowInstance: ReactFlowInstance) => {
+    //     // setRfInstance(reactFlowInstance)
+    //     setReactFlowInstance(reactFlowInstance)
+    // }
     const onDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
@@ -71,10 +76,10 @@ const OverviewFlow = () => {
         const nodeData: INode = JSON.parse(nodeStr)
 
         console.log('nodeData:', nodeData);
-        if (!rfInstance) {
+        if (!reactFlowInstance) {
             return
         }
-        const position = rfInstance.project({
+        const position = reactFlowInstance.project({
             x: event.clientX - reactFlowBounds.left,
             y: event.clientY - reactFlowBounds.top,
         });
@@ -92,12 +97,12 @@ const OverviewFlow = () => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         setNodes((nds) => nds.concat(newNode));
-    }, [rfInstance]);
+    }, [reactFlowInstance]);
 
     const onSave = () => {
-        console.log('saveFlow:', rfInstance)
-        if (rfInstance) {
-            let flow = rfInstance.toObject();
+        console.log('saveFlow:', reactFlowInstance)
+        if (reactFlowInstance) {
+            let flow = reactFlowInstance.toObject();
             console.log(flow);
             flow = edgeToData(flow);
             if (params.id) {
@@ -163,7 +168,7 @@ const OverviewFlow = () => {
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
-                onInit={onInit}
+                onInit={setReactFlowInstance}
                 onDragOver={onDragOver}
                 onDrop={onDrop}
                 fitView

@@ -21,7 +21,7 @@ const Flows = () => {
     const [isLoading, setIsLoading] = useState(true)
 
     // useEffect
-    useEffect(() => {
+    useEffect( () => {
         console.log('getListxxx')
         getFlowListApi.request()
     }, [])

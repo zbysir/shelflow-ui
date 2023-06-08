@@ -24,10 +24,15 @@ export const getComps = (params: any): Promise<any> => {
     })
 }
 
+export const runFlow = (data: { id: number }): Promise<any> => {
+    return axios.post('/flow/run', data)
+}
+
 export default {
     getFlowList,
     getFlow,
     addFlow,
     editFlow,
-    getComps
+    getComps,
+    runFlow
 }

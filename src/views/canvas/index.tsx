@@ -30,6 +30,8 @@ import {INode} from "../../custom_types";
 // context
 import {flowContext} from "../../store/context/ReactFlowContext";
 
+import {runFlow as runFlowApi} from "../../api/index";
+
 const nodeTypes = {
     customNode: CanvasNode
 };
@@ -45,7 +47,7 @@ const OverviewFlow = () => {
     const [detail, setDetail] = useState({name: ''});
 
     const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), []);
-
+    const ws = useRef<WebSocket | null>(null);
 
     // ===========|| flowApi ||=========== //
     const getFlowApi = useApi(api.getFlow)
@@ -124,6 +126,18 @@ const OverviewFlow = () => {
         }
     }
 
+    const runFlow = async () => {
+        //
+        const topic = await runFlowApi({id: Number(params.id)})
+        ws.current = new WebSocket('wss://writeflow.bysir.top/api/ws/' + topic);
+        ws.current.onmessage = e => {
+            console.log('messgae:', e.data);
+        };
+    }
+
+    useEffect(() => {
+        runFlow()
+    }, [])
     // // =========|| useEffect ||======== //
     useEffect(() => {
         getCompsApi.request()

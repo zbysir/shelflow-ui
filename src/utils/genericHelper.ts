@@ -30,6 +30,9 @@ export const initNode = (nodeData: INodeData, id: string) => {
         nodeData.inputs = {};
         nodeData.input_params = []
     }
+    if (!nodeData.input_anchors) {
+        nodeData.input_anchors = []
+    }
     return nodeData
 }
 

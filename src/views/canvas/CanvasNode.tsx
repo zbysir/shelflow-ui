@@ -1,9 +1,16 @@
 import {styled, useTheme} from "@mui/material/styles";
 import MainCard from "../ui-components/card/MainCard";
 import PropTypes from 'prop-types'
-import {Typography, Divider, Box} from '@mui/material'
+import {Box, Divider, Typography} from '@mui/material'
 import NodeInputHandler from "./NodeInputHandler";
 import NodeOutputHandler from "./NodeOutputHandler";
+import AddKeyHandle from "./AddKeyHandle";
+//  labelComp
+import LabelComp from '../ui-components/label/Index'
+
+import {INodeData, INodeParams} from '../../custom_types/index'
+
+import {useSnackbar} from 'notistack';
 
 const CardWrapper = styled(MainCard)(({theme}: { theme: any }) => ({
     background: theme?.palette?.card?.main,
@@ -19,13 +26,23 @@ const CardWrapper = styled(MainCard)(({theme}: { theme: any }) => ({
     }
 }));
 
-//  labelComp
-import LabelComp from '../ui-components/label/Index'
-
-import {INodeParams, INodeData} from '../../custom_types/index'
-
 export default function CanvasNode({data}: { data: INodeData }) {
-    const theme:any = useTheme()
+    const theme: any = useTheme()
+    const {enqueueSnackbar} = useSnackbar();
+    const addInputAnchor = (item: INodeParams) => {
+        if (item.key && item.type) {
+
+            if (!data.input_anchors) {
+                data.input_anchors = []
+            }
+            // 需要判断key是否存在
+            if (data.input_anchors.find((x: INodeParams) => x.key === item.key)) {
+                enqueueSnackbar('key已存在', {variant: 'error'})
+                return
+            }
+            data?.input_anchors?.push(item)
+        }
+    }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     return <CardWrapper
@@ -55,11 +72,20 @@ export default function CanvasNode({data}: { data: INodeData }) {
             </>
         )}
         {data.input_anchors && data.input_anchors.map((inputAnchor: INodeParams, index: number) => (
-            <NodeInputHandler key={index} inputAnchor={inputAnchor} data={data}/>
+            <NodeInputHandler key={index} inputAnchor={inputAnchor} data={data} deleteInputAnchor={() => {
+                data.input_anchors?.splice(index, 1)
+                // TODO：如果inputs有值，需要删除，后期会删除inputs，所以先不处理
+            }}/>
         ))}
         {data.input_params && data.input_params.map((inputParam, index) => (
             <NodeInputHandler key={index} inputParam={inputParam} data={data}/>
         ))}
+
+        {data.dynamic_input && <AddKeyHandle
+            onSelect={(x: INodeParams) => {
+                addInputAnchor(x)
+            }}
+        ></AddKeyHandle>}
         <Divider/>
         <Box sx={{background: theme?.palette?.asyncSelect?.main, p: 1}}>
             <Typography

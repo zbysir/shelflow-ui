@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import {Box, Tooltip} from "@mui/material";
+import {Box, Tooltip, Stack} from "@mui/material";
 import {useTheme, styled} from '@mui/material/styles'
 import {tooltipClasses} from '@mui/material/Tooltip'
 import {Handle, Position, useUpdateNodeInternals} from 'reactflow'
@@ -7,6 +7,7 @@ import {useState, useEffect, useRef, useContext} from 'react'
 import {Input} from '../ui-components/input/Index'
 import {flowContext} from "../../store/context/ReactFlowContext";
 import {isValidConnection} from '../../utils/genericHelper'
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const CustomWidthTooltip = styled(({className, ...props}: any) => <Tooltip {...props} classes={{popper: className}}/>)({
     [`& .${tooltipClasses.tooltip}`]: {
@@ -20,11 +21,12 @@ import LabelComp from '../ui-components/label/Index'
 //  type
 import {INodeParams, INodeData} from '../../custom_types/index'
 
-function NodeInputHandler({inputAnchor, data, disabled = false, inputParam}: {
+function NodeInputHandler({inputAnchor, data, disabled = false, inputParam, deleteInputAnchor}: {
     inputAnchor?: INodeParams,
     data: INodeData,
     disabled?: boolean,
-    inputParam?: INodeParams
+    inputParam?: INodeParams,
+    deleteInputAnchor?: () => void
 
 }) {
     const theme = useTheme()
@@ -63,7 +65,18 @@ function NodeInputHandler({inputAnchor, data, disabled = false, inputParam}: {
                     />
                 </CustomWidthTooltip>
                 <Box sx={{p: 2}}>
-                    <LabelComp name={inputAnchor.name} defaultValue={inputAnchor.key}></LabelComp>
+                    <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        className="group"
+                    >
+                        <LabelComp name={inputAnchor.name} defaultValue={inputAnchor.key}></LabelComp>
+                        <DeleteIcon
+                            className="group-hover:opacity-100 opacity-0"
+                            onClick={() => deleteInputAnchor && deleteInputAnchor()}
+                        ></DeleteIcon>
+                    </Stack>
                 </Box>
             </>
         )}

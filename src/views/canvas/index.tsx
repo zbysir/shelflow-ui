@@ -14,7 +14,7 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import './overview.css';
 //  mui
-import {Button, Box, AppBar, Toolbar, Typography} from '@mui/material'
+import {Button, Box, AppBar, Toolbar, Typography, Stack} from '@mui/material'
 import {useTheme} from '@mui/material/styles'
 //  hooks
 import useApi from "../../hooks/useApi";
@@ -42,7 +42,7 @@ const OverviewFlow = () => {
     const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
     // const [rfInstance, setRfInstance] = useState<ReactFlowInstance>()
-    const [detail, setDetail] = useState({});
+    const [detail, setDetail] = useState({name: ''});
 
     const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), []);
 
@@ -155,35 +155,42 @@ const OverviewFlow = () => {
             }}>
             <Toolbar>
                 <Box sx={{flexGrow: 1}}>
-                    <Typography>名称</Typography>
+                    <Typography>{detail.name}</Typography>
                 </Box>
-                <Button variant="contained" onClick={onSave}>save</Button>
+                <Stack direction="row" spacing={2}>
+                    <Button variant="outlined" onClick={onSave}>run</Button>
+                    <Button variant="contained" onClick={onSave}>save</Button>
+                </Stack>
+
             </Toolbar>
         </AppBar>
-        <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-            <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                nodeTypes={nodeTypes}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                onConnect={onConnect}
-                onInit={setReactFlowInstance}
-                onDragOver={onDragOver}
-                onDrop={onDrop}
-                fitView
-                minZoom={0.1}
-            >
-                <Controls style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)'
-                }}/>
-                <Background color="#aaa" gap={16}/>
-                {getCompsApi.data && <AddNode comps={getCompsApi.data}></AddNode>}
-            </ReactFlow>
-        </div>
+        <Box sx={{pt: '70px', height: '100vh', width: '100%'}}>
+            <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+                <ReactFlow
+                    nodes={nodes}
+                    edges={edges}
+                    nodeTypes={nodeTypes}
+                    onNodesChange={onNodesChange}
+                    onEdgesChange={onEdgesChange}
+                    onConnect={onConnect}
+                    onInit={setReactFlowInstance}
+                    onDragOver={onDragOver}
+                    onDrop={onDrop}
+                    fitView
+                    minZoom={0.1}
+                >
+                    <Controls style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)'
+                    }}/>
+                    <Background color="#aaa" gap={16}/>
+                    {getCompsApi.data && <AddNode comps={getCompsApi.data}></AddNode>}
+                </ReactFlow>
+            </div>
+        </Box>
+
     </Box>
 
 

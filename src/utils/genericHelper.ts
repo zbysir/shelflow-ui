@@ -6,12 +6,12 @@ export const getUniqueNodeId = () => {
 }
 
 
-export const initializeDefaultNodeData = (nodeParams: INodeParams[]) => {
+export const initializeDefaultNodeData = (nodeParams: INodeParams[], inputs: { [propName: string]: any; }) => {
     const initialValues: { [propName: string]: any; } = {}
 
     for (let i = 0; i < nodeParams.length; i += 1) {
         const input = nodeParams[i]
-        initialValues[input.key] = input.default || ''
+        initialValues[input.key] = inputs[input.key] || ''
     }
 
     return initialValues
@@ -25,7 +25,7 @@ export const initNode = (nodeData: INodeData, id: string) => {
         nodeData.input_params.forEach((inputParam: any) => {
             inputParam.id = getUniqueNodeId();
         })
-        nodeData.inputs = initializeDefaultNodeData(nodeData.input_params)
+        nodeData.inputs = initializeDefaultNodeData(nodeData.input_params, nodeData.inputs || {})
     } else {
         nodeData.inputs = {};
         nodeData.input_params = []

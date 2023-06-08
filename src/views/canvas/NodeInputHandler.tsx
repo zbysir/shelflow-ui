@@ -45,6 +45,9 @@ function NodeInputHandler({inputAnchor, data, disabled = false, inputParam, dele
         }
 
     }, [data.id, ref, updateNodeInternals])
+    useEffect(() => {
+        updateNodeInternals(data.id)
+    }, [data.id, position, updateNodeInternals])
     return <div ref={ref}>
         {inputAnchor && (
             <>

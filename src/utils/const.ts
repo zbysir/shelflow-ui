@@ -1,1 +1,1 @@
-export const BASE_URL = '/writeflow-ui'
+export const BASE_URL = '/'

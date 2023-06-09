@@ -9,7 +9,7 @@ const MainCard = forwardRef((props, ref: ForwardedRef<any>) => {
         border?: boolean,
         contentSX?: any,
         contentClass?: any,
-        children?: any,
+        children?: React.ReactNode,
         [propName: string]: any;
     } = props
     const theme = useTheme()

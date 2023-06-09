@@ -11,6 +11,8 @@ import LabelComp from '../ui-components/label/Index'
 import {INodeData, INodeParams} from '../../custom_types/index'
 
 import {useSnackbar} from 'notistack';
+import {flowContext} from "../../store/context/ReactFlowContext";
+import {useContext} from "react";
 
 const CardWrapper = styled(MainCard)(({theme}: { theme: any }) => ({
     background: theme?.palette?.card?.main,
@@ -29,19 +31,43 @@ const CardWrapper = styled(MainCard)(({theme}: { theme: any }) => ({
 export default function CanvasNode({data}: { data: INodeData }) {
     const theme: any = useTheme()
     const {enqueueSnackbar} = useSnackbar();
-    const addInputAnchor = (item: INodeParams) => {
+    const {updateNodeData} = useContext(flowContext)
+    const addAnchor = (item: INodeParams, key = 'input_anchors') => {
+
+        const newData = {...data}
         if (item.key && item.type) {
 
-            if (!data.input_anchors) {
-                data.input_anchors = []
+            if (!newData[key]) {
+                newData[key] = []
             }
             // 需要判断key是否存在
-            if (data.input_anchors.find((x: INodeParams) => x.key === item.key)) {
+            if (newData[key].find((x: INodeParams) => x.key === item.key)) {
                 enqueueSnackbar('key已存在', {variant: 'error'})
                 return
             }
-            data?.input_anchors?.push(item)
+            newData[key].push(item)
+            if (newData.type === 'switch' && key === 'input_anchors') {
+                if (!newData.output_anchors) {
+                    newData.output_anchors = []
+                }
+                if (newData.output_anchors.find((x: INodeParams) => x.key === item.key)) {
+                    enqueueSnackbar('输出入key已存在', {variant: 'error'})
+                    return
+                }
+                newData.output_anchors.push(item)
+            }
         }
+        // 更新nodeData
+        updateNodeData(data.id, newData)
+    }
+    const delAnchor = (fieldKey: string, key = 'input_anchors') => {
+        const newData = {...data}
+
+        newData[key] = newData[key].filter((x: INodeParams) => x.key !== fieldKey)
+        if (newData.type === 'switch' && key === 'input_anchors') {
+            newData.output_anchors = newData?.output_anchors?.filter((x: INodeParams) => x.key !== fieldKey)
+        }
+        updateNodeData(data.id, newData)
     }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -73,8 +99,7 @@ export default function CanvasNode({data}: { data: INodeData }) {
         )}
         {data.input_anchors && data.input_anchors.map((inputAnchor: INodeParams, index: number) => (
             <NodeInputHandler key={index} inputAnchor={inputAnchor} data={data} deleteInputAnchor={() => {
-                data.input_anchors?.splice(index, 1)
-                // TODO：如果inputs有值，需要删除，后期会删除inputs，所以先不处理
+                delAnchor(inputAnchor.key, 'input_anchors')
             }}/>
         ))}
         {data.input_params && data.input_params.map((inputParam, index) => (
@@ -83,7 +108,7 @@ export default function CanvasNode({data}: { data: INodeData }) {
 
         {data.dynamic_input && <AddKeyHandle
             onSelect={(x: INodeParams) => {
-                addInputAnchor(x)
+                addAnchor(x, 'input_anchors')
             }}
         ></AddKeyHandle>}
         <Divider/>
@@ -101,6 +126,11 @@ export default function CanvasNode({data}: { data: INodeData }) {
         {data.output_anchors && data.output_anchors.map((outputAnchor, index) => (
             <NodeOutputHandler key={index} outputAnchor={outputAnchor} data={data}/>
         ))}
+        {data.dynamic_output && <AddKeyHandle
+            onSelect={(x: INodeParams) => {
+                addAnchor(x, 'output_anchors')
+            }}
+        ></AddKeyHandle>}
     </CardWrapper>
 }
 

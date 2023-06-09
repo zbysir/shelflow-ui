@@ -55,11 +55,11 @@ export const flowDetail = (data: any) => {
                     })
                 }
             })
-
         }
+        const NodeType = node.type === 'output' ? 'outputNode' : 'customNode'
         return {
             ...node,
-            type: 'customNode',
+            type: NodeType,
             data: {
                 ...node.data,
                 id: node.id,
@@ -94,6 +94,7 @@ export const edgeToData = (flow: ReactFlowJsonObject) => {
 
 
 export const isValidConnection = (connection: any, inputAnchor: INodeParams, start: string, reactFlowInstance: any): boolean => {
+    console.log('reactFlowInstance:', reactFlowInstance)
     if (inputAnchor.type === 'any') {
         return true
     }

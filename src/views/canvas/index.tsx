@@ -23,6 +23,7 @@ import api from "../../api/index";
 //  customNode
 import CanvasNode from './CanvasNode';
 import AddNode from "./AddNode";
+import OutputNode from "./OutputNode";
 // utils
 import {initNode, getUniqueNodeId, flowDetail, edgeToData} from '../../utils/genericHelper'
 //  custom types
@@ -33,7 +34,8 @@ import {flowContext} from "../../store/context/ReactFlowContext";
 import {runFlow as runFlowApi} from "../../api/index";
 
 const nodeTypes = {
-    customNode: CanvasNode
+    customNode: CanvasNode,
+    outputNode: OutputNode,
 };
 
 
@@ -89,13 +91,15 @@ const OverviewFlow = () => {
         const id = getUniqueNodeId();
         const data = initNode(nodeData.data, id)
         data.type = nodeData.type
+        const NodeType = nodeData.type === 'output' ? 'outputNode' : 'customNode'
         const newNode = {
             id: id,
             position,
-            type: 'customNode',
+            type: NodeType,
             data: data
         }
 
+        console.log("newNode:", newNode)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         setNodes((nds) => nds.concat(newNode));
@@ -127,7 +131,6 @@ const OverviewFlow = () => {
     }
 
     const runFlow = async () => {
-        //
         const topic = await runFlowApi({id: Number(params.id)})
         ws.current = new WebSocket('wss://writeflow.bysir.top/api/ws/' + topic);
         ws.current.onmessage = e => {
@@ -135,9 +138,7 @@ const OverviewFlow = () => {
         };
     }
 
-    useEffect(() => {
-        runFlow()
-    }, [])
+
     // // =========|| useEffect ||======== //
     useEffect(() => {
         getCompsApi.request()

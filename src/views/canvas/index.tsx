@@ -131,10 +131,15 @@ const OverviewFlow = () => {
     }
 
     const runFlow = async () => {
+        const runObj: { [propName: string]: any; } = {}
         const topic = await runFlowApi({id: Number(params.id)})
         ws.current = new WebSocket('wss://writeflow.bysir.top/api/ws/' + topic);
         ws.current.onmessage = e => {
             console.log('messgae:', e.data);
+            const data = JSON.parse(e.data);
+            runObj[data.node_id] = data;
+
+            console.log('runObj:', runObj);
         };
     }
 
@@ -149,6 +154,7 @@ const OverviewFlow = () => {
             getFlowApi.request(params.id)
         }
     }, [])
+
 
     useEffect(() => {
             if (getFlowApi.data) {
@@ -173,7 +179,7 @@ const OverviewFlow = () => {
                     <Typography>{detail.name}</Typography>
                 </Box>
                 <Stack direction="row" spacing={2}>
-                    <Button variant="outlined" onClick={onSave}>run</Button>
+                    <Button variant="outlined" onClick={runFlow}>run</Button>
                     <Button variant="contained" onClick={onSave}>save</Button>
                 </Stack>
 

@@ -6,17 +6,19 @@ import {INodeData} from "../../custom_types";
 
 export const flowContext = createContext({
     reactFlowInstance: {} as ReactFlowInstance,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    runResult: {} as { [propName: string]: any; },
     setReactFlowInstance: (instance: ReactFlowInstance): void => {
     },
-    updateNodeData: (id: string, data: INodeData): void => {}
+    updateNodeData: (id: string, data: INodeData): void => {
+    },
+    setRunResult: (result: any): void => {
+    }
 })
 
 
 export const ReactFlowContext = ({children}: { children: ReactNode }) => {
     const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance>({} as ReactFlowInstance)
-
+    const [runResult, setRunResult] = useState<{ [propName: string]: any; }>({})
     const updateNodeData = (id: string, data: INodeData) => {
         console.log('updateNodeData:', id, data);
         reactFlowInstance.setNodes((prevNodes) => {
@@ -33,8 +35,10 @@ export const ReactFlowContext = ({children}: { children: ReactNode }) => {
         <flowContext.Provider
             value={{
                 reactFlowInstance,
+                runResult,
                 setReactFlowInstance,
                 updateNodeData,
+                setRunResult
             }}
         >
             {children}

@@ -58,7 +58,7 @@ const OverviewFlow = () => {
     const getCompsApi = useApi(api.getComps)
 
 
-    const {reactFlowInstance, setReactFlowInstance} = useContext(flowContext);
+    const {reactFlowInstance, setReactFlowInstance, runResult, setRunResult} = useContext(flowContext);
 
     // const onInit = (reactFlowInstance: ReactFlowInstance) => {
     //     // setRfInstance(reactFlowInstance)
@@ -137,9 +137,14 @@ const OverviewFlow = () => {
         ws.current.onmessage = e => {
             console.log('messgae:', e.data);
             const data = JSON.parse(e.data);
-            runObj[data.node_id] = data;
+            runObj[data.node_id] = data
 
-            console.log('runObj:', runObj);
+
+            setRunResult({...runObj})
+            console.log('runResult:', runResult);
+            return () => {
+                ws.current?.close();
+            };
         };
     }
 
@@ -187,7 +192,8 @@ const OverviewFlow = () => {
         </AppBar>
         <Box sx={{pt: '70px', height: '100vh', width: '100%'}}>
             <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-                <ReactFlow
+
+            <ReactFlow
                     nodes={nodes}
                     edges={edges}
                     nodeTypes={nodeTypes}

@@ -1,8 +1,6 @@
 import {useState} from 'react'
 import {Box, Input, Autocomplete, TextField, Stack} from "@mui/material";
 import {INodeParams} from "../../custom_types";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import DoneIcon from "@mui/icons-material/Done";
 
 interface Option {

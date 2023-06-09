@@ -7,8 +7,6 @@ import {useState, useEffect, useRef, useContext} from 'react'
 import {Input} from '../ui-components/input/Index'
 import {flowContext} from "../../store/context/ReactFlowContext";
 import {isValidConnection} from '../../utils/genericHelper'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const CustomWidthTooltip = styled(({className, ...props}: any) => <Tooltip {...props} classes={{popper: className}}/>)({

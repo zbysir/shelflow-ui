@@ -133,7 +133,7 @@ const OverviewFlow = () => {
     const runFlow = async () => {
         const runObj: { [propName: string]: any; } = {}
         const topic = await runFlowApi({id: Number(params.id)})
-        ws.current = new WebSocket('wss://writeflow.bysir.top/api/ws/' + topic);
+        ws.current = new WebSocket(`wss://${import.meta.env.VITE_HOST}/api/ws/` + topic);
         ws.current.onmessage = e => {
             console.log('messgae:', e.data);
             const data = JSON.parse(e.data);
@@ -151,6 +151,7 @@ const OverviewFlow = () => {
 
     // // =========|| useEffect ||======== //
     useEffect(() => {
+        console.log('env:', import.meta.env.MODE,  import.meta.env.VITE_HOST);
         getCompsApi.request()
     }, [])
 

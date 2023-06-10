@@ -1,7 +1,6 @@
 import axios, {AxiosResponse} from 'axios'
 
-axios.defaults.baseURL = 'https://writeflow.bysir.top/api'
-
+axios.defaults.baseURL = `https://${import.meta.env.VITE_HOST}/api`
 axios.interceptors.request.use((config: any) => {
     return config
 })

@@ -23,7 +23,7 @@ const router = createBrowserRouter([
         ],
     },
 ], {
-    // basename: BASE_URL
+    basename: import.meta.env.BASE_URL
 });
 
 export default router;

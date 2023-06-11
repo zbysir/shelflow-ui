@@ -132,7 +132,7 @@ const OverviewFlow = () => {
     }
 
     const runFlow = async () => {
-        const runObj: Record<nodeId, any> = {}
+        const runObj: Record<string, any> = {}
         const topic = await runFlowApi({id: Number(params.id)})
         ws.current = new WebSocket(`wss://${import.meta.env.VITE_HOST}/api/ws/` + topic);
         ws.current.onmessage = e => {

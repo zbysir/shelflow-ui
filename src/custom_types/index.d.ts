@@ -5,6 +5,7 @@ export interface INodeParams {
     key: string;
     type: string;
     default?: any;
+    display_type: string
 
 }
 

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import {Box, Tooltip, Stack} from "@mui/material";
+import {Box, Tooltip, Stack, IconButton} from "@mui/material";
 import {useTheme, styled} from '@mui/material/styles'
 import {tooltipClasses} from '@mui/material/Tooltip'
 import {Handle, Position, useUpdateNodeInternals} from 'reactflow'
@@ -8,6 +8,7 @@ import {Input} from '../ui-components/input/Index'
 import {flowContext} from "../../store/context/ReactFlowContext";
 import {isValidConnection} from '../../utils/genericHelper'
 import DeleteIcon from '@mui/icons-material/Delete';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
 
 const CustomWidthTooltip = styled(({className, ...props}: any) => <Tooltip {...props} classes={{popper: className}}/>)({
     [`& .${tooltipClasses.tooltip}`]: {
@@ -34,7 +35,12 @@ function NodeInputHandler({inputAnchor, data, disabled = false, inputParam, dele
     const ref = useRef(null)
     const updateNodeInternals = useUpdateNodeInternals()
     const {reactFlowInstance} = useContext(flowContext)
+    const [showExpandDialog, setShowExpandDialog] = useState(false)
 
+    const onExpandDialogClicked = () => {
+
+        setShowExpandDialog(true)
+    }
     useEffect(() => {
         if (ref.current) {
             const dom = ref.current as HTMLElement
@@ -86,10 +92,15 @@ function NodeInputHandler({inputAnchor, data, disabled = false, inputParam, dele
         {inputParam &&
             <>
                 <Box sx={{p: 2}}>
-                    <div style={{display: 'flex', flexDirection: 'row'}}>
+                    <div className="flex items-center justify-between">
                         <LabelComp name={inputParam.name} defaultValue={inputParam.key}></LabelComp>
-                        <div style={{flexGrow: 1}}></div>
 
+                        {['textarea', 'code'].includes(inputParam.display_type) && <IconButton
+                            title='Expand'
+                            color='primary'
+                            onClick={onExpandDialogClicked}>
+                            <FullscreenIcon/>
+                        </IconButton>}
                     </div>
 
                     {<Input
@@ -97,6 +108,10 @@ function NodeInputHandler({inputAnchor, data, disabled = false, inputParam, dele
                         inputParam={inputParam}
                         onChange={(newValue) => (data.inputs[inputParam.key] = newValue)}
                         value={data.inputs[inputParam.key] ?? inputParam.default ?? ''}
+                        showDlg={showExpandDialog}
+                        onDialogCancel={() => {
+                            setShowExpandDialog(false)
+                        }}
                     />}
                 </Box>
             </>}

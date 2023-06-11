@@ -457,14 +457,90 @@
             }
           ],
           "id": "characterTextSplitter_0",
-          "selected": true
+          "selected": false
         },
-        "selected": true,
+        "selected": false,
         "positionAbsolute": {
           "x": 1914.2930768098263,
           "y": -513.3327310853242
         },
         "dragging": false
+      },
+      {
+        "width": 300,
+        "height": 709,
+        "id": "chatPromptTemplate_0",
+        "position": {
+          "x": 758.2859976607997,
+          "y": -199.79102723932633
+        },
+        "type": "customNode",
+        "data": {
+          "label": "Chat Prompt Template",
+          "name": "chatPromptTemplate",
+          "type": "ChatPromptTemplate",
+          "icon": "C:/Users/merry/AppData/Roaming/nvm/v19.0.0/node_modules/flowise/node_modules/flowise-components/dist/nodes/prompts/ChatPromptTemplate/prompt.svg",
+          "category": "Prompts",
+          "description": "Schema to represent a chat prompt",
+          "baseClasses": [
+            "ChatPromptTemplate",
+            "BaseChatPromptTemplate",
+            "BasePromptTemplate"
+          ],
+          "inputs": {
+            "systemMessagePrompt": "const a=1;\nconst a=2;\nconsole.log('123')",
+            "humanMessagePrompt": "{a:1}",
+            "promptValues": ""
+          },
+          "filePath": "C:\\Users\\merry\\AppData\\Roaming\\nvm\\v19.0.0\\node_modules\\flowise\\node_modules\\flowise-components\\dist\\nodes\\prompts\\ChatPromptTemplate\\ChatPromptTemplate.js",
+          "inputAnchors": [],
+          "inputParams": [
+            {
+              "label": "System Message",
+              "name": "systemMessagePrompt",
+              "type": "string",
+              "rows": 4,
+              "placeholder": "You are a helpful assistant that translates {input_language} to {output_language}.",
+              "id": "chatPromptTemplate_0-input-systemMessagePrompt-string"
+            },
+            {
+              "label": "Human Message",
+              "name": "humanMessagePrompt",
+              "type": "string",
+              "rows": 4,
+              "placeholder": "{text}",
+              "id": "chatPromptTemplate_0-input-humanMessagePrompt-string"
+            },
+            {
+              "label": "Format Prompt Values",
+              "name": "promptValues",
+              "type": "string",
+              "rows": 4,
+              "placeholder": "{\n  \"input_language\": \"English\",\n  \"output_language\": \"French\"\n}",
+              "optional": true,
+              "acceptVariable": true,
+              "list": true,
+              "id": "chatPromptTemplate_0-input-promptValues-string"
+            }
+          ],
+          "outputs": {},
+          "outputAnchors": [
+            {
+              "id": "chatPromptTemplate_0-output-chatPromptTemplate-ChatPromptTemplate|BaseChatPromptTemplate|BasePromptTemplate",
+              "name": "chatPromptTemplate",
+              "label": "ChatPromptTemplate",
+              "type": "ChatPromptTemplate | BaseChatPromptTemplate | BasePromptTemplate"
+            }
+          ],
+          "id": "chatPromptTemplate_0",
+          "selected": false
+        },
+        "selected": true,
+        "dragging": false,
+        "positionAbsolute": {
+          "x": 758.2859976607997,
+          "y": -199.79102723932633
+        }
       }
     ],
     "edges": [
@@ -503,9 +579,9 @@
       }
     ],
     "viewport": {
-      "x": 938.5411933721493,
-      "y": 315.11628314358495,
-      "zoom": 0.25991521796401024
+      "x": -1287.5465386089709,
+      "y": 423.1713248282077,
+      "zoom": 2
     }
   },
   "apikeyid": null,

@@ -1,7 +1,7 @@
 import {Typography} from "@mui/material";
 
 const lang = 'en'
-export default function ({name, defaultValue}: { name: { [propName: string]: any }, defaultValue?: string }) {
+export default function LabelText({name, defaultValue}: { name: { [propName: string]: any }, defaultValue?: string }) {
     const keys = name ? Object.keys(name) : []
     if (!name) return <Typography>{defaultValue}</Typography>
     if (name[lang]) {

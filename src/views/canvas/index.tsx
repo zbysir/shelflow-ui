@@ -1,37 +1,27 @@
-import React, {useCallback, useEffect, useState, useRef, useContext} from 'react';
+import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {useParams} from 'react-router-dom';
 // react-flow
-import ReactFlow, {
-    addEdge,
-    Controls,
-    Background,
-    useNodesState,
-    useEdgesState,
-    Edge,
-    Node
-} from 'reactflow'
+import ReactFlow, {addEdge, Background, Controls, Edge, Node, useEdgesState, useNodesState} from 'reactflow'
 
 import 'reactflow/dist/style.css';
 import './overview.css';
 //  mui
-import {Button, Box, AppBar, Toolbar, Typography, Stack} from '@mui/material'
+import {AppBar, Box, Button, Stack, Toolbar, Typography} from '@mui/material'
 import {useTheme} from '@mui/material/styles'
 //  hooks
 import useApi from "../../hooks/useApi";
 // Api
-import api from "../../api/index";
+import api, {runFlow as runFlowApi} from "../../api/index";
 //  customNode
 import CanvasNode from './CanvasNode';
 import AddNode from "./AddNode";
 import OutputNode from "./OutputNode";
 // utils
-import {initNode, getUniqueNodeId, flowDetail, edgeToData} from '../../utils/genericHelper'
+import {edgeToData, flowDetail, getUniqueNodeId, initNode} from '../../utils/genericHelper'
 //  custom types
 import {INode} from "../../custom_types";
 // context
 import {flowContext} from "../../store/context/ReactFlowContext";
-
-import {runFlow as runFlowApi} from "../../api/index";
 
 const nodeTypes = {
     customNode: CanvasNode,
@@ -105,6 +95,20 @@ const OverviewFlow = () => {
         setNodes((nds) => nds.concat(newNode));
     }, [reactFlowInstance]);
 
+
+    const getFlow = () => {
+        if (reactFlowInstance) {
+            let flow = reactFlowInstance.toObject();
+            flow = edgeToData(flow);
+            return {
+                ...detail,
+                graph: flow
+            }
+        }
+
+        return null
+    }
+
     const onSave = () => {
         console.log('saveFlow:', reactFlowInstance)
         if (reactFlowInstance) {
@@ -132,14 +136,16 @@ const OverviewFlow = () => {
     }
 
     const runFlow = async () => {
-        const runObj: Record<nodeId, any> = {}
-        const topic = await runFlowApi({id: Number(params.id)})
+        const runObj: Record<string, any> = {}
+        setRunResult({})
+
+        const flow = getFlow()
+        const topic = await runFlowApi({graph: flow?.graph})
         ws.current = new WebSocket(`wss://${import.meta.env.VITE_HOST}/api/ws/` + topic);
         ws.current.onmessage = e => {
             console.log('messgae:', e.data);
             const data = JSON.parse(e.data);
             runObj[data.node_id] = data
-
 
             setRunResult({...runObj})
             console.log('runResult:', runResult);

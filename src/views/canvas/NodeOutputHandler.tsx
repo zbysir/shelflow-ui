@@ -3,16 +3,17 @@ import {Handle, Position, useUpdateNodeInternals} from 'reactflow'
 import {useContext, useEffect, useRef, useState} from 'react'
 
 // material-ui
-import {useTheme, styled} from '@mui/material/styles'
+import {styled, useTheme} from '@mui/material/styles'
 import {Box, Tooltip} from '@mui/material'
 import {tooltipClasses} from '@mui/material/Tooltip'
 
 //  labelComp
 import LabelComp from '../ui-components/label/Index'
 //  type
-import {INodeParams, INodeData} from '../../custom_types/index'
+import {INodeData, INodeParams} from '../../custom_types/index'
 import {isValidConnection} from "../../utils/genericHelper";
 import {flowContext} from "../../store/context/ReactFlowContext";
+import {getNodeRunStatusStyle} from "./CanvasNode.tsx";
 
 const CustomWidthTooltip = styled(({className, ...props}: any) => <Tooltip {...props} classes={{popper: className}}/>)({
     [`& .${tooltipClasses.tooltip}`]: {
@@ -26,7 +27,7 @@ const NodeOutputHandler = ({outputAnchor, data}: { outputAnchor: INodeParams, da
     const ref = useRef(null)
     const updateNodeInternals = useUpdateNodeInternals()
     const [position, setPosition] = useState(0)
-    const {reactFlowInstance} = useContext(flowContext)
+    const {reactFlowInstance, runResult} = useContext(flowContext)
 
     useEffect(() => {
         if (ref.current) {
@@ -64,7 +65,12 @@ const NodeOutputHandler = ({outputAnchor, data}: { outputAnchor: INodeParams, da
                         }}
                     />
                 </CustomWidthTooltip>
-                <Box sx={{p: 2, textAlign: 'end'}}>
+                <Box sx={
+                    {
+                        p: 2,
+                        textAlign: 'end',
+                    }
+                }>
                     <LabelComp
                         name={outputAnchor.name}
                         defaultValue={outputAnchor.key}></LabelComp>

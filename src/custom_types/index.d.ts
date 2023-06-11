@@ -1,6 +1,6 @@
 interface NodeAnchor {
     node_id: string;
-    output_Key: string;
+    output_key: string;
 }
 
 export  type inputTpe = 'anchor' | 'literal'

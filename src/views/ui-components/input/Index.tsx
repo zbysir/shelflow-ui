@@ -80,6 +80,7 @@ export const Input = ({
                 onCancel={onDialogCancel}
                 onConfirm={(s: string) => {
                     setMyValue(s)
+                    onChange(s)
                     onDialogCancel()
                 }}
                 value={myValue}

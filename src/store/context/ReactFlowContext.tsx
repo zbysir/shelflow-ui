@@ -4,7 +4,7 @@ import {INodeData} from "../../custom_types";
 
 
 export interface NodeStatus {
-    status: "running" | "error" | "success",
+    status: "running" | "failed" | "success",
     result?: Record<string, any>,
 }
 

@@ -1,11 +1,13 @@
+import {Edge} from 'reactflow'
 interface NodeAnchor {
     node_id: string;
-    output_Key: string;
+    output_key: string;
 }
 
 export  type inputTpe = 'anchor' | 'literal'
 
 export interface INodeParams {
+    id?: string;
     name: {
         [propName: string]: any;
     }
@@ -27,7 +29,7 @@ export interface INodeData {
     };
     type?: string;
     description?: string;
-    input_params?: INodeParams[];
+    input_params: INodeParams[];
     input_anchors?: INodeParams[];
     inputs: {
         [propName: string]: any;
@@ -46,4 +48,14 @@ export interface INode {
 
     [propName: string]: any;
 }
+
+export interface Graph {
+    nodes: INodeData[],
+    edges?: Edge[]
+}
+export interface FlowData {
+    id: string | number;
+    graph: Graph
+}
+
 

@@ -92,7 +92,10 @@ export default function CanvasNode({data}: { data: INodeData }) {
         {/*    }}/>*/}
         {/*))}*/}
         {data.input_params && data.input_params.map((inputParam, index) => (
-            <NodeInputHandler key={index} inputParam={inputParam} data={data}/>
+            <NodeInputHandler key={index} inputParam={inputParam} data={data}
+                              deleteInputAnchor={() => {
+                                  delAnchor(inputParam.key, 'input_params')
+                              }}/>
         ))}
 
         {data.dynamic_input && <AddKeyHandle

@@ -110,6 +110,7 @@ const OverviewFlow = () => {
         if (reactFlowInstance) {
             let flow = reactFlowInstance.toObject();
             console.log(flow);
+            // return
             flow = edgeToData(flow);
             if (params.id) {
                 const data = {
@@ -131,7 +132,7 @@ const OverviewFlow = () => {
     }
 
     const runFlow = async () => {
-        const runObj: { [propName: string]: any; } = {}
+        const runObj: Record<nodeId, any> = {}
         const topic = await runFlowApi({id: Number(params.id)})
         ws.current = new WebSocket(`wss://${import.meta.env.VITE_HOST}/api/ws/` + topic);
         ws.current.onmessage = e => {

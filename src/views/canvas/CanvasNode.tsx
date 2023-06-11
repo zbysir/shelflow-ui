@@ -33,7 +33,7 @@ export default function CanvasNode({data}: { data: INodeData }) {
     const {enqueueSnackbar} = useSnackbar();
     const {updateNodeData} = useContext(flowContext)
     const addAnchor = (item: INodeParams, key = 'input_anchors') => {
-
+        console.log('item:', item);
         const newData = {...data}
         if (item.key && item.type) {
 
@@ -46,27 +46,16 @@ export default function CanvasNode({data}: { data: INodeData }) {
                 return
             }
             newData[key].push(item)
-            if (newData.type === 'switch' && key === 'input_anchors') {
-                if (!newData.output_anchors) {
-                    newData.output_anchors = []
-                }
-                if (newData.output_anchors.find((x: INodeParams) => x.key === item.key)) {
-                    enqueueSnackbar('输出入key已存在', {variant: 'error'})
-                    return
-                }
-                newData.output_anchors.push(item)
-            }
         }
         // 更新nodeData
         updateNodeData(data.id, newData)
     }
+
     const delAnchor = (fieldKey: string, key = 'input_anchors') => {
         const newData = {...data}
 
         newData[key] = newData[key].filter((x: INodeParams) => x.key !== fieldKey)
-        if (newData.type === 'switch' && key === 'input_anchors') {
-            newData.output_anchors = newData?.output_anchors?.filter((x: INodeParams) => x.key !== fieldKey)
-        }
+
         updateNodeData(data.id, newData)
     }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -81,7 +70,7 @@ export default function CanvasNode({data}: { data: INodeData }) {
         <Box sx={{padding: 1}}>
             <LabelComp name={data.name}></LabelComp>
         </Box>
-        {(data.input_anchors && data.input_anchors.length > 0 || data.input_params && data.input_params.length > 0) && (
+        {(data.input_params && data.input_params.length > 0) && (
             <>
                 <Divider/>
                 <Box sx={{background: theme.palette?.asyncSelect?.main, p: 1}}>
@@ -97,18 +86,18 @@ export default function CanvasNode({data}: { data: INodeData }) {
                 <Divider/>
             </>
         )}
-        {data.input_anchors && data.input_anchors.map((inputAnchor: INodeParams, index: number) => (
-            <NodeInputHandler key={index} inputAnchor={inputAnchor} data={data} deleteInputAnchor={() => {
-                delAnchor(inputAnchor.key, 'input_anchors')
-            }}/>
-        ))}
+        {/*{data.input_anchors && data.input_anchors.map((inputAnchor: INodeParams, index: number) => (*/}
+        {/*    <NodeInputHandler key={index} inputAnchor={inputAnchor} data={data} deleteInputAnchor={() => {*/}
+        {/*        delAnchor(inputAnchor.key, 'input_anchors')*/}
+        {/*    }}/>*/}
+        {/*))}*/}
         {data.input_params && data.input_params.map((inputParam, index) => (
             <NodeInputHandler key={index} inputParam={inputParam} data={data}/>
         ))}
 
         {data.dynamic_input && <AddKeyHandle
             onSelect={(x: INodeParams) => {
-                addAnchor(x, 'input_anchors')
+                addAnchor(x, 'input_params')
             }}
         ></AddKeyHandle>}
         <Divider/>

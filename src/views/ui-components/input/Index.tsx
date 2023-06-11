@@ -23,28 +23,40 @@ export const Input = ({
                       }:
                           Props) => {
     const [myValue, setMyValue] = useState(value ?? '')
-    let multiline = false
-    let rows = 1
     // textarea| code | input
     const getInputType = (type: string) => {
+        type = type.split('/')[0]
         switch (type) {
             case 'string':
-                return 'text'
             case 'input':
-                multiline = false;
-                rows = 1;
-                return 'text'
+                return {
+                    type: 'text',
+                    multiline: false,
+                    rows: 1
+                }
             case 'number':
-                return 'number'
+                return {
+                    type: 'number',
+                    multiline: false,
+                    rows: 1
+                }
             case 'textarea':
             case 'code':
-                multiline = true;
-                rows = 2
-                return 'text'
+                return {
+                    type: 'text',
+                    multiline: true,
+                    rows: 2
+                }
             default:
-                return 'text'
+                return {
+                    type: 'text',
+                    multiline: false,
+                    rows: 1
+                }
         }
     }
+    const data = getInputType(inputParam.display_type)
+
     return <>
         <FormControl sx={{mt: 1, width: '100%'}} size='small'>
             <OutlinedInput
@@ -53,16 +65,16 @@ export const Input = ({
                 disabled={disabled}
                 value={myValue}
                 placeholder={inputParam.placeholder}
-                multiline={multiline}
+                type={data.type}
+                multiline={data.multiline}
                 name={inputParam.label}
-                rows={rows}
-                type={getInputType(inputParam.display_type)}
+                rows={data.rows}
                 onChange={(e) => {
                     setMyValue(e.target.value)
                     onChange(e.target.value)
                 }}
             ></OutlinedInput>
-            {multiline && <ExpandDlg
+            {data.multiline && <ExpandDlg
                 show={showDlg}
                 inputParam={inputParam}
                 onCancel={onDialogCancel}

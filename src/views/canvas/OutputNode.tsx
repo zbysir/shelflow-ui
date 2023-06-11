@@ -39,10 +39,8 @@ export default function OutputNode({data}: { data: INodeData }) {
             <LabelComp name={data.name}></LabelComp>
         </Box>
         <Divider/>
-        {data.input_anchors && data.input_anchors.map((inputAnchor: INodeParams, index: number) => (
-            <NodeInputHandler key={index} inputAnchor={inputAnchor} data={data} deleteInputAnchor={() => {
-                data.input_anchors?.splice(index, 1)
-            }}/>
+        {data.input_params && data.input_params.map((inputParam, index) => (
+            <NodeInputHandler key={index} inputParam={inputParam} data={data}/>
         ))}
         <Box sx={{padding: 1, minHeight: 100, textAlign: 'center'}}>
             {<Typography variant="body1">

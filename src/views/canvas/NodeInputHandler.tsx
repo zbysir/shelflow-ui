@@ -22,11 +22,10 @@ import LabelComp from '../ui-components/label/Index'
 //  type
 import {INodeParams, INodeData} from '../../custom_types/index'
 
-function NodeInputHandler({inputAnchor, data, disabled = false, inputParam, deleteInputAnchor}: {
-    inputAnchor?: INodeParams,
+function NodeInputHandler({data, disabled = false, inputParam, deleteInputAnchor}: {
     data: INodeData,
     disabled?: boolean,
-    inputParam?: INodeParams,
+    inputParam: INodeParams,
     deleteInputAnchor?: () => void
 
 }) {
@@ -38,9 +37,13 @@ function NodeInputHandler({inputAnchor, data, disabled = false, inputParam, dele
     const [showExpandDialog, setShowExpandDialog] = useState(false)
 
     const onExpandDialogClicked = () => {
-
         setShowExpandDialog(true)
     }
+    const showDisplay = (type) => {
+        const newType = type.split('/')[0]
+        return ['textarea', 'code'].includes(newType)
+    }
+
     useEffect(() => {
         if (ref.current) {
             const dom = ref.current as HTMLElement
@@ -55,15 +58,15 @@ function NodeInputHandler({inputAnchor, data, disabled = false, inputParam, dele
         updateNodeInternals(data.id)
     }, [data.id, position, updateNodeInternals])
     return <div ref={ref}>
-        {inputAnchor && (
+        {inputParam && inputParam.input_type === 'anchor' && (
             <>
-                <CustomWidthTooltip placement='left' title={inputAnchor.type}>
+                <CustomWidthTooltip placement='left' title={inputParam.type}>
                     <Handle
                         type='target'
                         position={Position.Left}
-                        key={inputAnchor.key}
-                        id={inputAnchor.key}
-                        isValidConnection={(connection) => isValidConnection(connection, inputAnchor, 'target', reactFlowInstance)}
+                        key={inputParam.key}
+                        id={inputParam.key}
+                        isValidConnection={(connection) => isValidConnection(connection, inputParam, 'target', reactFlowInstance)}
                         style={{
                             height: 10,
                             width: 10,
@@ -80,7 +83,7 @@ function NodeInputHandler({inputAnchor, data, disabled = false, inputParam, dele
                         justifyContent="space-between"
                         className="group"
                     >
-                        <LabelComp name={inputAnchor.name} defaultValue={inputAnchor.key}></LabelComp>
+                        <LabelComp name={inputParam.name} defaultValue={inputParam.key}></LabelComp>
                         <DeleteIcon
                             className="group-hover:opacity-100 opacity-0"
                             onClick={() => deleteInputAnchor && deleteInputAnchor()}
@@ -89,13 +92,13 @@ function NodeInputHandler({inputAnchor, data, disabled = false, inputParam, dele
                 </Box>
             </>
         )}
-        {inputParam &&
+        {inputParam && inputParam.input_type !== 'anchor' &&
             <>
                 <Box sx={{p: 2}}>
                     <div className="flex items-center justify-between">
                         <LabelComp name={inputParam.name} defaultValue={inputParam.key}></LabelComp>
 
-                        {['textarea', 'code'].includes(inputParam.display_type) && <IconButton
+                        {showDisplay(inputParam.display_type) && <IconButton
                             title='Expand'
                             color='primary'
                             onClick={onExpandDialogClicked}>
@@ -106,8 +109,8 @@ function NodeInputHandler({inputAnchor, data, disabled = false, inputParam, dele
                     {<Input
                         disabled={disabled}
                         inputParam={inputParam}
-                        onChange={(newValue) => (data.inputs[inputParam.key] = newValue)}
-                        value={data.inputs[inputParam.key] ?? inputParam.default ?? ''}
+                        onChange={(newValue) => (inputParam.value = newValue)}
+                        value={inputParam.value ?? inputParam.value ?? ''}
                         showDlg={showExpandDialog}
                         onDialogCancel={() => {
                             setShowExpandDialog(false)

@@ -25,7 +25,9 @@ export default function AddKeyHandle(
         {
             key: '',
             type: 'string',
-            name: {}
+            name: {},
+            input_type: 'anchor',
+            anchor: []
         })
 
     const saveHandle = () => {
@@ -35,7 +37,9 @@ export default function AddKeyHandle(
                 setInputAnchor({
                     key: '',
                     type: 'string',
-                    name: {}
+                    name: {},
+                    input_type: 'anchor',
+                    anchor: []
                 })
             })
         }

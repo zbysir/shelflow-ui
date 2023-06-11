@@ -1,12 +1,23 @@
+interface NodeAnchor {
+    node_id: string;
+    output_Key: string;
+}
+
+export  type inputTpe = 'anchor' | 'literal'
+
 export interface INodeParams {
     name: {
         [propName: string]: any;
     }
     key: string;
     type: string;
-    default?: any;
-    display_type: string
-
+    display_type: string;
+    value: string
+    input_type?: inputTpe;
+    anchors?: NodeAnchor[];
+    dynamic: boolean;
+    options?: any[];
+    list: boolean;
 }
 
 export interface INodeData {

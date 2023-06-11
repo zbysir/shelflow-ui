@@ -64,7 +64,7 @@ export const getNodeRunStatusStyle = (runStatus: Record<string, NodeStatus>, nod
             }
             ns.running = true
             break
-        case 'error':
+        case 'failed':
             ns.borderColor = "red"
             break
     }

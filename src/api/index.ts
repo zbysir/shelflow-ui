@@ -24,7 +24,10 @@ export const getComps = (params: any): Promise<any> => {
     })
 }
 
-export const runFlow = (data: { id: number }): Promise<any> => {
+export const runFlow = (data: { id?: number, graph?: any, parallel?: number }): Promise<any> => {
+    if (!data.parallel) {
+        data.parallel = 10
+    }
     return axios.post('/flow/run', data)
 }
 

@@ -1,12 +1,16 @@
-import {createContext, useState, ReactNode} from 'react'
+import {createContext, ReactNode, useState} from 'react'
 import {ReactFlowInstance} from 'reactflow'
 import {INodeData} from "../../custom_types";
 
 
+export interface NodeStatus {
+    status: "running" | "error" | "success",
+    result?: Record<string, any>,
+}
 
 export const flowContext = createContext({
     reactFlowInstance: {} as ReactFlowInstance,
-    runResult: {} as { [propName: string]: any; },
+    runResult: {} as Record<string, NodeStatus>,
     setReactFlowInstance: (instance: ReactFlowInstance): void => {
     },
     updateNodeData: (id: string, data: INodeData): void => {

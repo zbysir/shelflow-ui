@@ -40,7 +40,7 @@ export const flowDetail = (data: FlowData) => {
     data.graph.nodes = data.graph.nodes.map((node: INodeData) => {
         const inputAnchors = node.data.input_params?.filter(item => item.input_type === 'anchor')
         console.log('inputAnchors:', inputAnchors);
-        inputAnchors.forEach(item => {
+        inputAnchors?.forEach(item => {
             if (item.anchors && item.anchors.length) {
                 item.anchors.forEach((anchor: NodeAnchor) => {
                     // source+sourceHandle+target+targetHandle

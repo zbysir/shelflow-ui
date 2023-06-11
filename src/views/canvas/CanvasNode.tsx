@@ -9,12 +9,12 @@ import AddKeyHandle from "./AddKeyHandle";
 import LabelComp from '../ui-components/label/Index'
 
 import {INodeData, INodeParams} from '../../custom_types/index'
-
 import {useSnackbar} from 'notistack';
-import {flowContext} from "../../store/context/ReactFlowContext";
+import {flowContext, NodeStatus} from "../../store/context/ReactFlowContext";
 import {useContext} from "react";
+import LinearProgress from '@mui/material/LinearProgress';
 
-const CardWrapper = styled(MainCard)(({theme}: { theme: any }) => ({
+export const CardWrapper = styled(MainCard)(({theme}: { theme: any }) => ({
     background: theme?.palette?.card?.main,
     color: theme?.darkTextPrimary,
     border: 'solid 1px',
@@ -22,18 +22,62 @@ const CardWrapper = styled(MainCard)(({theme}: { theme: any }) => ({
     width: '300px',
     height: 'auto',
     padding: '10px',
-    boxShadow: '0 2px 14px 0 rgb(32 40 45 / 8%)',
+    boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.12), 0px 1px 2px rgba(0, 0, 0, 0.24);',
     '&:hover': {
-        borderColor: theme?.palette.primary.main
-    }
+        boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.16), 0px 3px 6px rgba(0, 0, 0, 0.23)'
+    },
+    transition: "box-shadow,border-color 300ms cubic-bezier(0.4, 0, 0.2, 1)",
 }));
+
+export interface NodeStyle {
+    borderColor?: string
+    borderWidth?: number
+    running?: boolean,
+    header?: {
+        color?: string,
+        background?: string,
+    }
+}
+
+export const getNodeRunStatusStyle = (runStatus: Record<string, NodeStatus>, nodeId: string): NodeStyle => {
+    const s = runStatus[nodeId]
+    console.log('s', s)
+
+    const ns: NodeStyle = {}
+    if (!s) {
+        return ns
+    }
+    // ns.borderWidth = 2
+    switch (s.status) {
+        case 'success':
+            ns.borderColor = "#388e3c"
+            ns.header = {
+                color: "#fff",
+                background: "#388e3c"
+            }
+            break
+        case 'running':
+            ns.borderColor = "#00e676"
+            ns.header = {
+                color: "#fff",
+                background: "#00e676"
+            }
+            ns.running = true
+            break
+        case 'error':
+            ns.borderColor = "red"
+            break
+    }
+    return ns
+}
 
 export default function CanvasNode({data}: { data: INodeData }) {
     const theme: any = useTheme()
     const {enqueueSnackbar} = useSnackbar();
-    const {updateNodeData} = useContext(flowContext)
+    const {updateNodeData, runResult} = useContext(flowContext)
+
+    const nodeStyle = getNodeRunStatusStyle(runResult, data.id)
     const addAnchor = (item: INodeParams, key = 'input_anchors') => {
-        console.log('item:', item);
         const newData = {...data}
         if (item.key && item.type) {
 
@@ -63,12 +107,26 @@ export default function CanvasNode({data}: { data: INodeData }) {
     return <CardWrapper
         content={false}
         sx={{
+            borderRadius: "8px",
             padding: 0,
-            borderColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary
+            borderColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary,
+            ...nodeStyle,
         }}
         border={false}>
-        <Box sx={{padding: 1}}>
-            <LabelComp name={data.name}></LabelComp>
+        <Box sx={
+            {
+                background: "#f5f5f5",
+                ...nodeStyle.header,
+                position: "relative"
+            }
+        }>
+            <LabelComp name={data.name} sx={{padding: 1}}></LabelComp>
+            <div style={{position:"absolute", bottom: 0, width:"100%"}}>
+                {
+                    nodeStyle.running ? <LinearProgress color="success"/> : null
+                }
+            </div>
+
         </Box>
         {(data.input_params && data.input_params.length > 0) && (
             <>

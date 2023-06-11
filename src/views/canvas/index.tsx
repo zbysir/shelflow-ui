@@ -19,7 +19,7 @@ import OutputNode from "./OutputNode";
 // utils
 import {edgeToData, flowDetail, getUniqueNodeId, initNode} from '../../utils/genericHelper'
 //  custom types
-import {INode} from "../../custom_types";
+import {INode, INodeData, INodeParams} from "../../custom_types";
 // context
 import {flowContext} from "../../store/context/ReactFlowContext";
 
@@ -37,9 +37,9 @@ const OverviewFlow = () => {
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
     // const [rfInstance, setRfInstance] = useState<ReactFlowInstance>()
     const [detail, setDetail] = useState({name: ''});
-
     const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), []);
     const ws = useRef<WebSocket | null>(null);
+    const [delEdge, setDelEdge] = useState(null)
 
     // ===========|| flowApi ||=========== //
     const getFlowApi = useApi(api.getFlow)
@@ -155,10 +155,29 @@ const OverviewFlow = () => {
         };
     }
 
+    const onEdgesDelete = (edges: Edge[]) => {
+        console.log('onEdgesDelete:', edges)
+        if (delEdge) {
+            const flow = getFlow();
+            const targetNode = flow.graph.nodes.find((node: INodeData) => node.id === delEdge.target)
+            const inputParams = targetNode.data.input_params.find((inputParam: INodeParams) => inputParam.key === delEdge.targetHandle)
+            const index = inputParams.anchors.findIndex(item => {
+                return item.node_id === delEdge.source && item.output_key === delEdge.sourceHandle
+            })
+            inputParams.anchors.splice(index, 1)
+            console.log('targetNode', targetNode, inputParams.anchors.length, index, delEdge)
+        }
+
+    }
+
+    const onEdgeClick = (e, edge) => {
+        console.log('onEdgeClick', e, edge)
+        setDelEdge(edge)
+    }
 
     // // =========|| useEffect ||======== //
     useEffect(() => {
-        console.log('env:', import.meta.env.MODE,  import.meta.env.VITE_HOST);
+        console.log('env:', import.meta.env.MODE, import.meta.env.VITE_HOST);
         getCompsApi.request()
     }, [])
 
@@ -201,7 +220,7 @@ const OverviewFlow = () => {
         <Box sx={{pt: '70px', height: '100vh', width: '100%'}}>
             <div className="reactflow-wrapper" ref={reactFlowWrapper}>
 
-            <ReactFlow
+                <ReactFlow
                     nodes={nodes}
                     edges={edges}
                     nodeTypes={nodeTypes}
@@ -211,6 +230,8 @@ const OverviewFlow = () => {
                     onInit={setReactFlowInstance}
                     onDragOver={onDragOver}
                     onDrop={onDrop}
+                    onEdgesDelete={onEdgesDelete}
+                    onEdgeClick={onEdgeClick}
                     fitView
                     minZoom={0.1}
                 >

@@ -105,6 +105,7 @@ export default function CanvasNode({data}: { data: INodeData }) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     return <CardWrapper
+        id={data.id}
         content={false}
         sx={{
             borderRadius: "8px",

@@ -44,13 +44,16 @@ export const flowDetail = (data: FlowData) => {
             if (item.anchors && item.anchors.length) {
                 item.anchors.forEach((anchor: NodeAnchor) => {
                     // source+sourceHandle+target+targetHandle
-                    edges.push({
-                        id: 'reactflow__edge-' + anchor.node_id + anchor.output_key + '-' + node.id + item.key,
-                        source: anchor.node_id,
-                        target: node.id,
-                        sourceHandle: anchor.output_key,
-                        targetHandle: item.key
-                    })
+                    const edgeId = 'reactflow__edge-' + anchor.node_id + anchor.output_key + '-' + node.id + item.key;
+                    if (!(edges.find(item => item.id === edgeId))) {
+                        edges.push({
+                            id: 'reactflow__edge-' + anchor.node_id + anchor.output_key + '-' + node.id + item.key,
+                            source: anchor.node_id,
+                            target: node.id,
+                            sourceHandle: anchor.output_key,
+                            targetHandle: item.key
+                        })
+                    }
                 })
             }
         })
@@ -87,17 +90,22 @@ export const edgeToData = (flow: Graph) => {
         const inputParams = target.data.input_params.find((inputParam: INodeParams) => inputParam.key === edge.targetHandle)
         if (inputParams.input_type === 'anchor') {
 
-            inputParams.anchors = []
-            inputParams.anchors.push({
-                node_id: edge.source,
-                output_Key: edge.sourceHandle
+            if (!inputParams.anchors) {
+                inputParams.anchors = []
+            }
+
+            const one = inputParams.anchors.find(item => {
+                return item.node_id === edge.source && item.output_key === edge.sourceHandle
             })
+            if (!one) {
+                inputParams.anchors.push({
+                    node_id: edge.source,
+                    output_Key: edge.sourceHandle
+                })
+            }
         }
     })
-    // TODO:删除的边的情况需要处理
-    // if (target && edge.targetHandle) {
-    //     target.data.inputs[edge.targetHandle] = [edge.source, edge.sourceHandle].join('.')
-    // }
+
 
     return flow
 }

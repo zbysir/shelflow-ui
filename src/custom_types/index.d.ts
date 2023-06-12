@@ -1,4 +1,4 @@
-import {Edge} from 'reactflow'
+import {Edge, Node} from 'reactflow'
 interface NodeAnchor {
     node_id: string;
     output_key: string;
@@ -9,7 +9,7 @@ export  type inputTpe = 'anchor' | 'literal'
 export interface INodeParams {
     id?: string;
     name: {
-        [propName: string]: any;
+        [key: string]: any;
     }
     key: string;
     type: string;
@@ -17,7 +17,7 @@ export interface INodeParams {
     value: string
     input_type?: inputTpe;
     anchors?: NodeAnchor[];
-    dynamic: boolean;
+    dynamic?: boolean;
     options?: any[];
     list: boolean;
 }
@@ -50,12 +50,13 @@ export interface INode {
 }
 
 export interface Graph {
-    nodes: INodeData[],
-    edges?: Edge[]
+    nodes: Node[],
+    edges?: Edge[],
 }
 export interface FlowData {
     id: string | number;
-    graph: Graph
+    name: string;
+    graph: Graph;
 }
 
 

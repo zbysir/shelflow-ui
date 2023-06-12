@@ -1,17 +1,24 @@
 import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {useParams} from 'react-router-dom';
 // react-flow
-import ReactFlow, {addEdge, Background, Controls, Edge, Node, useEdgesState, useNodesState} from 'reactflow'
+import ReactFlow, {
+    addEdge,
+    Background, Controls, useEdgesState, useNodesState,
+    ReactFlowJsonObject,
+    Node,
+    Edge
+} from 'reactflow'
 
 import 'reactflow/dist/style.css';
 import './overview.css';
 //  mui
 import {AppBar, Box, Button, Stack, Toolbar, Typography} from '@mui/material'
 import {useTheme} from '@mui/material/styles'
+import LoadingButton from '@mui/lab/LoadingButton';
 //  hooks
 import useApi from "../../hooks/useApi";
 // Api
-import api, {runFlow as runFlowApi} from "../../api/index";
+import api from "../../api/index";
 //  customNode
 import CanvasNode from './CanvasNode';
 import AddNode from "./AddNode";
@@ -19,9 +26,11 @@ import OutputNode from "./OutputNode";
 // utils
 import {edgeToData, flowDetail, getUniqueNodeId, initNode} from '../../utils/genericHelper'
 //  custom types
-import {INode, INodeData, INodeParams} from "../../custom_types";
+import {FlowData, INodeParams, NodeAnchor} from "../../custom_types";
 // context
 import {flowContext} from "../../store/context/ReactFlowContext";
+import {useSnackbar} from "notistack";
+
 
 const nodeTypes = {
     customNode: CanvasNode,
@@ -36,16 +45,18 @@ const OverviewFlow = () => {
     const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
     // const [rfInstance, setRfInstance] = useState<ReactFlowInstance>()
-    const [detail, setDetail] = useState({name: ''});
+    const [detail, setDetail] = useState<FlowData>({} as FlowData);
     const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), []);
     const ws = useRef<WebSocket | null>(null);
-    const [delEdge, setDelEdge] = useState(null)
-
+    const [delEdge, setDelEdge] = useState<Edge>()
+    const [runLoading, setRunLoading] = useState(false)
+    const {enqueueSnackbar} = useSnackbar();
     // ===========|| flowApi ||=========== //
     const getFlowApi = useApi(api.getFlow)
     const addFlowApi = useApi(api.addFlow)
     const editFlowApi = useApi(api.editFlow)
     const getCompsApi = useApi(api.getComps)
+    const runFlowApiHook = useApi(api.runFlow)
 
 
     const {reactFlowInstance, setReactFlowInstance, runResult, setRunResult} = useContext(flowContext);
@@ -67,7 +78,7 @@ const OverviewFlow = () => {
             return
         }
 
-        const nodeData: INode = JSON.parse(nodeStr)
+        const nodeData: Node = JSON.parse(nodeStr)
 
         console.log('nodeData:', nodeData);
         if (!reactFlowInstance) {
@@ -98,7 +109,7 @@ const OverviewFlow = () => {
 
     const getFlow = () => {
         if (reactFlowInstance) {
-            let flow = reactFlowInstance.toObject();
+            let flow: ReactFlowJsonObject = reactFlowInstance.toObject();
             flow = edgeToData(flow);
             return {
                 ...detail,
@@ -109,7 +120,7 @@ const OverviewFlow = () => {
         return null
     }
 
-    const onSave = () => {
+    const onSave = async () => {
         console.log('saveFlow:', reactFlowInstance)
         if (reactFlowInstance) {
             let flow = reactFlowInstance.toObject();
@@ -121,8 +132,8 @@ const OverviewFlow = () => {
                     ...detail,
                     graph: flow
                 }
-                editFlowApi.request(data)
-
+                await editFlowApi.request(data)
+                console.log('editFlowApi', editFlowApi)
             } else {
                 const data = {
                     name: 'first demo',
@@ -130,17 +141,20 @@ const OverviewFlow = () => {
                     graph: flow
                 }
 
-                addFlowApi.request(data)
+                await addFlowApi.request(data)
             }
+            // 提示保存成功
+            enqueueSnackbar('success', {variant: 'success'})
         }
     }
 
     const runFlow = async () => {
+        setRunLoading(true)
         const runObj: Record<string, any> = {}
         setRunResult({})
 
         const flow = getFlow()
-        const topic = await runFlowApi({graph: flow?.graph})
+        const topic = await runFlowApiHook.request({graph: flow?.graph})
         ws.current = new WebSocket(`wss://${import.meta.env.VITE_HOST}/api/ws/` + topic);
         ws.current.onmessage = e => {
             console.log('messgae:', e.data);
@@ -148,29 +162,32 @@ const OverviewFlow = () => {
             runObj[data.node_id] = data
 
             setRunResult({...runObj})
-            console.log('runResult:', runResult);
             return () => {
+                setRunLoading(false)
                 ws.current?.close();
             };
         };
+        ws.current.onclose = () => {
+            setRunLoading(false)
+        }
     }
 
     const onEdgesDelete = (edges: Edge[]) => {
-        console.log('onEdgesDelete:', edges)
-        if (delEdge) {
-            const flow = getFlow();
-            const targetNode = flow.graph.nodes.find((node: INodeData) => node.id === delEdge.target)
-            const inputParams = targetNode.data.input_params.find((inputParam: INodeParams) => inputParam.key === delEdge.targetHandle)
-            const index = inputParams.anchors.findIndex(item => {
-                return item.node_id === delEdge.source && item.output_key === delEdge.sourceHandle
-            })
-            inputParams.anchors.splice(index, 1)
-            console.log('targetNode', targetNode, inputParams.anchors.length, index, delEdge)
+        const flow = getFlow();
+        if (delEdge && flow) {
+            const targetNode = flow.graph.nodes.find((node: Node) => node.id === delEdge.target)
+            if (targetNode) {
+                const inputParams = targetNode.data.input_params.find((inputParam: INodeParams) => inputParam.key === delEdge.targetHandle)
+                const index = inputParams.anchors.findIndex((item: NodeAnchor) => {
+                    return item.node_id === delEdge.source && item.output_key === delEdge.sourceHandle
+                })
+                inputParams.anchors.splice(index, 1)
+            }
         }
 
     }
 
-    const onEdgeClick = (e, edge) => {
+    const onEdgeClick = (e: React.MouseEvent, edge: Edge) => {
         console.log('onEdgeClick', e, edge)
         setDelEdge(edge)
     }
@@ -211,8 +228,13 @@ const OverviewFlow = () => {
                     <Typography>{detail.name}</Typography>
                 </Box>
                 <Stack direction="row" spacing={2}>
-                    <Button variant="outlined" onClick={runFlow}>run</Button>
-                    <Button variant="contained" onClick={onSave}>save</Button>
+                    <LoadingButton
+                        variant="outlined"
+                        loading={runLoading}
+                        onClick={runFlow}>run</LoadingButton>
+                    <LoadingButton
+                        loading={editFlowApi.loading || addFlowApi.loading}
+                        variant="contained" onClick={onSave}>save</LoadingButton>
                 </Stack>
 
             </Toolbar>

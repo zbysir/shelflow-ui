@@ -23,11 +23,15 @@ export default function AddKeyHandle(
     ]
     const [inputAnchor, setInputAnchor] = useState<INodeParams>(
         {
+            anchors: [],
+            display_type: "",
+            list: false,
+            options: [],
+            value: "",
             key: '',
             type: 'string',
             name: {},
             input_type: 'anchor',
-            anchor: []
         })
 
     const saveHandle = () => {
@@ -35,11 +39,15 @@ export default function AddKeyHandle(
             onSelect(inputAnchor)
             setTimeout(() => {
                 setInputAnchor({
+                    anchors: [],
+                    display_type: "",
+                    list: false,
+                    options: [],
+                    value: "",
                     key: '',
                     type: 'string',
                     name: {},
                     input_type: 'anchor',
-                    anchor: []
                 })
             })
         }

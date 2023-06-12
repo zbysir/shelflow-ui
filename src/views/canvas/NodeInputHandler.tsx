@@ -39,7 +39,7 @@ function NodeInputHandler({data, disabled = false, inputParam, deleteInputAnchor
     const onExpandDialogClicked = () => {
         setShowExpandDialog(true)
     }
-    const showDisplay = (type) => {
+    const showDisplay = (type: string) => {
         const newType = type.split('/')[0]
         return ['textarea', 'code'].includes(newType)
     }

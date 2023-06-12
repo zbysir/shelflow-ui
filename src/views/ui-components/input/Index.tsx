@@ -9,7 +9,6 @@ interface Props {
     onChange: (s: string) => void;
     showDlg: boolean,
     onDialogCancel: () => void,
-    dialogProps: any
 }
 
 export const Input = ({
@@ -19,7 +18,6 @@ export const Input = ({
                           onChange,
                           showDlg,
                           onDialogCancel,
-                          dialogProps
                       }:
                           Props) => {
     const [myValue, setMyValue] = useState(value ?? '')

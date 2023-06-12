@@ -1,12 +1,12 @@
-import {INodeParams, INodeData, NodeAnchor, INode, FlowData, Graph} from '../custom_types/index'
-import {ReactFlowJsonObject, Edge} from 'reactflow'
+import {INodeParams, INodeData, NodeAnchor, FlowData, Graph} from '../custom_types/index'
+import {ReactFlowJsonObject, Edge, Node, Connection} from 'reactflow'
 
 export const getUniqueNodeId = () => {
     return Math.random().toString(36).substr(2, 9);
 }
 
 export const initializeDefaultNodeData = (nodeParams: INodeParams[], inputs: Record<string, any>) => {
-    const initialValues: Record<string, any>= {}
+    const initialValues: Record<string, any> = {}
 
     for (let i = 0; i < nodeParams.length; i += 1) {
         const input = nodeParams[i]
@@ -37,10 +37,10 @@ export const initNode = (nodeData: INodeData, id: string) => {
 
 export const flowDetail = (data: FlowData) => {
     const edges: Edge[] = []
-    data.graph.nodes = data.graph.nodes.map((node: INodeData) => {
-        const inputAnchors = node.data.input_params?.filter(item => item.input_type === 'anchor')
-        console.log('inputAnchors:', inputAnchors);
-        inputAnchors?.forEach(item => {
+    data.graph.nodes = data.graph.nodes.map((node: Node) => {
+        const inputAnchors = node.data.input_params?.filter((item: INodeParams) => item.input_type === 'anchor')
+
+        inputAnchors?.forEach((item: INodeParams) => {
             if (item.anchors && item.anchors.length) {
                 item.anchors.forEach((anchor: NodeAnchor) => {
                     // source+sourceHandle+target+targetHandle
@@ -77,30 +77,31 @@ export const flowDetail = (data: FlowData) => {
 }
 
 
-export const edgeToData = (flow: Graph) => {
-    flow.nodes = flow.nodes.map((node: INodeData) => {
+// 将edge转换为转化到data.inputs
+export const edgeToData = (flow: ReactFlowJsonObject) => {
+    flow.nodes = flow.nodes.map((node: Node) => {
         return {
             ...node,
-            type: node.data.type,
+            type: node?.data?.type,
         }
     })
     flow.edges?.forEach((edge: Edge) => {
-        const target = flow.nodes.find((node: INodeData) => node.id === edge.target)
+        const target = flow.nodes.find((node: Node) => node.id === edge.target)
         // source|sourceHandle |target|targetHandle
-        const inputParams = target.data.input_params.find((inputParam: INodeParams) => inputParam.key === edge.targetHandle)
+        const inputParams = target?.data.input_params.find((inputParam: INodeParams) => inputParam.key === edge.targetHandle)
         if (inputParams.input_type === 'anchor') {
 
             if (!inputParams.anchors) {
                 inputParams.anchors = []
             }
 
-            const one = inputParams.anchors.find(item => {
+            const one = inputParams.anchors.find((item: NodeAnchor) => {
                 return item.node_id === edge.source && item.output_key === edge.sourceHandle
             })
             if (!one) {
                 inputParams.anchors.push({
                     node_id: edge.source,
-                    output_Key: edge.sourceHandle
+                    output_key: edge.sourceHandle
                 })
             }
         }
@@ -111,7 +112,7 @@ export const edgeToData = (flow: Graph) => {
 }
 
 
-export const isValidConnection = (connection: any, inputAnchor: INodeParams, start: string, reactFlowInstance: any): boolean => {
+export const isValidConnection = (connection: Connection, inputAnchor: INodeParams, start: string, reactFlowInstance: any): boolean => {
     console.log('reactFlowInstance:', reactFlowInstance)
     if (inputAnchor.type === 'any') {
         return true

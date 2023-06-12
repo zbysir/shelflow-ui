@@ -8,7 +8,7 @@ let baseURL = `https://${import.meta.env.VITE_HOST}/api`;
 // @ts-ignore
 const service_host = window.__service_host__
 if (service_host) {
-    baseURL = `${service_host}/api`
+    baseURL = `${service_host.api}/api`
 }
 
 axios.defaults.baseURL = baseURL

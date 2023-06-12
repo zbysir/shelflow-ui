@@ -163,7 +163,7 @@ const OverviewFlow = () => {
         const service_host = window.__service_host__
 
         if (service_host) {
-            host = `${service_host}`
+            host = `${service_host.ws}`
         }
         ws.current = new WebSocket(`${host}/api/ws/` + topic);
         ws.current.onmessage = e => {

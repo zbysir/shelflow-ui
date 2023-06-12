@@ -1,13 +1,31 @@
 import {useEffect, useState} from "react";
 //  mui
-import {Box, CssBaseline, AppBar, Toolbar, ButtonBase, Card, Stack, Button, Grid} from '@mui/material'
+import {
+    Box,
+    CssBaseline,
+    AppBar,
+    Toolbar,
+    ButtonBase,
+    Card,
+    Stack,
+    Button,
+    Grid,
+    CardContent,
+    CardActions,
+    Typography,
+    CardHeader,
+    Pagination,
+    IconButton
+} from '@mui/material'
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import {useTheme, styled} from '@mui/material/styles'
-
+import {useNavigate} from 'react-router-dom'
 //  hooks
 import useApi from "../../hooks/useApi";
 
 // api
 import api from "../../api";
+import {FlowData} from "../../custom_types";
 
 const Main = styled('main', {shouldForwardProp: (prop) => prop !== 'open'})(({theme}: { theme: any }) => ({
     ...theme?.typography?.mainContent,
@@ -16,20 +34,24 @@ const Main = styled('main', {shouldForwardProp: (prop) => prop !== 'open'})(({th
 const Flows = () => {
     const getFlowListApi = useApi(api.getFlowList)
     const theme = useTheme()
-    console.log("Flows  theme:", theme);
+    const navigate = useNavigate()
+    const addFlow = () => {
+        navigate('/canvas')
+    }
 
-    const [isLoading, setIsLoading] = useState(true)
+    const goToCanvas = (item: FlowData) => {
+        navigate('canvas/' + item.id)
+    }
 
     // useEffect
-    useEffect( () => {
-        console.log('getListxxx')
-        getFlowListApi.request()
+    useEffect(() => {
+        const getFlowList = async () => {
+            const res = await getFlowListApi.request({limit: 20})
+            console.log('getListxxx res:', res)
+        }
+        getFlowList()
     }, [])
 
-    useEffect(() => {
-        setIsLoading(getFlowListApi.loading)
-        console.log('isLoading：', isLoading, getFlowListApi.data)
-    }, [getFlowListApi.loading])
 
     return <Box sx={{display: 'flex'}}>
         <CssBaseline/>
@@ -57,17 +79,59 @@ const Flows = () => {
 
         <Main theme={theme}>
             <Card sx={{padding: 2}}>
-                <Stack flexDirection='row'>
-                    <h1 className="flex-auto">Flows</h1>
-                    <Button variant="contained" disableElevation>
+                <Stack flexDirection='row' sx={{mb: 1.25}}>
+                    <h1 className="flex-auto">Flows{getFlowListApi.loading}</h1>
+                    <Button variant="contained" disableElevation
+                            onClick={() => addFlow()}>
                         Add New
                     </Button>
                 </Stack>
-                <Grid container spacing={3}>
-                    {
 
-                    }
-                </Grid>
+                {!getFlowListApi.loading &&
+                    getFlowListApi.data && <Box>
+                        <Grid container spacing={3}>
+                            {
+                                getFlowListApi.data?.list?.map((data: FlowData, index: number) => (
+                                    <Grid key={index} item lg={3} md={4} sm={6} xs={12}>
+                                        <Card
+                                            sx={{
+                                                boxShadow: '0 2px 14px 0 rgb(32 40 45 / 8%)',
+                                                cursor: 'pointer',
+                                                '&:hover': {
+                                                    boxShadow: '0 2px 14px 0 rgb(32 40 45 / 20%)'
+                                                },
+                                            }}
+                                            onClick={() => {
+                                                goToCanvas(data)
+                                            }}
+                                        >
+                                            <CardHeader
+                                                title={data.name || 'demo'}
+                                                subheader={data.description || 'description'}
+                                                action={
+                                                    <IconButton aria-label="settings">
+                                                        <DeleteForeverIcon/>
+                                                    </IconButton>
+                                                }/>
+                                            {/*<CardActions>*/}
+                                            {/*    <Button*/}
+                                            {/*        variant="outlined"*/}
+                                            {/*    >Delete</Button>*/}
+                                            {/*    <Button*/}
+                                            {/*        variant="contained"*/}
+                                            {/*    >Detail</Button>*/}
+
+                                            {/*</CardActions>*/}
+                                        </Card>
+                                    </Grid>
+                                ))}
+                        </Grid>
+                        {/*<Pagination*/}
+                        {/*    count={10}*/}
+                        {/*    color="primary"*/}
+                        {/*    className="flex justify-center mt-4"/>*/}
+                    </Box>}
+
             </Card>
         </Main>
     </Box>

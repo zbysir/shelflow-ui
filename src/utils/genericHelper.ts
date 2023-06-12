@@ -37,7 +37,7 @@ export const initNode = (nodeData: INodeData, id: string) => {
 
 export const flowDetail = (data: FlowData) => {
     const edges: Edge[] = []
-    data.graph.nodes = data.graph.nodes.map((node: Node) => {
+    data.graph.nodes = (data.graph.nodes || []).map((node: Node) => {
         const inputAnchors = node.data.input_params?.filter((item: INodeParams) => item.input_type === 'anchor')
 
         inputAnchors?.forEach((item: INodeParams) => {

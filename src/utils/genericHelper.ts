@@ -16,7 +16,9 @@ export const initializeDefaultNodeData = (nodeParams: INodeParams[], inputs: Rec
     return initialValues
 }
 
-
+export const buildEdgeId = (source: string, sourceHandle: string, target: string, targetHandle: string) => {
+    return 'reactflow__edge-' + source + sourceHandle + '-' + target + targetHandle;
+}
 export const initNode = (nodeData: INodeData, id: string) => {
     nodeData.id = id;
     if (nodeData.input_params) {
@@ -44,10 +46,10 @@ export const flowDetail = (data: FlowData) => {
             if (item.anchors && item.anchors.length) {
                 item.anchors.forEach((anchor: NodeAnchor) => {
                     // source+sourceHandle+target+targetHandle
-                    const edgeId = 'reactflow__edge-' + anchor.node_id + anchor.output_key + '-' + node.id + item.key;
+                    const edgeId = buildEdgeId(anchor.node_id, anchor.output_key, node.id, item.key);
                     if (!(edges.find(item => item.id === edgeId))) {
                         edges.push({
-                            id: 'reactflow__edge-' + anchor.node_id + anchor.output_key + '-' + node.id + item.key,
+                            id: edgeId,
                             source: anchor.node_id,
                             target: node.id,
                             sourceHandle: anchor.output_key,
@@ -77,6 +79,7 @@ export const flowDetail = (data: FlowData) => {
 }
 
 
+
 // 将edge转换为转化到data.inputs
 export const edgeToData = (flow: ReactFlowJsonObject) => {
     flow.nodes = flow.nodes.map((node: Node) => {
@@ -96,7 +99,7 @@ export const edgeToData = (flow: ReactFlowJsonObject) => {
         const target = flow.nodes.find((node: Node) => node.id === edge.target)
         // source|sourceHandle |target|targetHandle
         const inputParams = target?.data.input_params.find((inputParam: INodeParams) => inputParam.key === edge.targetHandle)
-        if (inputParams.input_type === 'anchor') {
+        if (inputParams && inputParams.input_type === 'anchor') {
 
             if (!inputParams.anchors) {
                 inputParams.anchors = []

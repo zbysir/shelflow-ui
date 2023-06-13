@@ -16,7 +16,8 @@ export const flowContext = createContext({
     updateNodeData: (id: string, data: INodeData): void => {
     },
     setRunResult: (result: any): void => {
-    }
+    },
+    deleteEdge: (id: string): void => {}
 })
 
 
@@ -35,6 +36,10 @@ export const ReactFlowContext = ({children}: { children: ReactNode }) => {
             })
         })
     }
+
+    const deleteEdge = (id: string) => {
+        reactFlowInstance.setEdges(reactFlowInstance.getEdges().filter((edge) => edge.id !== id))
+    }
     return (
         <flowContext.Provider
             value={{
@@ -42,7 +47,8 @@ export const ReactFlowContext = ({children}: { children: ReactNode }) => {
                 runResult,
                 setReactFlowInstance,
                 updateNodeData,
-                setRunResult
+                setRunResult,
+                deleteEdge
             }}
         >
             {children}

@@ -8,11 +8,12 @@ import AddKeyHandle from "./AddKeyHandle";
 //  labelComp
 import LabelComp from '../ui-components/label/Index'
 
-import {INodeData, INodeParams} from '../../custom_types/index'
+import {INodeData, INodeParams, NodeAnchor} from '../../custom_types/index'
 import {useSnackbar} from 'notistack';
 import {flowContext, NodeStatus} from "../../store/context/ReactFlowContext";
 import {useContext} from "react";
 import LinearProgress from '@mui/material/LinearProgress';
+import {buildEdgeId} from "../../utils/genericHelper";
 
 export const CardWrapper = styled(MainCard)(({theme}: { theme: any }) => ({
     background: theme?.palette?.card?.main,
@@ -74,7 +75,7 @@ export const getNodeRunStatusStyle = (runStatus: Record<string, NodeStatus>, nod
 export default function CanvasNode({data}: { data: INodeData }) {
     const theme: any = useTheme()
     const {enqueueSnackbar} = useSnackbar();
-    const {updateNodeData, runResult} = useContext(flowContext)
+    const {updateNodeData, runResult, deleteEdge} = useContext(flowContext)
 
     const nodeStyle = getNodeRunStatusStyle(runResult, data.id)
     const addAnchor = (item: INodeParams, key = 'input_anchors') => {
@@ -95,11 +96,18 @@ export default function CanvasNode({data}: { data: INodeData }) {
         updateNodeData(data.id, newData)
     }
 
-    const delAnchor = (fieldKey: string, key = 'input_anchors') => {
+    const delAnchor = (fieldKey: string, key = 'input_params') => {
         const newData = {...data}
+        // 如果连线了，需要去删除连线
+        const inputAnchor = newData[key].find((x: INodeParams) => x.key === fieldKey)
+        if (inputAnchor && inputAnchor.anchors) {
+            inputAnchor.anchors.forEach((anchor: NodeAnchor) => {
+                const edgeId = buildEdgeId(anchor.node_id, anchor.output_key, data.id, fieldKey)
+                deleteEdge(edgeId);
+            })
+        }
 
         newData[key] = newData[key].filter((x: INodeParams) => x.key !== fieldKey)
-
         updateNodeData(data.id, newData)
     }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -145,11 +153,6 @@ export default function CanvasNode({data}: { data: INodeData }) {
                 <Divider/>
             </>
         )}
-        {/*{data.input_anchors && data.input_anchors.map((inputAnchor: INodeParams, index: number) => (*/}
-        {/*    <NodeInputHandler key={index} inputAnchor={inputAnchor} data={data} deleteInputAnchor={() => {*/}
-        {/*        delAnchor(inputAnchor.key, 'input_anchors')*/}
-        {/*    }}/>*/}
-        {/*))}*/}
         {data.input_params && data.input_params.map((inputParam, index) => (
             <NodeInputHandler key={index} inputParam={inputParam} data={data}
                               deleteInputAnchor={() => {

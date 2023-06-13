@@ -6,7 +6,8 @@ import ReactFlow, {
     Background, Controls, useEdgesState, useNodesState,
     ReactFlowJsonObject,
     Node,
-    Edge
+    Edge,
+    Connection
 } from 'reactflow'
 
 import 'reactflow/dist/style.css';
@@ -46,7 +47,6 @@ const OverviewFlow = () => {
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
     // const [rfInstance, setRfInstance] = useState<ReactFlowInstance>()
     const [detail, setDetail] = useState<FlowData>({} as FlowData);
-    const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), []);
     const ws = useRef<WebSocket | null>(null);
     const [runLoading, setRunLoading] = useState(false)
     const {enqueueSnackbar} = useSnackbar();
@@ -105,6 +105,28 @@ const OverviewFlow = () => {
         setNodes((nds) => nds.concat(newNode));
     }, [reactFlowInstance]);
 
+    const onConnect = (params: Connection) => {
+        setNodes((nds) => {
+            return nds.map((node: Node) => {
+                if (node.id === params.target) {
+                    // 寻找目标节点的锚点
+                    const targetAnchor = node.data?.input_params?.find((input: INodeParams) => input.key === params.targetHandle);
+                    if (targetAnchor) {
+                        if (!targetAnchor.anchors) {
+                            targetAnchor.anchors = []
+                        }
+                        // 写入到anchors中的目的：为了在删除handle时，能够找到对应的node_id和output_key
+                        targetAnchor.anchors.push({
+                            node_id: params.source,
+                            output_key: params.sourceHandle
+                        })
+                    }
+                }
+                return node
+            })
+        })
+        setEdges((eds) => addEdge(params, eds));
+    };
 
     const getFlow = () => {
         if (reactFlowInstance) {

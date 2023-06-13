@@ -48,7 +48,6 @@ const OverviewFlow = () => {
     const [detail, setDetail] = useState<FlowData>({} as FlowData);
     const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), []);
     const ws = useRef<WebSocket | null>(null);
-    const [delEdge, setDelEdge] = useState<Edge>()
     const [runLoading, setRunLoading] = useState(false)
     const {enqueueSnackbar} = useSnackbar();
     // ===========|| flowApi ||=========== //
@@ -172,25 +171,7 @@ const OverviewFlow = () => {
         }
     }
 
-    const onEdgesDelete = (edges: Edge[]) => {
-        const flow = getFlow();
-        if (delEdge && flow) {
-            const targetNode = flow.graph.nodes.find((node: Node) => node.id === delEdge.target)
-            if (targetNode) {
-                const inputParams = targetNode.data.input_params.find((inputParam: INodeParams) => inputParam.key === delEdge.targetHandle)
-                const index = inputParams.anchors.findIndex((item: NodeAnchor) => {
-                    return item.node_id === delEdge.source && item.output_key === delEdge.sourceHandle
-                })
-                inputParams.anchors.splice(index, 1)
-            }
-        }
 
-    }
-
-    const onEdgeClick = (e: React.MouseEvent, edge: Edge) => {
-        console.log('onEdgeClick', e, edge)
-        setDelEdge(edge)
-    }
 
     // // =========|| useEffect ||======== //
     useEffect(() => {
@@ -252,8 +233,6 @@ const OverviewFlow = () => {
                     onInit={setReactFlowInstance}
                     onDragOver={onDragOver}
                     onDrop={onDrop}
-                    onEdgesDelete={onEdgesDelete}
-                    onEdgeClick={onEdgeClick}
                     fitView
                     minZoom={0.1}
                 >

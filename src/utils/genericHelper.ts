@@ -80,6 +80,13 @@ export const flowDetail = (data: FlowData) => {
 // 将edge转换为转化到data.inputs
 export const edgeToData = (flow: ReactFlowJsonObject) => {
     flow.nodes = flow.nodes.map((node: Node) => {
+        if (node.data.input_params && node.data.input_params.length) {
+            node.data.input_params.forEach((inputParam: INodeParams) => {
+                if (inputParam.input_type === 'anchor') {
+                    inputParam.anchors = []
+                }
+            })
+        }
         return {
             ...node,
             type: node?.data?.type,

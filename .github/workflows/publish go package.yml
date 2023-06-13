@@ -1,0 +1,48 @@
+name: Publish to Golang Package
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_TOKEN_FOR_PUSH }} # https://github.com/marketplace/actions/add-commit#about-tokens
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Set up Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.20
+
+      - run: npm install && npm run build
+      #    - run: mkdir dist && touch dist/index.html
+
+      # keep dist / dist.go / .git
+      - run: |
+          cp deploy/dist.go ./
+          ls -a | grep -vwE "[.]|dist|dist.go|[.]git" | xargs rm -rf
+          go mod init github.com/zbysir/writeflow-ui && go mod tidy
+          git checkout --orphan go
+
+      - name: Commit to go branch
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: CI Bot
+          fetch: false
+          author_email: zbysir@qq.com
+          message: publish go for '${{ github.ref_name }}'
+          push: origin go --force
+          #        tag: 'v1.0.2 --force'
+          new_branch: go
+          tag_push: '--force'
+          add: '*'

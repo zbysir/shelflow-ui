@@ -1,6 +1,17 @@
 import axios, {AxiosResponse} from 'axios'
 
-axios.defaults.baseURL = `https://${import.meta.env.VITE_HOST}/api`
+let baseURL = `https://${import.meta.env.VITE_HOST}/api`;
+
+// window.__service_host__ = {api: 'http://localhost::9433', ws: 'ws://localhost::9433'}
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const service_host = window.__service_host__
+if (service_host) {
+    baseURL = `${service_host.api}/api`
+}
+
+axios.defaults.baseURL = baseURL
 axios.interceptors.request.use((config: any) => {
     return config
 })

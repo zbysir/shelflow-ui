@@ -12,7 +12,7 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import './overview.css';
 //  mui
-import {AppBar, Box, Button, Stack, Toolbar, Typography} from '@mui/material'
+import {AppBar, Box, Stack, Toolbar, Typography} from '@mui/material'
 import {useTheme} from '@mui/material/styles'
 import LoadingButton from '@mui/lab/LoadingButton';
 //  hooks
@@ -154,7 +154,17 @@ const OverviewFlow = () => {
 
         const flow = getFlow()
         const topic = await runFlowApiHook.request({graph: flow?.graph})
-        ws.current = new WebSocket(`wss://${import.meta.env.VITE_HOST}/api/ws/` + topic);
+
+        let host = `wss://${import.meta.env.VITE_HOST}`
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const service_host = window.__service_host__
+
+        if (service_host) {
+            host = `${service_host.ws}`
+        }
+        ws.current = new WebSocket(`${host}/api/ws/` + topic);
         ws.current.onmessage = e => {
             console.log('messgae:', e.data);
             const data = JSON.parse(e.data);

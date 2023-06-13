@@ -84,10 +84,10 @@ function NodeInputHandler({data, disabled = false, inputParam, deleteInputAnchor
                         className="group"
                     >
                         <LabelComp name={inputParam.name} defaultValue={inputParam.key}></LabelComp>
-                        <DeleteIcon
+                        {inputParam.dynamic && <DeleteIcon
                             className="group-hover:opacity-100 opacity-0"
                             onClick={() => deleteInputAnchor && deleteInputAnchor()}
-                        ></DeleteIcon>
+                        ></DeleteIcon>}
                     </Stack>
                 </Box>
             </>

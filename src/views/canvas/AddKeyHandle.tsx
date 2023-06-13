@@ -32,6 +32,7 @@ export default function AddKeyHandle(
             type: 'string',
             name: {},
             input_type: 'anchor',
+            dynamic: true
         })
 
     const saveHandle = () => {
@@ -48,6 +49,7 @@ export default function AddKeyHandle(
                     type: 'string',
                     name: {},
                     input_type: 'anchor',
+                    dynamic: true
                 })
             })
         }

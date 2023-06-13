@@ -39,7 +39,7 @@ const NodeOutputHandler = ({outputAnchor, data}: { outputAnchor: INodeParams, da
                 }, 0)
             }
         }
-    }, [data.id, ref, updateNodeInternals, data.input_params.length, data.output_anchors?.length])
+    }, [data.id, ref, updateNodeInternals, data.input_params?.length, data.output_anchors?.length])
 
     useEffect(() => {
         setTimeout(() => {

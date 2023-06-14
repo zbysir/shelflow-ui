@@ -15,7 +15,8 @@ import {
     Typography,
     CardHeader,
     Pagination,
-    IconButton
+
+    IconButton, CircularProgress
 } from '@mui/material'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import {useTheme, styled} from '@mui/material/styles'
@@ -27,14 +28,23 @@ import useApi from "../../hooks/useApi";
 import api from "../../api";
 import {FlowData} from "../../custom_types";
 
+
 const Main = styled('main', {shouldForwardProp: (prop) => prop !== 'open'})(({theme}: { theme: any }) => ({
     ...theme?.typography?.mainContent,
 }))
+
 
 const Flows = () => {
     const getFlowListApi = useApi(api.getFlowList)
     const theme = useTheme()
     const navigate = useNavigate()
+    const pageSize = 20;
+
+    const [list, setList] = useState<{ total: number, list: FlowData[], totalPage: number }>({
+        total: 0,
+        list: [],
+        totalPage: 0,
+    })
     const addFlow = () => {
         navigate('/canvas')
     }
@@ -42,13 +52,24 @@ const Flows = () => {
     const goToCanvas = (item: FlowData) => {
         navigate('canvas/' + item.id)
     }
-
+    const getFlowList = async (page = 1) => {
+        const res = await getFlowListApi.request({
+            limit: pageSize,
+            index: page
+        })
+        console.log('getListxxx res:', res)
+        const data = {
+            ...res,
+        }
+        data.totalPage = Math.ceil(data.total / pageSize)
+        setList(data);
+    }
+    const changePageHandle = (page: number) => {
+        console.log('page:', page)
+        getFlowList(page)
+    }
     // useEffect
     useEffect(() => {
-        const getFlowList = async () => {
-            const res = await getFlowListApi.request({limit: 20})
-            console.log('getListxxx res:', res)
-        }
         getFlowList()
     }, [])
 
@@ -69,9 +90,7 @@ const Flows = () => {
                     }
                 }}>
                     <Box>
-                        <ButtonBase>
-                            writeFlow
-                        </ButtonBase>
+                        <Typography variant="h1">writeFlow</Typography>
                     </Box>
                 </Box>
             </Toolbar>
@@ -80,18 +99,20 @@ const Flows = () => {
         <Main theme={theme}>
             <Card sx={{padding: 2}}>
                 <Stack flexDirection='row' sx={{mb: 1.25}}>
-                    <h1 className="flex-auto">Flows{getFlowListApi.loading}</h1>
+                    <Typography variant={'h2'} className="flex-auto">Flows</Typography>
                     <Button variant="contained" disableElevation
                             onClick={() => addFlow()}>
                         Add New
                     </Button>
                 </Stack>
-
+                {getFlowListApi.loading && <Box
+                    sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '500px'}}
+                ><CircularProgress/></Box>}
                 {!getFlowListApi.loading &&
                     getFlowListApi.data && <Box>
                         <Grid container spacing={3}>
                             {
-                                getFlowListApi.data?.list?.map((data: FlowData, index: number) => (
+                                list.list.map((data: FlowData, index: number) => (
                                     <Grid key={index} item lg={3} md={4} sm={6} xs={12}>
                                         <Card
                                             sx={{
@@ -126,10 +147,15 @@ const Flows = () => {
                                     </Grid>
                                 ))}
                         </Grid>
-                        {/*<Pagination*/}
-                        {/*    count={10}*/}
-                        {/*    color="primary"*/}
-                        {/*    className="flex justify-center mt-4"/>*/}
+
+                        <Pagination
+                            count={list.totalPage}
+                            color="primary"
+                            className="flex justify-center mt-4"
+                            onChange={(e, page) => {
+                                changePageHandle(page)
+                            }}
+                        />
                     </Box>}
 
             </Card>

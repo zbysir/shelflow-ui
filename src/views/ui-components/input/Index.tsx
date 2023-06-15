@@ -2,6 +2,7 @@ import {FormControl, OutlinedInput} from '@mui/material'
 import PropTypes from 'prop-types'
 import {useState} from 'react'
 import ExpandDlg from '../dlg/ExpandDlg'
+
 interface Props {
     inputParam: any;
     disabled: boolean;
@@ -32,6 +33,12 @@ export const Input = ({
                     multiline: false,
                     rows: 1
                 }
+            case 'password':
+                return {
+                    type: 'password',
+                    multiline: false,
+                    rows: 1
+                }
             case 'number':
                 return {
                     type: 'number',
@@ -53,6 +60,7 @@ export const Input = ({
                 }
         }
     }
+
     const data = getInputType(inputParam.display_type)
 
     return <>

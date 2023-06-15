@@ -8,7 +8,6 @@ import NodeOutputHandler from "./NodeOutputHandler";
 import {flowContext} from "../../store/context/ReactFlowContext";
 import {CardWrapper, getNodeRunStatusStyle} from "./CanvasNode.tsx";
 
-
 export default function OutputNode({data}: { data: INodeData }) {
     const theme: any = useTheme()
     const {runResult} = React.useContext(flowContext)
@@ -27,18 +26,22 @@ export default function OutputNode({data}: { data: INodeData }) {
         content={false}
     >
         <Box
-            sx={{padding: 1}}
+            sx={{
+                background: "#f5f5f5",
+                ...nodeStyle.header,
+                position: "relative"
+            }}
         >
-            <LabelComp name={data.name}></LabelComp>
+            <LabelComp name={data.name} sx={{padding: 1}}></LabelComp>
         </Box>
+
         <Divider/>
         {data.input_params && data.input_params.map((inputParam, index) => (
             <NodeInputHandler key={index} inputParam={inputParam} data={data}/>
         ))}
         <Box sx={{padding: 1, minHeight: 100, textAlign: 'center'}}>
             {<Typography variant="body1">
-                {!runResult[data.id]?.result?.default && <span>run your flow to see data</span>}
-                {runResult[data.id]?.result?.default}
+                {runResult[data.id]?.result?.default || <span>run your flow to see data</span>}
             </Typography>}
         </Box>
         {data.output_anchors && data.output_anchors.map((outputAnchor, index) => (

@@ -11,7 +11,7 @@ import LabelComp from '../ui-components/label/Index'
 import {INodeData, INodeParams, NodeAnchor} from '../../custom_types/index'
 import {useSnackbar} from 'notistack';
 import {flowContext, NodeStatus} from "../../store/context/ReactFlowContext";
-import {useContext} from "react";
+import React, {useContext} from "react";
 import LinearProgress from '@mui/material/LinearProgress';
 import {buildEdgeId} from "../../utils/genericHelper";
 
@@ -37,12 +37,12 @@ export interface NodeStyle {
     header?: {
         color?: string,
         background?: string,
-    }
+    },
+    errorMsg?: string
 }
 
 export const getNodeRunStatusStyle = (runStatus: Record<string, NodeStatus>, nodeId: string): NodeStyle => {
     const s = runStatus[nodeId]
-    console.log('s', s)
 
     const ns: NodeStyle = {}
     if (!s) {
@@ -67,6 +67,7 @@ export const getNodeRunStatusStyle = (runStatus: Record<string, NodeStatus>, nod
             break
         case 'failed':
             ns.borderColor = "red"
+            ns.errorMsg = s.error
             break
     }
     return ns
@@ -87,7 +88,7 @@ export default function CanvasNode({data}: { data: INodeData }) {
             }
             // 需要判断key是否存在
             if (newData[key].find((x: INodeParams) => x.key === item.key)) {
-                enqueueSnackbar('key已存在', {variant: 'error'})
+                enqueueSnackbar('key 已存在', {variant: 'error'})
                 return
             }
             newData[key].push(item)
@@ -137,27 +138,13 @@ export default function CanvasNode({data}: { data: INodeData }) {
             </div>
 
         </Box>
-        {(data.input_params && data.input_params.length > 0) && (
-            <>
-                <Divider/>
-                <Box sx={{background: theme.palette?.asyncSelect?.main, p: 1}}>
-                    <Typography
-                        sx={{
-                            fontWeight: 500,
-                            textAlign: 'center'
-                        }}
-                    >
-                        Inputs
-                    </Typography>
-                </Box>
-                <Divider/>
-            </>
-        )}
+
         {data.input_params && data.input_params.map((inputParam, index) => (
-            <NodeInputHandler key={index} inputParam={inputParam} data={data}
-                              deleteInputAnchor={() => {
-                                  delAnchor(inputParam.key, 'input_params')
-                              }}/>
+            <NodeInputHandler
+                key={index} inputParam={inputParam} data={data}
+                deleteInputAnchor={() => {
+                    delAnchor(inputParam.key, 'input_params')
+                }}/>
         ))}
 
         {data.dynamic_input && <AddKeyHandle
@@ -166,25 +153,32 @@ export default function CanvasNode({data}: { data: INodeData }) {
             }}
         ></AddKeyHandle>}
         <Divider/>
-        <Box sx={{background: theme?.palette?.asyncSelect?.main, p: 1}}>
-            <Typography
-                sx={{
-                    fontWeight: 500,
-                    textAlign: 'center'
-                }}
-            >
-                Output
-            </Typography>
-        </Box>
-        <Divider/>
         {data.output_anchors && data.output_anchors.map((outputAnchor, index) => (
             <NodeOutputHandler key={index} outputAnchor={outputAnchor} data={data}/>
         ))}
         {data.dynamic_output && <AddKeyHandle
-            onSelect={(x: INodeParams) => {
-                addAnchor(x, 'output_anchors')
-            }}
+          onSelect={(x: INodeParams) => {
+              addAnchor(x, 'output_anchors')
+          }}
         ></AddKeyHandle>}
+
+        {
+            nodeStyle.errorMsg ?
+                <>
+                    <Divider/>
+                    <Box sx={{padding: 1}}>
+                        <Typography
+                            sx={{
+                                fontWeight: 500,
+                                textAlign: 'start',
+                                color: '#d04e4e'
+                            }}
+                        >
+                            {nodeStyle.errorMsg}
+                        </Typography>
+                    </Box>
+                </> : null
+        }
     </CardWrapper>
 }
 

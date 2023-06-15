@@ -177,7 +177,7 @@ const OverviewFlow = () => {
         const flow = getFlow()
         const topic = await runFlowApiHook.request({graph: flow?.graph})
 
-        let host = `wss://${import.meta.env.VITE_HOST}`
+        let host = `${import.meta.env.VITE_WS_HOST}`
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -203,11 +203,9 @@ const OverviewFlow = () => {
         }
     }
 
-
-
     // // =========|| useEffect ||======== //
     useEffect(() => {
-        console.log('env:', import.meta.env.MODE, import.meta.env.VITE_HOST);
+        console.log('env:', import.meta.env.MODE, import.meta.env.VITE_API_HOST);
         getCompsApi.request()
     }, [])
 

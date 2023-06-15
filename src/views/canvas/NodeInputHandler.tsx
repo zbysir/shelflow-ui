@@ -106,7 +106,8 @@ function NodeInputHandler({data, disabled = false, inputParam, deleteInputAnchor
                         </IconButton>}
                     </div>
 
-                    {<Input
+                    {
+                        <Input
                         disabled={disabled}
                         inputParam={inputParam}
                         onChange={(newValue) => (inputParam.value = newValue)}
@@ -115,7 +116,8 @@ function NodeInputHandler({data, disabled = false, inputParam, deleteInputAnchor
                         onDialogCancel={() => {
                             setShowExpandDialog(false)
                         }}
-                    />}
+                    />
+                    }
                 </Box>
             </>}
     </div>

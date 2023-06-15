@@ -6,6 +6,7 @@ import {INodeData} from "../../custom_types";
 export interface NodeStatus {
     status: "running" | "failed" | "success",
     result?: Record<string, any>,
+    error?:string
 }
 
 export const flowContext = createContext({

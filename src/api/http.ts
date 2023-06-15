@@ -1,6 +1,6 @@
 import axios, {AxiosResponse} from 'axios'
 
-let baseURL = `https://${import.meta.env.VITE_HOST}/api`;
+let baseURL = `${import.meta.env.VITE_API_HOST}/api`;
 
 // window.__service_host__ = {api: 'http://localhost::9433', ws: 'ws://localhost::9433'}
 

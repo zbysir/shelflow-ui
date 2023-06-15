@@ -10,6 +10,7 @@
     const theme = sessionStorage.getItem('theme') || 'light'
     const html = document.documentElement;
     html.setAttribute('class', theme);
+    html.setAttribute('style', `color-scheme: ${theme}`);
 </script>
 <body>
 <div id="root"></div>

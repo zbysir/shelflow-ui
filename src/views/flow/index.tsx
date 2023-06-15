@@ -73,9 +73,12 @@ const Flows = () => {
         if (mode === 'dark') {
             html.classList.remove('light')
             html.classList.add(mode)
+
+            html.setAttribute('style', `color-scheme: dark`)
         } else {
             html.classList.remove('dark')
             html.classList.add(mode)
+            html.setAttribute('style', `color-scheme: light`)
         }
         sessionStorage.setItem('theme', mode)
 

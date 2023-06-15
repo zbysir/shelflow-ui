@@ -4,8 +4,14 @@
     <meta charset="UTF-8"/>
     <link rel="icon" type="image/svg+xml" href="/vite.svg"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Vite + React + TS</title>
+    <title>writeFlow</title>
 </head>
+<script>
+    const theme = sessionStorage.getItem('theme') || 'light'
+    const html = document.documentElement;
+    html.setAttribute('class', theme);
+    html.setAttribute('style', `color-scheme: ${theme}`);
+</script>
 <body>
 <div id="root"></div>
 <div id="portal"></div>

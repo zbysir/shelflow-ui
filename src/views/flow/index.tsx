@@ -11,7 +11,7 @@ import {FlowData} from "../../custom_types";
 
 
 import {Button} from "@/components/ui/button"
-import {Loader2, BadgeX, Edit} from "lucide-react"
+import {Loader2, BadgeX, Edit, Sun, Github, Moon, Laptop, Workflow} from "lucide-react"
 import {
     Card,
     CardContent,
@@ -20,7 +20,17 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import {
+    Menubar,
+    MenubarContent,
+    MenubarItem,
+    MenubarMenu,
+    MenubarSeparator,
+    MenubarShortcut,
+    MenubarTrigger,
+} from "@/components/ui/menubar"
 import {Separator} from "@/components/ui/separator"
+
 
 const Main = styled('main', {shouldForwardProp: (prop) => prop !== 'open'})(({theme}: { theme: any }) => ({
     ...theme?.typography?.mainContent,
@@ -29,7 +39,6 @@ const Main = styled('main', {shouldForwardProp: (prop) => prop !== 'open'})(({th
 
 const Flows = () => {
     const getFlowListApi = useApi(api.getFlowList)
-    const theme = useTheme()
     const navigate = useNavigate()
     const pageSize = 20;
 
@@ -57,6 +66,20 @@ const Flows = () => {
         data.totalPage = Math.ceil(data.total / pageSize)
         setList(data);
     }
+
+    const changeMode = (mode: string) => {
+        console.log('changeMode:', mode)
+        const html = document.documentElement;
+        if (mode === 'dark') {
+            html.classList.remove('light')
+            html.classList.add(mode)
+        } else {
+            html.classList.remove('dark')
+            html.classList.add(mode)
+        }
+        sessionStorage.setItem('theme', mode)
+
+    }
     const changePageHandle = (page: number) => {
         console.log('page:', page)
         getFlowList(page)
@@ -67,20 +90,40 @@ const Flows = () => {
     }, [])
 
 
-    return <div className="min-h-full bg-blue-50">
-        <header className="bg-white">
-            <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+    return <div className="min-h-full bg-secondary">
+        <header className="bg-background">
+            <nav className="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8" aria-label="Global">
                 <div className="flex lg:flex-1">
-                    <a href="#" className="-m-1.5 p-1.5">
-                        <h1 className="text-3xl font-bold">WriteFlow</h1>
+                    <a href="/" className="flex items-center">
+                        <Workflow className="w-6 h-6"></Workflow>
+                        <h1 className="font-bold inline-block ml-1">WriteFlow</h1>
                     </a>
                 </div>
+                <Menubar>
+                    <MenubarMenu>
+                        <MenubarTrigger>
+                            <a href="https://github.com/zbysir/writeflow-ui"
+                               target="_blank"><Github></Github></a></MenubarTrigger>
+                    </MenubarMenu>
+                    <MenubarMenu>
+                        <MenubarTrigger><Sun></Sun></MenubarTrigger>
+                        <MenubarContent>
+                            <MenubarItem
+                                onClick={() => changeMode('light')}><Sun
+                                className="w-4 h-4 mr-2"></Sun> Light</MenubarItem>
+                            <MenubarItem
+                                onClick={() => changeMode('dark')}><Moon
+                                className="w-4 h-4 mr-2"></Moon> Dark</MenubarItem>
+                            <MenubarItem><Laptop className="w-4 h-4 mr-2"></Laptop>System</MenubarItem>
+                        </MenubarContent>
+                    </MenubarMenu>
+                </Menubar>
             </nav>
         </header>
         <main className="p-6">
-            <div className="mx-auto max-w-7xl py-6 px-6 lg:px-8 bg-white">
+            <div className="mx-auto max-w-7xl py-6 px-6 lg:px-8 bg-seco">
                 <div className="flex items-center justify-between mb-4">
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900">flows</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">flows</h1>
                     <Button
                         onClick={addFlow}>Add New</Button>
                 </div>
@@ -93,7 +136,8 @@ const Flows = () => {
                         {list.list.map((item: FlowData, index: number) => (
                             <Card
                                 key={index}
-                                className="border border-solid  border-gray-100
+                                className="border border-solid
+                                border-color
                             cursor-pointer
                             group
                             hover:shadow-xl"
@@ -105,7 +149,8 @@ const Flows = () => {
                                     </CardTitle>
                                     <CardDescription>{item.description || 'description'}</CardDescription>
                                 </CardHeader>
-                                <CardContent className="border border-solid border-gray-100">
+                                <Separator></Separator>
+                                <CardContent>
                                     <div className="flex pt-2 justify-between">
                                         <Button variant="ghost">
                                             <BadgeX className="text-gray-400"></BadgeX>

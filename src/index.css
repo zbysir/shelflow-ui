@@ -91,8 +91,14 @@ body {
     * {
         @apply border-border;
     }
+
     body {
         @apply bg-background text-foreground;
         font-feature-settings: "rlig" 1, "calt" 1;
     }
+}
+
+
+.border-color {
+    border-color: hsl(var(--border));
 }

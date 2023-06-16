@@ -1,5 +1,5 @@
 import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
-import {useParams} from 'react-router-dom';
+import {useParams, useNavigate} from 'react-router-dom';
 // react-flow
 import ReactFlow, {
     addEdge,
@@ -41,6 +41,7 @@ const nodeTypes = {
 
 const OverviewFlow = () => {
     const params = useParams();
+    const navigate = useNavigate()
     const reactFlowWrapper = useRef(null);
     const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
@@ -158,8 +159,6 @@ const OverviewFlow = () => {
 
                 await addFlowApi.request(data)
             }
-            // 提示保存成功
-            enqueueSnackbar('success', {variant: 'success'})
         }
     }
 
@@ -228,6 +227,23 @@ const OverviewFlow = () => {
             }
         },
         [getFlowApi.data, getFlowApi.error])
+
+    useEffect(() => {
+        if (addFlowApi.data) {
+            enqueueSnackbar('success', {variant: 'success'})
+            navigate(`/canvas/${addFlowApi.data}`, {replace: true})
+        } else if (addFlowApi.error) {
+            enqueueSnackbar(addFlowApi.error.msg, {variant: 'error'})
+        }
+    }, [addFlowApi.data, addFlowApi.error])
+
+    useEffect(() => {
+        if (editFlowApi.data) {
+            enqueueSnackbar('success', {variant: 'success'})
+        } else if (editFlowApi.error) {
+            enqueueSnackbar(editFlowApi.error.msg, {variant: 'error'})
+        }
+    }, [editFlowApi.data, editFlowApi.error])
 
     return <div className="h-full">
         <header

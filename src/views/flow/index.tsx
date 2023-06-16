@@ -39,7 +39,6 @@ const Main = styled('main', {shouldForwardProp: (prop) => prop !== 'open'})(({th
 
 const Flows = () => {
     const getFlowListApi = useApi(api.getFlowList)
-    const navigate = useNavigate()
     const pageSize = 20;
 
     const [list, setList] = useState<{ total: number, list: FlowData[], totalPage: number }>({
@@ -47,13 +46,7 @@ const Flows = () => {
         list: [],
         totalPage: 0,
     })
-    const addFlow = () => {
-        navigate('/canvas')
-    }
 
-    const goToCanvas = (item: FlowData) => {
-        navigate('canvas/' + item.id)
-    }
     const getFlowList = async (page = 1) => {
         const res = await getFlowListApi.request({
             limit: pageSize,
@@ -95,7 +88,8 @@ const Flows = () => {
 
     return <div className="min-h-full bg-secondary">
         <header className="bg-background">
-            <nav className="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8" aria-label="Global">
+            <nav className="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8"
+                 aria-label="Global">
                 <div className="flex lg:flex-1">
                     <a href="/" className="flex items-center">
                         <Workflow className="w-6 h-6"></Workflow>
@@ -127,8 +121,9 @@ const Flows = () => {
             <div className="mx-auto max-w-7xl py-6 px-6 lg:px-8 bg-seco">
                 <div className="flex items-center justify-between mb-4">
                     <h1 className="text-3xl font-bold tracking-tight">flows</h1>
-                    <Button
-                        onClick={addFlow}>Add New</Button>
+                    <a href="/canvas">
+                        <Button>Add New</Button>
+                    </a>
                 </div>
                 {getFlowListApi.loading && <div
                     className="flex items-center justify-center h-64"
@@ -159,86 +154,20 @@ const Flows = () => {
                                             <BadgeX className="text-gray-400"></BadgeX>
                                             <span className="ml-1">Delete</span>
                                         </Button>
-                                        <Button variant="ghost"
-                                                onClick={() => {
-                                                    goToCanvas(item)
-                                                }}>
-                                            <Edit className="text-gray-400"></Edit>
-                                            <span className="ml-1">Edit</span>
-                                        </Button>
+                                        <a href={'/canvas/' + item.id}>
+                                            <Button variant="ghost"
+                                            >
+                                                <Edit className="text-gray-400"></Edit>
+                                                <span className="ml-1">Edit</span>
+                                            </Button>
+                                        </a>
                                     </div>
                                 </CardContent>
                             </Card>
                         ))}
                     </div>}
-
             </div>
         </main>
-
-        {/*<Main theme={theme}>*/}
-        {/*    <Card sx={{padding: 2}}>*/}
-        {/*        <Stack flexDirection='row' sx={{mb: 1.25}}>*/}
-        {/*            <Typography variant={'h2'} className="flex-auto">Flows</Typography>*/}
-        {/*            <Button variant="contained" disableElevation*/}
-        {/*                    onClick={() => addFlow()}>*/}
-        {/*                Add New*/}
-        {/*            </Button>*/}
-        {/*        </Stack>*/}
-        {/*        {getFlowListApi.loading && <Box*/}
-        {/*            sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '500px'}}*/}
-        {/*        ><CircularProgress/></Box>}*/}
-        {/*        {!getFlowListApi.loading &&*/}
-        {/*            getFlowListApi.data && <Box>*/}
-        {/*                <Grid container spacing={3}>*/}
-        {/*                    {*/}
-        {/*                        list.list.map((data: FlowData, index: number) => (*/}
-        {/*                            <Grid key={index} item lg={3} md={4} sm={6} xs={12}>*/}
-        {/*                                <Card*/}
-        {/*                                    sx={{*/}
-        {/*                                        boxShadow: '0 2px 14px 0 rgb(32 40 45 / 8%)',*/}
-        {/*                                        cursor: 'pointer',*/}
-        {/*                                        '&:hover': {*/}
-        {/*                                            boxShadow: '0 2px 14px 0 rgb(32 40 45 / 20%)'*/}
-        {/*                                        },*/}
-        {/*                                    }}*/}
-        {/*                                    onClick={() => {*/}
-        {/*                                        goToCanvas(data)*/}
-        {/*                                    }}*/}
-        {/*                                >*/}
-        {/*                                    <CardHeader*/}
-        {/*                                        title={data.name || 'demo'}*/}
-        {/*                                        subheader={data.description || 'description'}*/}
-        {/*                                        action={*/}
-        {/*                                            <IconButton aria-label="settings">*/}
-        {/*                                                <DeleteForeverIcon/>*/}
-        {/*                                            </IconButton>*/}
-        {/*                                        }/>*/}
-        {/*                                    /!*<CardActions>*!/*/}
-        {/*                                    /!*    <Button*!/*/}
-        {/*                                    /!*        variant="outlined"*!/*/}
-        {/*                                    /!*    >Delete</Button>*!/*/}
-        {/*                                    /!*    <Button*!/*/}
-        {/*                                    /!*        variant="contained"*!/*/}
-        {/*                                    /!*    >Detail</Button>*!/*/}
-
-        {/*                                    /!*</CardActions>*!/*/}
-        {/*                                </Card>*/}
-        {/*                            </Grid>*/}
-        {/*                        ))}*/}
-        {/*                </Grid>*/}
-
-        {/*                <Pagination*/}
-        {/*                    count={list.totalPage}*/}
-        {/*                    color="primary"*/}
-        {/*                    className="flex justify-center mt-4"*/}
-        {/*                    onChange={(e, page) => {*/}
-        {/*                        changePageHandle(page)*/}
-        {/*                    }}*/}
-        {/*                />*/}
-        {/*            </Box>}*/}
-
-        {/*    </Card>*/}
-        {/*</Main>*/}
     </div>
 }
 

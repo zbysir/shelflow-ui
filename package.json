@@ -16,6 +16,8 @@
     "@mui/lab": "^5.0.0-alpha.133",
     "@mui/material": "^5.13.1",
     "@radix-ui/react-menubar": "^1.0.3",
+    "@radix-ui/react-popover": "^1.0.6",
+    "@radix-ui/react-select": "^1.2.2",
     "@radix-ui/react-separator": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tooltip": "^1.0.6",

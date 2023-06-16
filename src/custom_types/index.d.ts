@@ -20,6 +20,7 @@ export interface INodeParams {
     dynamic?: boolean;
     options?: any[];
     list?: boolean;
+    placeholder?: string;
 }
 
 export interface INodeData {

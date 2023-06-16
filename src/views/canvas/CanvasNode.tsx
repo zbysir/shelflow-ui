@@ -130,8 +130,8 @@ export default function CanvasNode({data}: { data: INodeData }) {
                 position: "relative"
             }
         }>
-            <LabelComp name={data.name} sx={{padding: 1}}></LabelComp>
-            <div style={{position:"absolute", bottom: 0, width:"100%"}}>
+            <LabelComp name={data.name} className="p-2"></LabelComp>
+            <div style={{position: "absolute", bottom: 0, width: "100%"}}>
                 {
                     nodeStyle.running ? <LinearProgress color="success"/> : null
                 }

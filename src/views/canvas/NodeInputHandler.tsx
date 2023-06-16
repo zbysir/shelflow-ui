@@ -1,21 +1,22 @@
 import PropTypes from 'prop-types'
-import {Box, Tooltip, Stack, IconButton} from "@mui/material";
-import {useTheme, styled} from '@mui/material/styles'
-import {tooltipClasses} from '@mui/material/Tooltip'
 import {Handle, Position, useUpdateNodeInternals} from 'reactflow'
 import {useState, useEffect, useRef, useContext} from 'react'
-import {Input} from '../ui-components/input/Index'
-import {flowContext} from "../../store/context/ReactFlowContext";
-import {isValidConnection} from '../../utils/genericHelper'
-import DeleteIcon from '@mui/icons-material/Delete';
-import FullscreenIcon from '@mui/icons-material/Fullscreen';
 
-const CustomWidthTooltip = styled(({className, ...props}: any) => <Tooltip {...props} classes={{popper: className}}/>)({
-    [`& .${tooltipClasses.tooltip}`]: {
-        maxWidth: 500
-    }
-})
+import {flowContext} from "@/store/context/ReactFlowContext";
+import {isValidConnection} from '@/utils/genericHelper'
 
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
+
+// ui-components
+import Input from '../ui-components/input/Index'
+import TextAreaComp from '../ui-components/textarea/Textarea'
+
+import {Maximize, Trash2} from 'lucide-react'
 
 //  labelComp
 import LabelComp from '../ui-components/label/Index'
@@ -29,7 +30,6 @@ function NodeInputHandler({data, disabled = false, inputParam, deleteInputAnchor
     deleteInputAnchor?: () => void
 
 }) {
-    const theme = useTheme()
     const [position, setPosition] = useState(0)
     const ref = useRef(null)
     const updateNodeInternals = useUpdateNodeInternals()
@@ -41,8 +41,9 @@ function NodeInputHandler({data, disabled = false, inputParam, deleteInputAnchor
     }
     const showDisplay = (type: string) => {
         const newType = type.split('/')[0]
-        return ['textarea', 'code'].includes(newType)
+        return newType
     }
+    const displayType = showDisplay(inputParam.display_type);
 
     useEffect(() => {
         if (ref.current) {
@@ -60,65 +61,76 @@ function NodeInputHandler({data, disabled = false, inputParam, deleteInputAnchor
     return <div ref={ref}>
         {inputParam && inputParam.input_type === 'anchor' && (
             <>
-                <CustomWidthTooltip placement='left' title={inputParam.type}>
-                    <Handle
-                        type='target'
-                        position={Position.Left}
-                        key={inputParam.key}
-                        id={inputParam.key}
-                        isValidConnection={(connection) => isValidConnection(connection, inputParam, 'target', reactFlowInstance)}
-                        style={{
-                            height: 10,
-                            width: 10,
-                            backgroundColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary,
-                            top: position
-                        }}
-
-                    />
-                </CustomWidthTooltip>
-                <Box sx={{p: 2}}>
-                    <Stack
-                        direction="row"
-                        alignItems="center"
-                        justifyContent="space-between"
-                        className="group"
-                    >
-                        <LabelComp name={inputParam.name} defaultValue={inputParam.key}></LabelComp>
-                        {inputParam.dynamic && <DeleteIcon
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Handle
+                                type='target'
+                                position={Position.Left}
+                                key={inputParam.key}
+                                id={inputParam.key}
+                                isValidConnection={(connection) => isValidConnection(connection, inputParam, 'target', reactFlowInstance)}
+                                style={{
+                                    height: 10,
+                                    width: 10,
+                                    top: position
+                                }}
+                            />
+                        </TooltipTrigger>
+                        <TooltipContent side="left" align="center">
+                            {inputParam.type}
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+                <div className="p-2">
+                    <div className="flex items-center justify-between  group">
+                        <LabelComp name={inputParam.name} defaultValue={inputParam.key} className="ml-2"></LabelComp>
+                        {inputParam.dynamic && <Trash2
                             className="group-hover:opacity-100 opacity-0"
                             onClick={() => deleteInputAnchor && deleteInputAnchor()}
-                        ></DeleteIcon>}
-                    </Stack>
-                </Box>
+                        ></Trash2>}
+                    </div>
+                </div>
             </>
         )}
         {inputParam && inputParam.input_type !== 'anchor' &&
             <>
-                <Box sx={{p: 2}}>
-                    <div className="flex items-center justify-between">
+                <div className="p-2">
+                    <div className="flex items-center justify-between mb-2">
                         <LabelComp name={inputParam.name} defaultValue={inputParam.key}></LabelComp>
 
-                        {showDisplay(inputParam.display_type) && <IconButton
-                            title='Expand'
-                            color='primary'
-                            onClick={onExpandDialogClicked}>
-                            <FullscreenIcon/>
-                        </IconButton>}
+                        {['code', 'textarea'].includes(displayType) &&
+                            <Maximize
+                                onClick={onExpandDialogClicked}
+                                className="w-5 h-4  cursor-pointer hover:bg-secondary"/>}
                     </div>
+                    {(() => {
+                        switch (displayType) {
+                            case 'text':
+                            case 'number':
+                            case 'password':
+                            default:
+                                return <Input
+                                    displayType={displayType}
+                                    inputParam={inputParam}
+                                    onChange={(newValue) => (inputParam.value = newValue)}
+                                    value={inputParam.value ?? inputParam.value ?? ''}
+                                />
+                            case 'textarea':
+                            case 'code':
+                                return <TextAreaComp
+                                    inputParam={inputParam}
+                                    onChange={(newValue) => (inputParam.value = newValue)}
+                                    value={inputParam.value ?? inputParam.value ?? ''}
+                                    showDlg={showExpandDialog}
+                                    onDialogCancel={() => {
+                                        setShowExpandDialog(false)
+                                    }}
+                                ></TextAreaComp>
 
-                    {
-                        <Input
-                        disabled={disabled}
-                        inputParam={inputParam}
-                        onChange={(newValue) => (inputParam.value = newValue)}
-                        value={inputParam.value ?? inputParam.value ?? ''}
-                        showDlg={showExpandDialog}
-                        onDialogCancel={() => {
-                            setShowExpandDialog(false)
-                        }}
-                    />
-                    }
-                </Box>
+                        }
+                    })()}
+                </div>
             </>}
     </div>
 }

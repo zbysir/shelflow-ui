@@ -1,22 +1,23 @@
-import {Typography} from "@mui/material";
-import {SxProps} from "@mui/system";
-import {Theme} from "@mui/material/styles";
-import {TypographyProps} from "@mui/material/Typography/Typography";
-
-interface LabelTextProps extends TypographyProps {
-    name: Record<string, string>,
-    defaultValue?: string,
+interface Props {
+    name: Record<string, any>;
+    defaultValue?: string;
+    className?: string
 }
 
 const lang = 'en'
-export default function LabelText({name, defaultValue, ...props}: LabelTextProps) {
+export default function LabelText({name, defaultValue, className}: Props) {
     const keys = name ? Object.keys(name) : []
-    if (!name) return <Typography>{defaultValue}</Typography>
-    if (name[lang]) {
-        return <Typography {...props}>{name[lang]}</Typography>
-    } else if (!name[lang] && name[keys[0]]) {
-        return <Typography {...props}>{name[keys[0]]}</Typography>
+    let text = ''
+    if (name) {
+        if (name[lang]) {
+            text = name[lang]
+        } else if (!name[lang] && name[keys[0]]) {
+            text = name[keys[0]]
+        } else {
+            text = defaultValue || ''
+        }
     } else {
-        return <Typography {...props}>{defaultValue}</Typography>
+        text = defaultValue || ''
     }
+    return <p className={className}>{text}</p>
 }

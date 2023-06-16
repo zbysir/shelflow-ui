@@ -1,6 +1,11 @@
 import * as React from 'react';
-import {Button, Typography, Box} from '@mui/material'
-import Popover from '@mui/material/Popover';
+import {Button} from "@/components/ui/button"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import {Plus} from 'lucide-react'
 
 interface Cate {
     category: {
@@ -15,59 +20,35 @@ interface Cate {
 
 const AddNode = ({comps}: { comps: Cate[] }) => {
     const onDragStart = (event: any, node: any) => {
-        console.log('dragstart11111:', event);
         event.dataTransfer.setData('application/reactflow', JSON.stringify(node));
         event.dataTransfer.effectAllowed = 'move';
     }
-    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-    const open = Boolean(anchorEl);
-    const id = open ? 'simple-popover' : undefined;
 
     return <>
-        <Button
-            aria-describedby={id}
-            style={{position: 'absolute'}}
-            sx={{zIndex: 100}}
-            className={'left-4 top-10'}
-            variant="outlined"
-            onClick={handleClick}
-        >
-            添加
-        </Button>
-        <Popover
-            id={id}
-            open={open}
-            anchorEl={anchorEl}
-            onClose={handleClose}
-            anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-            }}
-        >
-            <Box sx={{padding: 2, width: 300}}>
-                <Typography>组件库</Typography>
-                <div className='mt-2'>
+        <Popover>
+            <PopoverTrigger>
+                <Button className="w-10 rounded-full p-0 absolute z-50 left-4 shadow-xl">
+                    <Plus className="h-4 w-4"/>
+                    <span className="sr-only">Open popover</span>
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent>
+                <div className="font-bold">组件库</div>
+
+                <div className="mt-4 h-fit max-h-96 overflow-auto">
                     {comps && comps.map((item: Cate, index: number) => (
-                        <Box key={index} sx={{marginBottom: 2}}>
-                            <Typography variant="body1" mt={2}>{item.category.name['zh-CN']}</Typography>
+                        <div className="mb-4" key={index}>
+                            <div>{item.category.name['zh-CN']}</div>
                             {item.children && item.children.map((child, i) => (
                                 <Button
                                     draggable
                                     onDragStart={(event) => onDragStart(event, child)}
-                                    variant="text" key={i}>{child.data.name['zh-CN']}</Button>
+                                    variant="ghost" key={i}>{child.data.name['zh-CN']}</Button>
                             ))}
-                        </Box>
+                        </div>
                     ))}
                 </div>
-
-            </Box>
-
+            </PopoverContent>
         </Popover>
     </>
 }

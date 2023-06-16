@@ -16,6 +16,9 @@ import './overview.css';
 import {AppBar, Box, Stack, Toolbar, Typography} from '@mui/material'
 import {useTheme} from '@mui/material/styles'
 import LoadingButton from '@mui/lab/LoadingButton';
+//  shadcnUI
+import {Button} from "@/components/ui/button"
+import {Loader2} from 'lucide-react'
 //  hooks
 import useApi from "../../hooks/useApi";
 // Api
@@ -227,32 +230,34 @@ const OverviewFlow = () => {
         },
         [getFlowApi.data, getFlowApi.error])
 
-    return <Box className="h-full">
-        <AppBar
-            color='inherit'
-            elevation={1}
-            sx={{
-                bgcolor: theme.palette.background.default
-            }}>
-            <Toolbar>
-                <Box sx={{flexGrow: 1}}>
-                    <Typography>{detail.name}</Typography>
-                </Box>
-                <Stack direction="row" spacing={2}>
-                    <LoadingButton
-                        variant="outlined"
-                        loading={runLoading}
-                        onClick={runFlow}>run</LoadingButton>
-                    <LoadingButton
-                        loading={editFlowApi.loading || addFlowApi.loading}
-                        variant="contained" onClick={onSave}>save</LoadingButton>
-                </Stack>
+    return <div className="h-full">
+        <header
+            className="shadow-md"
+        >
+            <nav className="flex items-center justify-between p-4">
+                <div>
+                    {detail.name}
+                </div>
+                <div className="flex">
+                    <Button
+                        disabled={runLoading}
+                        variant="outline"
+                        onClick={runFlow}>
+                        {runLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+                        run</Button>
+                    <Button
+                        disabled={editFlowApi.loading || addFlowApi.loading}
+                        className="ml-2"
+                        onClick={onSave}>
+                        {(editFlowApi.loading || addFlowApi.loading) &&
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+                        save</Button>
+                </div>
 
-            </Toolbar>
-        </AppBar>
-        <Box sx={{pt: '70px', height: '100vh', width: '100%'}}>
+            </nav>
+        </header>
+        <div>
             <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-
                 <ReactFlow
                     nodes={nodes}
                     edges={edges}
@@ -276,9 +281,9 @@ const OverviewFlow = () => {
                     {getCompsApi.data && <AddNode comps={getCompsApi.data}></AddNode>}
                 </ReactFlow>
             </div>
-        </Box>
+        </div>
 
-    </Box>
+    </div>
 
 
 };

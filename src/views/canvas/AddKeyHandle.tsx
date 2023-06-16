@@ -1,7 +1,14 @@
 import {useState} from 'react'
-import {Box, Input, Autocomplete, TextField, Stack} from "@mui/material";
 import {INodeParams} from "../../custom_types";
-import DoneIcon from "@mui/icons-material/Done";
+import {Input} from "@/components/ui/input";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import {Check} from 'lucide-react'
 
 interface Option {
     label: string;
@@ -56,12 +63,11 @@ export default function AddKeyHandle(
     }
 
 
-    return <Box sx={{padding: 1}}>
-        <Stack direction="row"
-               spacing={1}
-               alignItems="center">
+    return <div className="p-2">
+        <div className="flex items-center"
+        >
             <Input
-                size='small'
+                className="w-32 mr-2"
                 placeholder="Key"
                 value={inputAnchor.key}
                 onChange={(e) => {
@@ -74,29 +80,32 @@ export default function AddKeyHandle(
                 }
                 }
             />
-
-            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment*/}
-            {/* @ts-ignore*/}
-            <Autocomplete
-                id={inputAnchor.key}
-                disableClearable={true}
-                size='small'
-                sx={{width: '50%'}}
-                options={options}
-                onChange={(e: any, selection: Option) => {
-                    console.log('change:', selection, e);
-                    const data = {
-                        ...inputAnchor,
-                        type: selection.value
+            <Select className="ml-2"
+                    onValueChange={(v: string) => {
+                        const data: INodeParams = {
+                            ...inputAnchor,
+                            type: v
+                        }
+                        setInputAnchor(data)
+                    }}>
+                <SelectTrigger>
+                    <SelectValue
+                        placeholder="type"
+                    />
+                </SelectTrigger>
+                <SelectContent>
+                    {
+                        options.map((option, index) => (
+                            <SelectItem key={index} value={option.value}>{option.label}</SelectItem>
+                        ))
                     }
-                    setInputAnchor(data)
-                }}
-                renderInput={(params) => <TextField {...params} label="type"/>}>
-            </Autocomplete>
+                </SelectContent>
+            </Select>
 
-            <DoneIcon
-                onClick={saveHandle}></DoneIcon>
-        </Stack>
+            <Check
+                className="flex-none cursor-pointer ml-2"
+                onClick={saveHandle}></Check>
+        </div>
 
-    </Box>
+    </div>
 }

@@ -1,29 +1,24 @@
 import PropTypes from 'prop-types'
 import {Handle, Position, useUpdateNodeInternals} from 'reactflow'
 import {useContext, useEffect, useRef, useState} from 'react'
-
-// material-ui
-import {styled, useTheme} from '@mui/material/styles'
-import {Box, Tooltip} from '@mui/material'
-import {tooltipClasses} from '@mui/material/Tooltip'
-
 //  labelComp
 import LabelComp from '../ui-components/label/Index'
 //  type
-import {INodeData, INodeParams} from '../../custom_types/index'
-import {isValidConnection} from "../../utils/genericHelper";
-import {flowContext} from "../../store/context/ReactFlowContext";
-import {getNodeRunStatusStyle} from "./CanvasNode.tsx";
+import {INodeData, INodeParams} from '@/custom_types/index'
+import {isValidConnection} from "@/utils/genericHelper";
+import {flowContext} from "@/store/context/ReactFlowContext";
 
-const CustomWidthTooltip = styled(({className, ...props}: any) => <Tooltip {...props} classes={{popper: className}}/>)({
-    [`& .${tooltipClasses.tooltip}`]: {
-        maxWidth: 500
-    }
-})
+
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
+
 
 // ===========================|| NodeOutputHandler ||=========================== //
 const NodeOutputHandler = ({outputAnchor, data}: { outputAnchor: INodeParams, data: INodeData }) => {
-    const theme = useTheme()
     const ref = useRef(null)
     const updateNodeInternals = useUpdateNodeInternals()
     const [position, setPosition] = useState(0)
@@ -50,31 +45,33 @@ const NodeOutputHandler = ({outputAnchor, data}: { outputAnchor: INodeParams, da
     return (
         <div ref={ref}>
             <>
-                <CustomWidthTooltip placement='right' title={outputAnchor.type}>
-                    <Handle
-                        type='source'
-                        position={Position.Right}
-                        key={outputAnchor.key}
-                        id={outputAnchor.key}
-                        isValidConnection={(connection) => isValidConnection(connection, outputAnchor, 'source', reactFlowInstance)}
-                        style={{
-                            height: 10,
-                            width: 10,
-                            backgroundColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary,
-                            top: position
-                        }}
-                    />
-                </CustomWidthTooltip>
-                <Box sx={
-                    {
-                        p: 2,
-                        textAlign: 'end',
-                    }
-                }>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Handle
+                                type='source'
+                                position={Position.Right}
+                                key={outputAnchor.key}
+                                id={outputAnchor.key}
+                                isValidConnection={(connection) => isValidConnection(connection, outputAnchor, 'source', reactFlowInstance)}
+                                style={{
+                                    height: 10,
+                                    width: 10,
+                                    top: position
+                                }}
+                            />
+                        </TooltipTrigger>
+                        <TooltipContent side="right" align="center">
+                            {outputAnchor.type}
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+                <div className="p-2 text-end">
                     <LabelComp
+                        className="mr-2"
                         name={outputAnchor.name}
                         defaultValue={outputAnchor.key}></LabelComp>
-                </Box>
+                </div>
             </>
         </div>
     )

@@ -61,10 +61,9 @@ export const flowDetail = (data: FlowData) => {
         })
 
         console.log('flowDetail edges', edges)
-        const NodeType = node.type === 'output' ? 'outputNode' : 'customNode'
         return {
             ...node,
-            type: NodeType,
+            type: 'customNode',
             data: {
                 ...node.data,
                 id: node.id,
@@ -141,4 +140,14 @@ export const isValidConnection = (connection: Connection, inputAnchor: INodePara
         return true
     }
     return handle?.type === inputAnchor.type
+}
+
+export const isConnectable = (inputParam: INodeParams) => {
+    // console.log('isConnectable inputParam:', inputParam)
+    if (inputParam.list) {
+        return true
+    } else {
+        // console.log('isConnectable1111',!inputParam.anchors || inputParam.anchors && inputParam.anchors.length <= 1)
+        return !inputParam.anchors || inputParam.anchors && inputParam.anchors.length <= 1
+    }
 }

@@ -15,6 +15,7 @@ import './overview.css';
 
 //  shadcnUI
 import {Button} from "@/components/ui/button"
+import {Input} from '@/components/ui/input'
 import {Loader2} from 'lucide-react'
 //  hooks
 import useApi from "@/hooks/useApi";
@@ -32,10 +33,9 @@ import {FlowData, INodeParams} from "@/custom_types";
 import {flowContext} from "@/store/context/ReactFlowContext";
 import {useSnackbar} from "notistack";
 
-
 const nodeTypes = {
     customNode: CanvasNode,
-    outputNode: OutputNode,
+    // outputNode: OutputNode,
 };
 
 
@@ -59,10 +59,6 @@ const OverviewFlow = () => {
 
     const {reactFlowInstance, setReactFlowInstance, runResult, setRunResult} = useContext(flowContext);
 
-    // const onInit = (reactFlowInstance: ReactFlowInstance) => {
-    //     // setRfInstance(reactFlowInstance)
-    //     setReactFlowInstance(reactFlowInstance)
-    // }
     const onDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
@@ -90,11 +86,10 @@ const OverviewFlow = () => {
         const id = getUniqueNodeId();
         const data = initNode(nodeData.data, id)
         data.type = nodeData.type
-        const NodeType = nodeData.type === 'output' ? 'outputNode' : 'customNode'
         const newNode = {
             id: id,
             position,
-            type: NodeType,
+            type: 'customNode',
             data: data
         }
 
@@ -202,11 +197,19 @@ const OverviewFlow = () => {
         }
     }
 
+    const changeName = (name: string) => {
+        setDetail({
+            ...detail,
+            name: name
+        })
+    }
+
     // // =========|| useEffect ||======== //
     useEffect(() => {
         console.log('env:', import.meta.env.MODE, import.meta.env.VITE_API_HOST);
         getCompsApi.request()
     }, [])
+
 
     useEffect(() => {
         if (params.id) {
@@ -232,7 +235,12 @@ const OverviewFlow = () => {
         >
             <nav className="flex items-center justify-between p-4">
                 <div>
-                    {detail.name}
+                    <Input value={detail.name || ''}
+                           placeholder="flow name"
+                           onChange={(e) => {
+                               changeName(e.target.value)
+                           }
+                           }></Input>
                 </div>
                 <div className="flex">
                     <Button

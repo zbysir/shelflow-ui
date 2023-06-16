@@ -13,8 +13,9 @@ import {
 } from "@/components/ui/tooltip"
 
 // ui-components
-import Input from '../ui-components/input/Index'
+import InputComp from '../ui-components/input/Index'
 import TextAreaComp from '../ui-components/textarea/Textarea'
+import {Switch} from "@/components/ui/switch"
 
 import {Maximize, Trash2} from 'lucide-react'
 
@@ -23,11 +24,12 @@ import LabelComp from '../ui-components/label/Index'
 //  type
 import {INodeParams, INodeData} from '../../custom_types/index'
 
-function NodeInputHandler({data, disabled = false, inputParam, deleteInputAnchor}: {
+function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
     data: INodeData,
     disabled?: boolean,
     inputParam: INodeParams,
-    deleteInputAnchor?: () => void
+    deleteInputAnchor?: () => void,
+    changeParam?: (node: INodeParams) => void
 
 }) {
     const [position, setPosition] = useState(0)
@@ -35,7 +37,6 @@ function NodeInputHandler({data, disabled = false, inputParam, deleteInputAnchor
     const updateNodeInternals = useUpdateNodeInternals()
     const {reactFlowInstance} = useContext(flowContext)
     const [showExpandDialog, setShowExpandDialog] = useState(false)
-
     const onExpandDialogClicked = () => {
         setShowExpandDialog(true)
     }
@@ -43,7 +44,11 @@ function NodeInputHandler({data, disabled = false, inputParam, deleteInputAnchor
         const newType = type.split('/')[0]
         return newType
     }
-    const displayType = showDisplay(inputParam.display_type);
+    const displayType = showDisplay(inputParam.display_type || inputParam.type);
+    const changeInputParamValue = (v: any) => {
+        changeParam && changeParam({...inputParam, value: v})
+    }
+
 
     useEffect(() => {
         if (ref.current) {
@@ -69,6 +74,7 @@ function NodeInputHandler({data, disabled = false, inputParam, deleteInputAnchor
                                 position={Position.Left}
                                 key={inputParam.key}
                                 id={inputParam.key}
+                                isConnectable={true}
                                 isValidConnection={(connection) => isValidConnection(connection, inputParam, 'target', reactFlowInstance)}
                                 style={{
                                     height: 10,
@@ -110,7 +116,7 @@ function NodeInputHandler({data, disabled = false, inputParam, deleteInputAnchor
                             case 'number':
                             case 'password':
                             default:
-                                return <Input
+                                return <InputComp
                                     displayType={displayType}
                                     inputParam={inputParam}
                                     onChange={(newValue) => (inputParam.value = newValue)}
@@ -127,7 +133,10 @@ function NodeInputHandler({data, disabled = false, inputParam, deleteInputAnchor
                                         setShowExpandDialog(false)
                                     }}
                                 ></TextAreaComp>
-
+                            case 'bool':
+                                return <Switch checked={inputParam.value as boolean}
+                                               onCheckedChange={(newValue) => changeInputParamValue(newValue)}
+                                ></Switch>
                         }
                     })()}
                 </div>

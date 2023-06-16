@@ -14,7 +14,7 @@ export interface INodeParams {
     key: string;
     type: string;
     display_type: string;
-    value: string
+    value: any;
     input_type?: inputTpe;
     anchors?: NodeAnchor[];
     dynamic?: boolean;

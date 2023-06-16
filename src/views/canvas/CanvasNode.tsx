@@ -104,6 +104,12 @@ export default function CanvasNode({data}: { data: INodeData }) {
         updateNodeData(data.id, newData)
     }
 
+    const changeParam = (index: number, params: INodeParams) => {
+        console.log('changeParam params:', params);
+        const newData = {...data}
+        newData.input_params[index] = params
+        updateNodeData(data.id, newData)
+    }
     return <Card id={data.id}
                  className="border border-solid shadow-md
                  border-color hover:shadow-xl w-[300px] overflow-hidden dark:bg-secondary"
@@ -123,6 +129,7 @@ export default function CanvasNode({data}: { data: INodeData }) {
             {data.input_params && data.input_params.map((inputParam, index) => (
                 <NodeInputHandler
                     key={index} inputParam={inputParam} data={data}
+                    changeParam={(param) => changeParam(index, param)}
                     deleteInputAnchor={() => {
                         delAnchor(inputParam.key, 'input_params')
                     }}/>
@@ -132,7 +139,13 @@ export default function CanvasNode({data}: { data: INodeData }) {
                     addAnchor(x, 'input_params')
                 }}
             ></AddKeyHandle>}
-            <Separator></Separator>
+
+            {data.type === 'output' ? <div className="p-1  text-center" style={{'minHeight': '100px'}}>
+                <p>
+                    {runResult[data.id]?.result?.default || <span>run your flow to see data</span>}
+                </p>
+            </div> : <Separator></Separator>
+            }
             {data.output_anchors && data.output_anchors.map((outputAnchor, index) => (
                 <NodeOutputHandler key={index} outputAnchor={outputAnchor} data={data}/>
             ))}

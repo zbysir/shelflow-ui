@@ -1,9 +1,9 @@
 import React from 'react'
 import LabelComp from '../ui-components/label/Index'
-import {INodeData} from "../../custom_types";
+import {INodeData} from "@/custom_types";
 import NodeInputHandler from "./NodeInputHandler";
 import NodeOutputHandler from "./NodeOutputHandler";
-import {flowContext} from "../../store/context/ReactFlowContext";
+import {flowContext} from "@/store/context/ReactFlowContext";
 import {getNodeRunStatusStyle} from "./CanvasNode.tsx";
 import {
     Card,

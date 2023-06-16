@@ -1,13 +1,10 @@
 import {useEffect, useState} from "react";
-
-import {useTheme, styled} from '@mui/material/styles'
-import {useNavigate} from 'react-router-dom'
 //  hooks
-import useApi from "../../hooks/useApi";
+import useApi from "@/hooks/useApi";
 
 // api
-import api from "../../api";
-import {FlowData} from "../../custom_types";
+import api from "@/api";
+import {FlowData} from "@/custom_types";
 
 
 import {Button} from "@/components/ui/button"
@@ -31,10 +28,6 @@ import {
 } from "@/components/ui/menubar"
 import {Separator} from "@/components/ui/separator"
 
-
-const Main = styled('main', {shouldForwardProp: (prop) => prop !== 'open'})(({theme}: { theme: any }) => ({
-    ...theme?.typography?.mainContent,
-}))
 
 
 const Flows = () => {

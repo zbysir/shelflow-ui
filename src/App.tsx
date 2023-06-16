@@ -1,15 +1,10 @@
 import './App.css'
 import {RouterProvider} from "react-router";
-
 import router from './routes/index.tsx'
-import { ThemeProvider } from '@mui/material/styles'
-import theme from './theme/index.ts'
 
 
 function App() {
-    return <ThemeProvider theme={theme({isDarkMode: false})}>
-        <RouterProvider router={router}/>
-    </ThemeProvider>
+    return <RouterProvider router={router}/>
 }
 
 export default App

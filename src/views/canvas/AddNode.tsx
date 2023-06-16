@@ -26,10 +26,9 @@ const AddNode = ({comps}: { comps: Cate[] }) => {
 
     return <>
         <Popover>
-            <PopoverTrigger>
-                <Button className="w-10 rounded-full p-0 absolute z-50 left-4 shadow-xl">
+            <PopoverTrigger asChild>
+                <Button className="w-10 rounded-full p-0 absolute z-50 top-4 left-4 shadow-xl">
                     <Plus className="h-4 w-4"/>
-                    <span className="sr-only">Open popover</span>
                 </Button>
             </PopoverTrigger>
             <PopoverContent>

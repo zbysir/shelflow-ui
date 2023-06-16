@@ -12,27 +12,24 @@ import ReactFlow, {
 
 import 'reactflow/dist/style.css';
 import './overview.css';
-//  mui
-import {AppBar, Box, Stack, Toolbar, Typography} from '@mui/material'
-import {useTheme} from '@mui/material/styles'
-import LoadingButton from '@mui/lab/LoadingButton';
+
 //  shadcnUI
 import {Button} from "@/components/ui/button"
 import {Loader2} from 'lucide-react'
 //  hooks
-import useApi from "../../hooks/useApi";
+import useApi from "@/hooks/useApi";
 // Api
-import api from "../../api/index";
+import api from "@/api/index";
 //  customNode
 import CanvasNode from './CanvasNode';
 import AddNode from "./AddNode";
 import OutputNode from "./OutputNode";
 // utils
-import {edgeToData, flowDetail, getUniqueNodeId, initNode} from '../../utils/genericHelper'
+import {edgeToData, flowDetail, getUniqueNodeId, initNode} from '@/utils/genericHelper'
 //  custom types
-import {FlowData, INodeParams, NodeAnchor} from "../../custom_types";
+import {FlowData, INodeParams} from "@/custom_types";
 // context
-import {flowContext} from "../../store/context/ReactFlowContext";
+import {flowContext} from "@/store/context/ReactFlowContext";
 import {useSnackbar} from "notistack";
 
 
@@ -43,7 +40,6 @@ const nodeTypes = {
 
 
 const OverviewFlow = () => {
-    const theme = useTheme()
     const params = useParams();
     const reactFlowWrapper = useRef(null);
     const [nodes, setNodes, onNodesChange] = useNodesState<Node[]>([]);
@@ -244,14 +240,16 @@ const OverviewFlow = () => {
                         variant="outline"
                         onClick={runFlow}>
                         {runLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
-                        run</Button>
+                        Run
+                    </Button>
                     <Button
                         disabled={editFlowApi.loading || addFlowApi.loading}
                         className="ml-2"
                         onClick={onSave}>
                         {(editFlowApi.loading || addFlowApi.loading) &&
                             <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
-                        save</Button>
+                        Save
+                    </Button>
                 </div>
 
             </nav>

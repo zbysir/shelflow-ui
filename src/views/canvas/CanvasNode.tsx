@@ -1,34 +1,27 @@
-import {styled, useTheme} from "@mui/material/styles";
-import MainCard from "../ui-components/card/MainCard";
 import PropTypes from 'prop-types'
-import {Box, Divider, Typography} from '@mui/material'
 import NodeInputHandler from "./NodeInputHandler";
 import NodeOutputHandler from "./NodeOutputHandler";
 import AddKeyHandle from "./AddKeyHandle";
 //  labelComp
 import LabelComp from '../ui-components/label/Index'
 
-import {INodeData, INodeParams, NodeAnchor} from '../../custom_types/index'
+import {INodeData, INodeParams, NodeAnchor} from '@/custom_types/index'
 import {useSnackbar} from 'notistack';
-import {flowContext, NodeStatus} from "../../store/context/ReactFlowContext";
+import {flowContext, NodeStatus} from "@/store/context/ReactFlowContext";
 import React, {useContext} from "react";
 import LinearProgress from '@mui/material/LinearProgress';
-import {buildEdgeId} from "../../utils/genericHelper";
+import {buildEdgeId} from "@/utils/genericHelper";
 
-export const CardWrapper = styled(MainCard)(({theme}: { theme: any }) => ({
-    background: theme?.palette?.card?.main,
-    color: theme?.darkTextPrimary,
-    border: 'solid 1px',
-    borderColor: theme?.palette.primary[200] + 75,
-    width: '300px',
-    height: 'auto',
-    padding: '10px',
-    boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.12), 0px 1px 2px rgba(0, 0, 0, 0.24);',
-    '&:hover': {
-        boxShadow: '0px 3px 6px rgba(0, 0, 0, 0.16), 0px 3px 6px rgba(0, 0, 0, 0.23)'
-    },
-    transition: "box-shadow,border-color 300ms cubic-bezier(0.4, 0, 0.2, 1)",
-}));
+
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
+import {Separator} from "@/components/ui/separator"
 
 export interface NodeStyle {
     borderColor?: string
@@ -74,7 +67,6 @@ export const getNodeRunStatusStyle = (runStatus: Record<string, NodeStatus>, nod
 }
 
 export default function CanvasNode({data}: { data: INodeData }) {
-    const theme: any = useTheme()
     const {enqueueSnackbar} = useSnackbar();
     const {updateNodeData, runResult, deleteEdge} = useContext(flowContext)
 
@@ -111,75 +103,57 @@ export default function CanvasNode({data}: { data: INodeData }) {
         newData[key] = newData[key].filter((x: INodeParams) => x.key !== fieldKey)
         updateNodeData(data.id, newData)
     }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return <CardWrapper
-        id={data.id}
-        content={false}
-        sx={{
-            borderRadius: "8px",
-            padding: 0,
-            borderColor: data.selected ? theme.palette.primary.main : theme.palette.text.secondary,
-            ...nodeStyle,
-        }}
-        border={false}>
-        <Box sx={
-            {
-                background: "#f5f5f5",
-                ...nodeStyle.header,
-                position: "relative"
-            }
-        }>
-            <LabelComp name={data.name} className="p-2"></LabelComp>
-            <div style={{position: "absolute", bottom: 0, width: "100%"}}>
-                {
-                    nodeStyle.running ? <LinearProgress color="success"/> : null
-                }
+
+    return <Card id={data.id}
+                 className="border border-solid shadow-md
+                 border-color hover:shadow-xl w-[300px] overflow-hidden dark:bg-secondary"
+                 style={{borderColor: nodeStyle.borderColor}}>
+        <CardHeader className='p-0'>
+            <div className="bg-gray-100 relative p-2 dark:bg-background"
+                 style={nodeStyle.header}>
+                <LabelComp name={data.name}></LabelComp>
+                <div style={{position: "absolute", bottom: 0, width: "100%"}}>
+                    {
+                        nodeStyle.running ? <LinearProgress color="success"/> : null
+                    }
+                </div>
             </div>
-
-        </Box>
-
-        {data.input_params && data.input_params.map((inputParam, index) => (
-            <NodeInputHandler
-                key={index} inputParam={inputParam} data={data}
-                deleteInputAnchor={() => {
-                    delAnchor(inputParam.key, 'input_params')
-                }}/>
-        ))}
-
-        {data.dynamic_input && <AddKeyHandle
-            onSelect={(x: INodeParams) => {
-                addAnchor(x, 'input_params')
-            }}
-        ></AddKeyHandle>}
-        <Divider/>
-        {data.output_anchors && data.output_anchors.map((outputAnchor, index) => (
-            <NodeOutputHandler key={index} outputAnchor={outputAnchor} data={data}/>
-        ))}
-        {data.dynamic_output && <AddKeyHandle
-          onSelect={(x: INodeParams) => {
-              addAnchor(x, 'output_anchors')
-          }}
-        ></AddKeyHandle>}
-
-        {
-            nodeStyle.errorMsg ?
-                <>
-                    <Divider/>
-                    <Box sx={{padding: 1}}>
-                        <Typography
-                            sx={{
-                                fontWeight: 500,
-                                textAlign: 'start',
-                                color: '#d04e4e'
-                            }}
-                        >
-                            {nodeStyle.errorMsg}
-                        </Typography>
-                    </Box>
-                </> : null
-        }
-    </CardWrapper>
+        </CardHeader>
+        <CardContent className="p-0">
+            {data.input_params && data.input_params.map((inputParam, index) => (
+                <NodeInputHandler
+                    key={index} inputParam={inputParam} data={data}
+                    deleteInputAnchor={() => {
+                        delAnchor(inputParam.key, 'input_params')
+                    }}/>
+            ))}
+            {data.dynamic_input && <AddKeyHandle
+                onSelect={(x: INodeParams) => {
+                    addAnchor(x, 'input_params')
+                }}
+            ></AddKeyHandle>}
+            <Separator></Separator>
+            {data.output_anchors && data.output_anchors.map((outputAnchor, index) => (
+                <NodeOutputHandler key={index} outputAnchor={outputAnchor} data={data}/>
+            ))}
+            {data.dynamic_output && <AddKeyHandle
+                onSelect={(x: INodeParams) => {
+                    addAnchor(x, 'output_anchors')
+                }}
+            ></AddKeyHandle>}
+            {
+                nodeStyle.errorMsg ?
+                    <>
+                        <Separator></Separator>
+                        <div className="p-2">
+                            <p className="text-start font-medium" style={{'color': '#d04e4e'}}>
+                                {nodeStyle.errorMsg}
+                            </p>
+                        </div>
+                    </> : null
+            }
+        </CardContent>
+    </Card>
 }
 
 CanvasNode.propTypes = {

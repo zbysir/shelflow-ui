@@ -27,12 +27,17 @@ import {
     MenubarTrigger,
 } from "@/components/ui/menubar"
 import {Separator} from "@/components/ui/separator"
-
+import Pagination from '../ui-components/pagination/Pagination'
+import {useNavigate, useSearchParams} from "react-router-dom";
 
 
 const Flows = () => {
     const getFlowListApi = useApi(api.getFlowList)
-    const pageSize = 20;
+    const [pageSize, setPageSize] = useState(20);
+    const [curPage, setCurPage] = useState(1);
+    const navigate = useNavigate()
+    // const query = useMatch()
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const [list, setList] = useState<{ total: number, list: FlowData[], totalPage: number }>({
         total: 0,
@@ -40,12 +45,11 @@ const Flows = () => {
         totalPage: 0,
     })
 
-    const getFlowList = async (page = 1) => {
+    const getFlowList = async (page = 1, size = 20) => {
         const res = await getFlowListApi.request({
-            limit: pageSize,
-            index: page
+            limit: size,
+            offset: (page - 1) * size,
         })
-        console.log('getListxxx res:', res)
         const data = {
             ...res,
         }
@@ -70,12 +74,28 @@ const Flows = () => {
 
     }
     const changePageHandle = (page: number) => {
-        console.log('page:', page)
+        setCurPage(page)
         getFlowList(page)
+        navigate('/?page=' + page, {
+            replace: true,
+        })
     }
+
+    const pageSizeHandle = (size: number) => {
+        setPageSize(size)
+        setCurPage(1)
+        getFlowList(1, size)
+    }
+
     // useEffect
     useEffect(() => {
-        getFlowList()
+        const page = searchParams.get('page');
+        let p = 1;
+        if (page) {
+            p = parseInt(page)
+            setCurPage(p)
+        }
+        getFlowList(p)
     }, [])
 
 
@@ -123,42 +143,57 @@ const Flows = () => {
                 ><Loader2 className="mr-2 h-8 w-8 animate-spin"></Loader2></div>}
                 {
                     !getFlowListApi.loading && getFlowListApi.data &&
-                    <div className="grid lg:grid-cols-3 gap-4 md:grid-cols-2 sm:grid-cols-1 xl:grid-cols-4">
-                        {list.list.map((item: FlowData, index: number) => (
-                            <Card
-                                key={index}
-                                className="border border-solid
+                    <>
+                        <div className="grid lg:grid-cols-3 gap-4 md:grid-cols-2 sm:grid-cols-1 xl:grid-cols-4">
+                            {list.list.map((item: FlowData, index: number) => (
+                                <Card
+                                    key={index}
+                                    className="border border-solid
                                 border-color
                             cursor-pointer
                             group
                             hover:shadow-xl"
 
-                            >
-                                <CardHeader>
-                                    <CardTitle>{item.name || 'demo'}
+                                >
+                                    <CardHeader>
+                                        <CardTitle>{item.name || 'demo'}
 
-                                    </CardTitle>
-                                    <CardDescription>{item.description || 'description'}</CardDescription>
-                                </CardHeader>
-                                <Separator></Separator>
-                                <CardContent>
-                                    <div className="flex pt-2 justify-between">
-                                        <Button variant="ghost">
-                                            <BadgeX className="text-gray-400"></BadgeX>
-                                            <span className="ml-1">Delete</span>
-                                        </Button>
-                                        <a href={'/canvas/' + item.id}>
-                                            <Button variant="ghost"
-                                            >
-                                                <Edit className="text-gray-400"></Edit>
-                                                <span className="ml-1">Edit</span>
+                                        </CardTitle>
+                                        <CardDescription>{item.description || 'description'}</CardDescription>
+                                    </CardHeader>
+                                    <Separator></Separator>
+                                    <CardContent>
+                                        <div className="flex pt-2 justify-between">
+                                            <Button variant="ghost">
+                                                <BadgeX className="text-gray-400"></BadgeX>
+                                                <span className="ml-1">Delete</span>
                                             </Button>
-                                        </a>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>}
+                                            <a href={'/canvas/' + item.id}>
+                                                <Button variant="ghost"
+                                                >
+                                                    <Edit className="text-gray-400"></Edit>
+                                                    <span className="ml-1">Edit</span>
+                                                </Button>
+                                            </a>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            ))}
+
+                        </div>
+                        <div className="mt-4 flex justify-end">
+                            <Pagination
+                                total={list.total}
+                                pageSize={pageSize}
+                                curPage={curPage}
+                                pageChange={changePageHandle}
+                                pageSizeChange={pageSizeHandle}
+                            ></Pagination>
+                        </div>
+                    </>
+                }
+
+
             </div>
         </main>
     </div>

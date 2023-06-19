@@ -9,7 +9,6 @@ import {INodeData, INodeParams, NodeAnchor} from '@/custom_types/index'
 import {useSnackbar} from 'notistack';
 import {flowContext, NodeStatus} from "@/store/context/ReactFlowContext";
 import React, {useContext} from "react";
-import LinearProgress from '@mui/material/LinearProgress';
 import {buildEdgeId} from "@/utils/genericHelper";
 
 
@@ -22,7 +21,7 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import {Separator} from "@/components/ui/separator"
-
+import {Loader} from 'lucide-react'
 export interface NodeStyle {
     borderColor?: string
     borderWidth?: number
@@ -118,9 +117,9 @@ export default function CanvasNode({data}: { data: INodeData }) {
             <div className="bg-gray-100 relative p-2 dark:bg-background"
                  style={nodeStyle.header}>
                 <LabelComp name={data.name}></LabelComp>
-                <div style={{position: "absolute", bottom: 0, width: "100%"}}>
+                <div className="absolute bottom-2 right-0">
                     {
-                        nodeStyle.running ? <LinearProgress color="success"/> : null
+                        nodeStyle.running ? <Loader className="animate-spin"></Loader>: null
                     }
                 </div>
             </div>

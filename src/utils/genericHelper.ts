@@ -122,10 +122,8 @@ export const edgeToData = (flow: ReactFlowJsonObject) => {
 
 
 export const isValidConnection = (connection: Connection, inputAnchor: INodeParams, start: string, reactFlowInstance: any): boolean => {
-    console.log('reactFlowInstance:', reactFlowInstance)
-    if (inputAnchor.type === 'any') {
-        return true
-    }
+
+
     const flow = reactFlowInstance.toObject();
     let node = null, handle = null
     if (start === 'source') {
@@ -135,8 +133,23 @@ export const isValidConnection = (connection: Connection, inputAnchor: INodePara
         node = flow.nodes.find((node: any) => node.id === connection.source);
         handle = node?.data?.output_anchors?.find((anchor: any) => anchor.key === connection.sourceHandle);
     }
+    let inputNode = null
+    if (start === 'target') {
+        inputNode = inputAnchor;
+    } else {
+        inputNode = handle;
+    }
 
-    if (handle && handle.type === 'any') {
+    // 判断inputNode.list是否为false，如果为false，那么可以1个input只能连接1个output
+    if (!inputNode.list) {
+        if (inputNode.anchors && inputNode.anchors.length) {
+            return false
+        }
+    }
+
+
+    // 验证类型是否一致
+    if (inputAnchor.type === 'any' || handle && handle.type === 'any') {
         return true
     }
     return handle?.type === inputAnchor.type

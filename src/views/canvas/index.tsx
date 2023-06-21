@@ -28,7 +28,7 @@ import OutputNode from "./OutputNode";
 // utils
 import {edgeToData, flowDetail, getUniqueNodeId, initNode} from '@/utils/genericHelper'
 //  custom types
-import {FlowData, INodeParams} from "@/custom_types";
+import {FlowData, INodeParams, NodeAnchor} from "@/custom_types";
 // context
 import {flowContext} from "@/store/context/ReactFlowContext";
 import {useSnackbar} from "notistack";
@@ -48,6 +48,7 @@ const OverviewFlow = () => {
     // const [rfInstance, setRfInstance] = useState<ReactFlowInstance>()
     const [detail, setDetail] = useState<FlowData>({} as FlowData);
     const ws = useRef<WebSocket | null>(null);
+    const [delEdge, setDelEdge] = useState<Edge>()
     const [runLoading, setRunLoading] = useState(false)
     const {enqueueSnackbar} = useSnackbar();
     // ===========|| flowApi ||=========== //
@@ -202,6 +203,24 @@ const OverviewFlow = () => {
             name: name
         })
     }
+    const onEdgesDelete = (edges: Edge[]) => {
+        const flow = getFlow();
+        if (delEdge && flow) {
+            const targetNode = flow.graph.nodes.find((node: Node) => node.id === delEdge.target)
+            if (targetNode) {
+                const inputParams = targetNode.data.input_params.find((inputParam: INodeParams) => inputParam.key === delEdge.targetHandle)
+                const index = inputParams.anchors.findIndex((item: NodeAnchor) => {
+                    return item.node_id === delEdge.source && item.output_key === delEdge.sourceHandle
+                })
+                inputParams.anchors.splice(index, 1)
+            }
+        }
+
+    }
+    const onEdgeClick = (e: React.MouseEvent, edge: Edge) => {
+        console.log('onEdgeClick', e, edge)
+        setDelEdge(edge)
+    }
 
     // // =========|| useEffect ||======== //
     useEffect(() => {
@@ -288,6 +307,8 @@ const OverviewFlow = () => {
                     onEdgesChange={onEdgesChange}
                     onConnect={onConnect}
                     onInit={setReactFlowInstance}
+                    onEdgesDelete={onEdgesDelete}
+                    onEdgeClick={onEdgeClick}
                     onDragOver={onDragOver}
                     onDrop={onDrop}
                     fitView

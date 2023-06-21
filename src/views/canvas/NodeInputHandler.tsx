@@ -22,7 +22,7 @@ import {Maximize, Trash2} from 'lucide-react'
 //  labelComp
 import LabelComp from '../ui-components/label/Index'
 //  type
-import {INodeParams, INodeData} from '../../custom_types/index'
+import {INodeParams, INodeData} from '@/custom_types/index'
 
 function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
     data: INodeData,
@@ -119,14 +119,14 @@ function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
                                 return <InputComp
                                     displayType={displayType}
                                     inputParam={inputParam}
-                                    onChange={(newValue) => (inputParam.value = newValue)}
+                                    onChange={(newValue) => changeInputParamValue(newValue)}
                                     value={inputParam.value ?? inputParam.value ?? ''}
                                 />
                             case 'textarea':
                             case 'code':
                                 return <TextAreaComp
                                     inputParam={inputParam}
-                                    onChange={(newValue) => (inputParam.value = newValue)}
+                                    onChange={(newValue) => changeInputParamValue(newValue)}
                                     value={inputParam.value ?? inputParam.value ?? ''}
                                     showDlg={showExpandDialog}
                                     onDialogCancel={() => {

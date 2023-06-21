@@ -13,20 +13,20 @@ interface Props {
 
 export default function CodeEditor({value, onValueChange}: Props) {
     return (
-        <Editor
-            className="border border-solid border-color rounded-md font-12 bg-background"
-            value={value}
-            onValueChange={onValueChange}
-            highlight={code => highlight(code, languages.js)}
-            padding={10}
-            textareaClassName='editor__textarea'
-            style={{
-                fontFamily: '"Fira code", "Fira Mono", monospace',
-                height: 'calc(100vh - 220px)',
-                width: '100%',
-                overflowX: 'hidden',
-                overflowY: 'auto'
-            }}
-        />
+        <div style={{'height': "calc(100vh - 220px)", 'overflowY': 'auto'}}>
+            <Editor
+                className="border border-solid border-color rounded-md font-12 bg-background"
+                value={value}
+                onValueChange={onValueChange}
+                highlight={code => highlight(code, languages.js)}
+                padding={10}
+                textareaClassName='editor__textarea'
+                style={{
+                    fontFamily: '"Fira code", "Fira Mono", monospace',
+                    minHeight: "calc(100vh - 220px)",
+                }}
+            />
+        </div>
+
     );
 }

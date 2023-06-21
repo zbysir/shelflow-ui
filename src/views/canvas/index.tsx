@@ -24,7 +24,6 @@ import api from "@/api/index";
 //  customNode
 import CanvasNode from './CanvasNode';
 import AddNode from "./AddNode";
-import OutputNode from "./OutputNode";
 // utils
 import {edgeToData, flowDetail, getUniqueNodeId, initNode} from '@/utils/genericHelper'
 //  custom types
@@ -35,7 +34,6 @@ import {useSnackbar} from "notistack";
 
 const nodeTypes = {
     customNode: CanvasNode,
-    // outputNode: OutputNode,
 };
 
 

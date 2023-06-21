@@ -24,6 +24,9 @@ import LabelComp from '../ui-components/label/Index'
 //  type
 import {INodeParams, INodeData} from '@/custom_types/index'
 
+const swapNode= (node: INodeParams) => {
+
+}
 function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
     data: INodeData,
     disabled?: boolean,

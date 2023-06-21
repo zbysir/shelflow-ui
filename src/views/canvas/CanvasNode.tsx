@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/card"
 import {Separator} from "@/components/ui/separator"
 import {Loader} from 'lucide-react'
+
 export interface NodeStyle {
     borderColor?: string
     borderWidth?: number

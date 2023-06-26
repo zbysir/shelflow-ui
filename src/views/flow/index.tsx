@@ -133,7 +133,7 @@ const Flows = () => {
         <main className="p-6">
             <div className="mx-auto max-w-7xl py-6 px-6 lg:px-8 bg-seco">
                 <div className="flex items-center justify-between mb-4">
-                    <h1 className="text-3xl font-bold tracking-tight">flows</h1>
+                    <h2 className="text-3xl font-bold tracking-tight">flows</h2>
                     <a href="/canvas">
                         <Button>Add New</Button>
                     </a>

@@ -132,7 +132,8 @@ export default function CanvasNode({data}: { data: INodeData }) {
                     changeParam={(param) => changeParam(index, param)}
                     deleteInputAnchor={() => {
                         delAnchor(inputParam.key, 'input_params')
-                    }}/>
+                    }}
+                />
             ))}
             {data.dynamic_input && <AddKeyHandle
                 onSelect={(x: INodeParams) => {

@@ -24,7 +24,7 @@ export default function AddKeyHandle(
     const options: Option[] = [
         {label: 'string', value: 'string'},
         {label: 'number', value: 'number'},
-        {label: 'boolean', value: 'boolean'},
+        {label: 'boolean', value: 'bool'},
         {label: 'any', value: 'any'},
         {label: 'langchain/llm', value: 'langchain/llm'},
     ]
@@ -80,7 +80,7 @@ export default function AddKeyHandle(
                 }
                 }
             />
-            <Select className="ml-2"
+            <Select
                     onValueChange={(v: string) => {
                         const data: INodeParams = {
                             ...inputAnchor,

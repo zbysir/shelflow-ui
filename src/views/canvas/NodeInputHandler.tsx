@@ -17,22 +17,56 @@ import InputComp from '../ui-components/input/Index'
 import TextAreaComp from '../ui-components/textarea/Textarea'
 import {Switch} from "@/components/ui/switch"
 
-import {Maximize, Trash2} from 'lucide-react'
+import {Maximize, Trash2, MoreVertical, ArrowRightLeft} from 'lucide-react'
 
 //  labelComp
 import LabelComp from '../ui-components/label/Index'
 //  type
 import {INodeParams, INodeData} from '@/custom_types/index'
 
-const swapNode= (node: INodeParams) => {
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
+
+interface Props {
+    isDel?: boolean;
+    className: string;
+    deleteInputAnchor: () => void;
+    swapNode: () => void;
 }
+
+function MoreDropDown({isDel, className, deleteInputAnchor, swapNode}: Props) {
+    return <DropdownMenu>
+        <DropdownMenuTrigger>
+            <MoreVertical className={className}></MoreVertical>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+            <DropdownMenuItem
+                className="text-sm"
+                onClick={() => swapNode()}>
+                <ArrowRightLeft className="w-4 mr-2"></ArrowRightLeft>
+                Swap Block
+            </DropdownMenuItem>
+            {isDel && <DropdownMenuItem
+                onClick={() => deleteInputAnchor()}
+                className="text-sm text-red-500">
+                <Trash2 className="w-4 mr-2"></Trash2> Delete</DropdownMenuItem>}
+        </DropdownMenuContent>
+    </DropdownMenu>
+}
+
 function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
-    data: INodeData,
-    disabled?: boolean,
-    inputParam: INodeParams,
-    deleteInputAnchor?: () => void,
-    changeParam?: (node: INodeParams) => void
+    data: INodeData;
+    disabled?: boolean;
+    inputParam: INodeParams;
+    deleteInputAnchor: () => void;
+    changeParam?: (node: INodeParams) => void;
 
 }) {
     const [position, setPosition] = useState(0)
@@ -50,6 +84,18 @@ function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
     const displayType = showDisplay(inputParam.display_type || inputParam.type);
     const changeInputParamValue = (v: any) => {
         changeParam && changeParam({...inputParam, value: v})
+    }
+
+    const swapNodeHandle = () => {
+        const newParam = {...inputParam}
+        if (newParam.input_type === 'anchor') {
+            newParam.input_type = 'literal'
+        } else {
+            newParam.input_type = 'anchor'
+        }
+
+        changeParam && changeParam(newParam)
+
     }
 
 
@@ -94,10 +140,11 @@ function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
                 <div className="p-2">
                     <div className="flex items-center justify-between  group">
                         <LabelComp name={inputParam.name} defaultValue={inputParam.key} className="ml-2"></LabelComp>
-                        {inputParam.dynamic && <Trash2
+                        {inputParam.dynamic && <MoreDropDown
                             className="group-hover:opacity-100 opacity-0"
-                            onClick={() => deleteInputAnchor && deleteInputAnchor()}
-                        ></Trash2>}
+                            isDel={inputParam.dynamic}
+                            deleteInputAnchor={deleteInputAnchor}
+                            swapNode={() => swapNodeHandle()}></MoreDropDown>}
                     </div>
                 </div>
             </>
@@ -105,13 +152,18 @@ function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
         {inputParam && inputParam.input_type !== 'anchor' &&
             <>
                 <div className="p-2">
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center justify-between mb-2 group">
                         <LabelComp name={inputParam.name} defaultValue={inputParam.key}></LabelComp>
-
+                        {inputParam.dynamic && <MoreDropDown
+                            className="group-hover:opacity-100 opacity-0"
+                            isDel={inputParam.dynamic}
+                            deleteInputAnchor={deleteInputAnchor}
+                            swapNode={() => swapNodeHandle()}></MoreDropDown>}
                         {['code', 'textarea'].includes(displayType) &&
                             <Maximize
                                 onClick={onExpandDialogClicked}
                                 className="w-5 h-4  cursor-pointer hover:bg-secondary"/>}
+
                     </div>
                     {(() => {
                         switch (displayType) {

@@ -31,6 +31,16 @@ export const runFlow = (data: { id?: number, graph?: any, parallel?: number }): 
     return axios.post('/flow/run', data)
 }
 
+export const flowChat = (data: {
+    id: string;
+    params: {
+        query: string
+    };
+    output_node_id: string
+}) => {
+    return axios.post('/flow/run_sync', data)
+}
+
 export default {
     getFlowList,
     getFlow,

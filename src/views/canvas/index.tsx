@@ -24,6 +24,7 @@ import api from "@/api/index";
 //  customNode
 import CanvasNode from './CanvasNode';
 import AddNode from "./AddNode";
+import ChatBox from "@/views/chat/Chat";
 // utils
 import {edgeToData, flowDetail, getUniqueNodeId, initNode} from '@/utils/genericHelper'
 //  custom types
@@ -330,6 +331,7 @@ const OverviewFlow = () => {
                     }}/>
                     <Background color="#aaa" gap={16}/>
                     {getCompsApi.data && <AddNode comps={getCompsApi.data}></AddNode>}
+                    <ChatBox></ChatBox>
                 </ReactFlow>
             </div>
         </div>

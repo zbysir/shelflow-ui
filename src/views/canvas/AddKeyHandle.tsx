@@ -64,10 +64,10 @@ export default function AddKeyHandle(
 
 
     return <div className="p-2">
-        <div className="flex items-center"
+        <div className="flex items-center space-x-2"
         >
             <Input
-                className="w-32 mr-2"
+                className="w-32"
                 placeholder="Key"
                 value={inputAnchor.key}
                 onChange={(e) => {
@@ -88,7 +88,8 @@ export default function AddKeyHandle(
                         }
                         setInputAnchor(data)
                     }}>
-                <SelectTrigger>
+                <SelectTrigger
+                    className="w-[115px]">
                     <SelectValue
                         placeholder="type"
                     />
@@ -103,7 +104,7 @@ export default function AddKeyHandle(
             </Select>
 
             <Check
-                className="flex-none cursor-pointer ml-2"
+                className="flex-none cursor-pointer"
                 onClick={saveHandle}></Check>
         </div>
 

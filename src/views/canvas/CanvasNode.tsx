@@ -66,6 +66,19 @@ export const getNodeRunStatusStyle = (runStatus: Record<string, NodeStatus>, nod
     return ns
 }
 
+const showResult = (result: any) => {
+    const type = typeof result;
+    switch (type) {
+        case 'string':
+        case 'number':
+        case 'boolean':
+            return result
+        case 'object':
+            return JSON.stringify(result)
+        default:
+            return result
+    }
+}
 export default function CanvasNode({data}: { data: INodeData }) {
     const {enqueueSnackbar} = useSnackbar();
     const {updateNodeData, runResult, deleteEdge} = useContext(flowContext)
@@ -149,7 +162,7 @@ export default function CanvasNode({data}: { data: INodeData }) {
 
             {data.type === 'output' ? <div className="p-1  text-center" style={{'minHeight': '100px'}}>
                 <p>
-                    {runResult[data.id]?.result?.default || <span>run your flow to see data</span>}
+                    {showResult(runResult[data.id]?.result?.default) || <span>run your flow to see data</span>}
                 </p>
             </div> : <Separator></Separator>
             }

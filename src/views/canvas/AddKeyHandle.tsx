@@ -1,5 +1,5 @@
 import {useState} from 'react'
-import {INodeParams} from "../../custom_types";
+import {INodeParams} from "@/custom_types";
 import {Input} from "@/components/ui/input";
 import {
     Select,

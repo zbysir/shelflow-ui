@@ -66,7 +66,7 @@ function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
     disabled?: boolean;
     inputParam: INodeParams;
     deleteInputAnchor: () => void;
-    changeParam?: (node: INodeParams) => void;
+    changeParam?: (node: INodeParams, type?: string) => void;
 
 }) {
     const [position, setPosition] = useState(0)
@@ -94,7 +94,7 @@ function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
             newParam.input_type = 'anchor'
         }
 
-        changeParam && changeParam(newParam)
+        changeParam && changeParam(newParam, 'swapNode')
 
     }
 
@@ -112,7 +112,7 @@ function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
     useEffect(() => {
         updateNodeInternals(data.id)
     }, [data.id, position, updateNodeInternals])
-    return <div ref={ref}>
+    return <div className="relative" ref={ref}>
         {inputParam && inputParam.input_type === 'anchor' && (
             <>
                 <TooltipProvider>
@@ -128,7 +128,7 @@ function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
                                 style={{
                                     height: 10,
                                     width: 10,
-                                    top: position
+                                    // top: position
                                 }}
                             />
                         </TooltipTrigger>

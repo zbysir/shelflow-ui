@@ -69,6 +69,7 @@ export const getNodeRunStatusStyle = (runStatus: Record<string, NodeStatus>, nod
 export default function CanvasNode({data}: { data: INodeData }) {
     const {enqueueSnackbar} = useSnackbar();
     const {updateNodeData, runResult, deleteEdge} = useContext(flowContext)
+    const [cardKey, setCardKey] = React.useState(Date.now())
 
     const nodeStyle = getNodeRunStatusStyle(runResult, data.id)
     const addAnchor = (item: INodeParams, key = 'input_anchors') => {
@@ -104,23 +105,28 @@ export default function CanvasNode({data}: { data: INodeData }) {
         updateNodeData(data.id, newData)
     }
 
-    const changeParam = (index: number, params: INodeParams) => {
+    const changeParam = (index: number, params: INodeParams, type?: string) => {
         console.log('changeParam params:', params);
         const newData = {...data}
         newData.input_params[index] = params
         updateNodeData(data.id, newData)
+        // 重新渲染(当inputParam类型切换时，会影响到其他node的位置，所以直接重新渲染整个CustomNode节点即可)
+        if (type === 'swapNode') {
+            setCardKey(Date.now())
+        }
     }
     return <Card id={data.id}
+                 key={cardKey}
                  className="border border-solid shadow-md
-                 border-color hover:shadow-xl w-[300px] overflow-hidden dark:bg-secondary"
+                 border-color hover:shadow-xl w-[300px]  dark:bg-secondary"
                  style={{borderColor: nodeStyle.borderColor}}>
         <CardHeader className='p-0'>
-            <div className="bg-gray-100 relative p-2 dark:bg-background"
+            <div className="bg-gray-100 relative p-2 dark:bg-background rounded-t-lg"
                  style={nodeStyle.header}>
                 <LabelComp name={data.name}></LabelComp>
                 <div className="absolute bottom-2 right-0">
                     {
-                        nodeStyle.running ? <Loader className="animate-spin"></Loader>: null
+                        nodeStyle.running ? <Loader className="animate-spin"></Loader> : null
                     }
                 </div>
             </div>
@@ -129,7 +135,7 @@ export default function CanvasNode({data}: { data: INodeData }) {
             {data.input_params && data.input_params.map((inputParam, index) => (
                 <NodeInputHandler
                     key={index} inputParam={inputParam} data={data}
-                    changeParam={(param) => changeParam(index, param)}
+                    changeParam={(param, type) => changeParam(index, param, type)}
                     deleteInputAnchor={() => {
                         delAnchor(inputParam.key, 'input_params')
                     }}

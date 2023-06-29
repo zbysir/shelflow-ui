@@ -43,7 +43,7 @@ const NodeOutputHandler = ({outputAnchor, data}: { outputAnchor: INodeParams, da
     }, [data.id, position, updateNodeInternals])
 
     return (
-        <div ref={ref}>
+        <div className="relative" ref={ref}>
             <>
                 <TooltipProvider>
                     <Tooltip>
@@ -57,7 +57,7 @@ const NodeOutputHandler = ({outputAnchor, data}: { outputAnchor: INodeParams, da
                                 style={{
                                     height: 10,
                                     width: 10,
-                                    top: position
+                                    // top: position
                                 }}
                             />
                         </TooltipTrigger>

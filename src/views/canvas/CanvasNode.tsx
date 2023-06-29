@@ -81,7 +81,7 @@ const showResult = (result: any) => {
 }
 export default function CanvasNode({data}: { data: INodeData }) {
     const {enqueueSnackbar} = useSnackbar();
-    const {updateNodeData, runResult, deleteEdge} = useContext(flowContext)
+    const {updateNodeData, runResult, onlyDeleteEdge} = useContext(flowContext)
     const [cardKey, setCardKey] = React.useState(Date.now())
 
     const nodeStyle = getNodeRunStatusStyle(runResult, data.id)
@@ -110,7 +110,7 @@ export default function CanvasNode({data}: { data: INodeData }) {
         if (inputAnchor && inputAnchor.anchors) {
             inputAnchor.anchors.forEach((anchor: NodeAnchor) => {
                 const edgeId = buildEdgeId(anchor.node_id, anchor.output_key, data.id, fieldKey)
-                deleteEdge(edgeId);
+                onlyDeleteEdge(edgeId);
             })
         }
 

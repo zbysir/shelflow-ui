@@ -1,6 +1,6 @@
 import {createContext, ReactNode, useState} from 'react'
 import {ReactFlowInstance} from 'reactflow'
-import {INodeData} from "../../custom_types";
+import {INodeData, INodeParams, NodeAnchor} from "@/custom_types";
 
 
 export interface NodeStatus {
@@ -18,7 +18,12 @@ export const flowContext = createContext({
     },
     setRunResult: (result: any): void => {
     },
-    deleteEdge: (id: string): void => {}
+    deleteEdge: (id: string): void => {
+    },
+    deleteNode: (id: string): void => {
+    },
+    onlyDeleteEdge: (id: string): void => {
+    }
 })
 
 
@@ -38,9 +43,43 @@ export const ReactFlowContext = ({children}: { children: ReactNode }) => {
         })
     }
 
-    const deleteEdge = (id: string) => {
+    const onlyDeleteEdge = (id: string) => {
         reactFlowInstance.setEdges(reactFlowInstance.getEdges().filter((edge) => edge.id !== id))
     }
+    const deleteEdge = (id: string) => {
+        deleteConnectedAnchor(id, 'edge')
+        reactFlowInstance.setEdges(reactFlowInstance.getEdges().filter((edge) => edge.id !== id))
+    }
+
+    const deleteNode = (nodeId: string) => {
+        deleteConnectedAnchor(nodeId, 'node')
+        reactFlowInstance.setNodes(reactFlowInstance.getNodes().filter((n) => n.id !== nodeId))
+        reactFlowInstance.setEdges(reactFlowInstance.getEdges().filter((ns) => ns.source !== nodeId && ns.target !== nodeId))
+    }
+
+    const deleteConnectedAnchor = (id: string, type: 'node' | 'edge') => {
+        const connectedEdges =
+            type === 'node'
+                ? reactFlowInstance.getEdges().filter((edge) => edge.source === id)
+                : reactFlowInstance.getEdges().filter((edge) => edge.id === id)
+        console.log('deleteConnectedAnchor:', connectedEdges);
+
+        for (const edge of connectedEdges) {
+            reactFlowInstance.setNodes((nds) =>
+                nds.map((node) => {
+                    if (node.id === edge.target) {
+                        const inputParams = node.data.input_params.find((inputParam: INodeParams) => inputParam.key === edge.targetHandle)
+                        const index = inputParams.anchors.findIndex((item: NodeAnchor) => {
+                            return item.node_id === edge.source && item.output_key === edge.sourceHandle
+                        })
+                        inputParams.anchors.splice(index, 1)
+                    }
+                    return node
+                })
+            )
+        }
+    }
+
     return (
         <flowContext.Provider
             value={{
@@ -49,7 +88,9 @@ export const ReactFlowContext = ({children}: { children: ReactNode }) => {
                 setReactFlowInstance,
                 updateNodeData,
                 setRunResult,
-                deleteEdge
+                onlyDeleteEdge,
+                deleteEdge,
+                deleteNode
             }}
         >
             {children}

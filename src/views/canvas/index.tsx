@@ -47,6 +47,7 @@ const OverviewFlow = () => {
     const [detail, setDetail] = useState<FlowData>({} as FlowData);
     const ws = useRef<WebSocket | null>(null);
     const [delEdge, setDelEdge] = useState<Edge>()
+    const [delNode, setDelNode] = useState<Node>()
     const [runLoading, setRunLoading] = useState(false)
     const {enqueueSnackbar} = useSnackbar();
     // ===========|| flowApi ||=========== //
@@ -57,7 +58,14 @@ const OverviewFlow = () => {
     const runFlowApiHook = useApi(api.runFlow)
 
 
-    const {reactFlowInstance, setReactFlowInstance, runResult, setRunResult} = useContext(flowContext);
+    const {
+        reactFlowInstance,
+        setReactFlowInstance,
+        runResult,
+        setRunResult,
+        deleteEdge,
+        deleteNode
+    } = useContext(flowContext);
 
     const onDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
@@ -202,22 +210,22 @@ const OverviewFlow = () => {
         })
     }
     const onEdgesDelete = (edges: Edge[]) => {
-        const flow = getFlow();
-        if (delEdge && flow) {
-            const targetNode = flow.graph.nodes.find((node: Node) => node.id === delEdge.target)
-            if (targetNode) {
-                const inputParams = targetNode.data.input_params.find((inputParam: INodeParams) => inputParam.key === delEdge.targetHandle)
-                const index = inputParams.anchors.findIndex((item: NodeAnchor) => {
-                    return item.node_id === delEdge.source && item.output_key === delEdge.sourceHandle
-                })
-                inputParams.anchors.splice(index, 1)
-            }
+        if (delEdge) {
+            deleteEdge(delEdge.id)
         }
-
     }
     const onEdgeClick = (e: React.MouseEvent, edge: Edge) => {
-        console.log('onEdgeClick', e, edge)
         setDelEdge(edge)
+    }
+
+    const onNodeClick = (e: React.MouseEvent, node: Node) => {
+        setDelNode(node)
+    }
+
+    const onNodesDelete = (nodes: Node[]) => {
+        if(delNode){
+            deleteNode(delNode.id)
+        }
     }
 
     // // =========|| useEffect ||======== //
@@ -307,6 +315,8 @@ const OverviewFlow = () => {
                     onInit={setReactFlowInstance}
                     onEdgesDelete={onEdgesDelete}
                     onEdgeClick={onEdgeClick}
+                    onNodeClick={onNodeClick}
+                    onNodesDelete={onNodesDelete}
                     onDragOver={onDragOver}
                     onDrop={onDrop}
                     fitView

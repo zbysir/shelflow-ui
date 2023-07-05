@@ -1,12 +1,12 @@
 import {createBrowserRouter} from "react-router-dom";
-import Layout from "../views/Layout";
 import Canvas from "../views/canvas/index";
 import Flows from '../views/flow/index'
+import MainLayout from "@/views/layout/main.tsx";
 // import {BASE_URL} from '../utils/const'
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <Layout/>,
+        element: <MainLayout/>,
         children: [
             {
                 path: "/",

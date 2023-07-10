@@ -142,7 +142,7 @@ function NodeInputHandler({nodeId, inputParam, deleteInputAnchor, changeParam}: 
                                 className={"flex justify-center items-center bg-transparent w-auto h-auto p-1"}
                             >
                                 <div
-                                    className={`border-neuter-foreground ${connected ? 'bg-neuter-foreground' : ''} border-2 h-1.5 w-1.5 rounded-xl pointer-events-none`}></div>
+                                    className={`${connected ? 'border-neuter-foreground bg-neuter-foreground' : (inputParam.optional?'border-neuter-foreground':'border-destructive')} border-2 h-1.5 w-1.5 rounded-xl pointer-events-none`}></div>
                             </Handle>
                         </TooltipTrigger>
                         <TooltipContent side="left" align="center">

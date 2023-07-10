@@ -19,6 +19,7 @@ export interface INodeParams {
     anchors?: NodeAnchor[];
     dynamic?: boolean;
     options?: any[];
+    optional?: boolean;
     list?: boolean;
     placeholder?: string;
 }

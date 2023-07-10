@@ -41,7 +41,7 @@ function NodeStatusIcon(props: NodeStatusProps) {
         [""]: "bg-secondary-foreground/40"
     }
     const status = props.status || ''
-    return <div className={`w-3 h-3 ${cla[status]} rounded-xl`}></div>
+    return <div className={`w-3 h-3 ${cla[status]} rounded-xl border-secondary-foreground/20 border`}></div>
 }
 
 function CanvasNode({data}: { data: INodeData }) {
@@ -96,9 +96,9 @@ function CanvasNode({data}: { data: INodeData }) {
     return <Card id={data.id}
                  key={cardKey}
                  className="border border-solid shadow-md
-                 border-gray-300 hover:shadow-xl w-60 dark:bg-secondary">
+                 border-secondary-foreground/50 hover:shadow-xl w-60 dark:bg-secondary">
         <CardHeader className='p-0 cursor-move'>
-            <div className="bg-[#e8e8e8] relative p-1.5 rounded-t-lg">
+            <div className="bg-neuter relative p-1.5 rounded-t-lg">
                 <div className={"flex items-center space-x-1.5"}>
                     <NodeStatusIcon status={nodeStatus?.status}/>
                     <LabelComp name={data.name} className={"text-sm"}/>

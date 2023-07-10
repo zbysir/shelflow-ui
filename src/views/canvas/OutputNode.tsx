@@ -14,7 +14,7 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 
-
+// WIP
 export default function OutputNode({data}: { data: INodeData }) {
     const {runResult} = React.useContext(flowContext)
     const nodeStyle = getNodeRunStatusStyle(runResult, data.id)
@@ -29,7 +29,7 @@ export default function OutputNode({data}: { data: INodeData }) {
         </CardHeader>
         <CardContent className="p-0">
             {data.input_params && data.input_params.map((inputParam, index) => (
-                <NodeInputHandler key={index} inputParam={inputParam} data={data}/>
+                <NodeInputHandler key={index} inputParam={inputParam} nodeId={data.id}/>
             ))}
             <div className="p-1  text-center"
                  style={{'minHeight': '100px'}}>

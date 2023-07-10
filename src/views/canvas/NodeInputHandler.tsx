@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
-import {Handle, Position, useUpdateNodeInternals} from 'reactflow'
-import {ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react'
+import {getConnectedEdges, Handle, Position, useStore, useUpdateNodeInternals} from 'reactflow'
+import React, {ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react'
 
 import {flowContext} from "@/store/context/ReactFlowContext";
 import {isValidConnection} from '@/utils/genericHelper'
@@ -60,18 +60,24 @@ const showDisplay = (type: string) => {
     return newType
 }
 
-function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
-    data: INodeData;
+function NodeInputHandler({nodeId, inputParam, deleteInputAnchor, changeParam}: {
+    nodeId: string;
     disabled?: boolean;
     inputParam: INodeParams;
-    deleteInputAnchor: () => void;
+    deleteInputAnchor?: () => void;
     changeParam?: (node: INodeParams, type?: string) => void;
-
 }) {
     const [position, setPosition] = useState(0)
     const ref = useRef(null)
     const updateNodeInternals = useUpdateNodeInternals()
     const {reactFlowInstance} = useContext(flowContext)
+
+    const connected = useStore((s) => {
+        const node = s.nodeInternals.get(nodeId);
+        const connectedEdges = getConnectedEdges([node!], s.edges);
+        return !!connectedEdges.find(i => i.targetHandle == inputParam.key)
+    })
+
     const [showExpandDialog, setShowExpandDialog] = useState(false)
     const onExpandDialogClicked = () => {
         setShowExpandDialog(true)
@@ -100,19 +106,19 @@ function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
             const dom = ref.current as HTMLElement
             if (dom.offsetTop && dom.clientHeight) {
                 setPosition(dom.offsetTop + dom.clientHeight / 2)
-                updateNodeInternals(data.id)
+                updateNodeInternals(nodeId)
             }
         }
 
-    }, [data.id, ref, updateNodeInternals])
+    }, [nodeId, ref, updateNodeInternals])
     useEffect(() => {
-        updateNodeInternals(data.id)
-    }, [data.id, position, updateNodeInternals])
+        updateNodeInternals(nodeId)
+    }, [nodeId, position, updateNodeInternals])
 
     const onMenuClick = function (action: string) {
         switch (action) {
             case 'delete':
-                deleteInputAnchor()
+                deleteInputAnchor&&deleteInputAnchor()
                 break
             case 'swap':
                 swapNodeHandle()
@@ -136,7 +142,7 @@ function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
                                 className={"flex justify-center items-center bg-transparent w-auto h-auto p-1"}
                             >
                                 <div
-                                    className={"border-neuter-foreground border-2 h-1.5 w-1.5 rounded-xl pointer-events-none"}></div>
+                                    className={`border-neuter-foreground ${connected ? 'bg-neuter-foreground' : ''} border-2 h-1.5 w-1.5 rounded-xl pointer-events-none`}></div>
                             </Handle>
                         </TooltipTrigger>
                         <TooltipContent side="left" align="center">
@@ -150,6 +156,7 @@ function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
                             <LabelComp
                                 name={inputParam.name} defaultValue={inputParam.key}
                                 className="pl-3"></LabelComp>
+                            {/*{Math.random()}*/}
                         </div>
                     </NodeContextMenu>
                 </div>
@@ -166,7 +173,7 @@ function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
 
 interface NodeInputItemProps {
     inputParam: INodeParams
-    onDeleteInputAnchor: () => void
+    onDeleteInputAnchor?: () => void
     onSwapNodeHandle: () => void
     onExpandDialogClicked: () => void
     onChangeInputParamValue: (v: any) => void
@@ -225,7 +232,7 @@ function NodeInputItem(
     const onMenuClick = function (action: string) {
         switch (action) {
             case 'delete':
-                onDeleteInputAnchor()
+                onDeleteInputAnchor && onDeleteInputAnchor()
                 break
             case 'swap':
                 onSwapNodeHandle()
@@ -330,4 +337,4 @@ NodeInputHandler.propTypes = {
     isAdditionalParams: PropTypes.bool
 }
 
-export default NodeInputHandler
+export default React.memo(NodeInputHandler)

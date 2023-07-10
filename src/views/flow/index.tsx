@@ -14,7 +14,7 @@ import {Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger,} from
 import Pagination from '../ui-components/pagination/Pagination'
 import {Link, useNavigate, useSearchParams} from "react-router-dom";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
-import * as dayjs from "dayjs";
+import dayjs from 'dayjs';
 
 const Flows = () => {
 

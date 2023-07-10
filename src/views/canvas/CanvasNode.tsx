@@ -109,7 +109,7 @@ function CanvasNode({data}: { data: INodeData }) {
             {
                 data.input_params && data.input_params.map((inputParam, index) => (
                     <NodeInputHandler
-                        key={index} inputParam={inputParam} data={data}
+                        key={index} inputParam={inputParam} nodeId={data.id}
                         changeParam={(param, type) => changeParam(index, param, type)}
                         deleteInputAnchor={() => {
                             delAnchor(inputParam.key, 'input_params')

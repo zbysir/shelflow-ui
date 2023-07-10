@@ -136,7 +136,7 @@ function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
                                 className={"flex justify-center items-center bg-transparent w-auto h-auto p-1"}
                             >
                                 <div
-                                    className={"border-secondary-foreground border-2 h-1.5 w-1.5 rounded-xl pointer-events-none"}></div>
+                                    className={"border-neuter-foreground border-2 h-1.5 w-1.5 rounded-xl pointer-events-none"}></div>
                             </Handle>
                         </TooltipTrigger>
                         <TooltipContent side="left" align="center">
@@ -146,9 +146,10 @@ function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
                 </TooltipProvider>
                 <div>
                     <NodeContextMenu onMenuClick={onMenuClick} inputParam={inputParam}>
-                        <div className="flex items-center justify-between group text-xs text-secondary-foreground">
-                            <LabelComp name={inputParam.name} defaultValue={inputParam.key}
-                                       className="pl-3"></LabelComp>
+                        <div className="flex items-center justify-between group text-xs">
+                            <LabelComp
+                                name={inputParam.name} defaultValue={inputParam.key}
+                                className="pl-3"></LabelComp>
                         </div>
                     </NodeContextMenu>
                 </div>
@@ -179,7 +180,7 @@ interface NodeContextMenu {
 }
 
 function NodeContextMenu({inputParam, onMenuClick, children}: NodeContextMenu) {
-    const actions: { name: string, value: string ,className?:string}[] = []
+    const actions: { name: string, value: string, className?: string }[] = []
     const displayType = showDisplay(inputParam.display_type) || inputParam.type
 
 
@@ -195,7 +196,7 @@ function NodeContextMenu({inputParam, onMenuClick, children}: NodeContextMenu) {
             break
     }
     if (inputParam.dynamic) {
-        actions.push({name: "Delete", value: 'delete', className:"text-destructive"})
+        actions.push({name: "Delete", value: 'delete', className: "text-destructive"})
     }
 
     return <ContextMenu>
@@ -203,7 +204,8 @@ function NodeContextMenu({inputParam, onMenuClick, children}: NodeContextMenu) {
             {children}
         </ContextMenuTrigger>
         {actions.length > 0 ? <ContextMenuContent>
-            {actions.map(i => <ContextMenuItem onClick={() => onMenuClick(i.value)}><span className={i.className}>{i.name}</span></ContextMenuItem>)}
+            {actions.map(i => <ContextMenuItem onClick={() => onMenuClick(i.value)}><span
+                className={i.className}>{i.name}</span></ContextMenuItem>)}
         </ContextMenuContent> : null
         }
     </ContextMenu>
@@ -232,7 +234,7 @@ function NodeInputItem(
     }
 
     const labelLine = useMemo(() => {
-        return <div className="flex items-center justify-between group text-xs text-secondary-foreground">
+        return <div className="flex items-center justify-between group text-xs">
             {hideTitle ? null :
                 <NodeContextMenu onMenuClick={onMenuClick} inputParam={inputParam}>
                     <div className={"flex-1"}>
@@ -282,12 +284,11 @@ function NodeInputItem(
             </div>
         case 'bool':
             // 左右布局
-            return <div className={"flex space-x-3 h-8 text-xs text-secondary-foreground items-center "}>
+            return <div className={"flex space-x-3 h-8 text-xs items-center "}>
                 {hideTitle ? null :
                     <NodeContextMenu onMenuClick={onMenuClick} inputParam={inputParam}>
                         <div>
-
-                        <LabelComp name={inputParam.name} defaultValue={inputParam.key}></LabelComp>
+                            <LabelComp name={inputParam.name} defaultValue={inputParam.key}></LabelComp>
                         </div>
                     </NodeContextMenu>
                 }
@@ -300,12 +301,12 @@ function NodeInputItem(
             </div>
         case 'number':
         case 'int':
-            return <div className={"flex space-x-3 h-8 text-xs text-secondary-foreground items-center "}>
+            return <div className={"flex space-x-3 h-8 text-xs items-center "}>
                 {hideTitle ? null :
                     <NodeContextMenu onMenuClick={onMenuClick} inputParam={inputParam}>
-<div>
-                        <LabelComp name={inputParam.name} defaultValue={inputParam.key}></LabelComp>
-</div>
+                        <div>
+                            <LabelComp name={inputParam.name} defaultValue={inputParam.key}></LabelComp>
+                        </div>
                     </NodeContextMenu>
                 }
 

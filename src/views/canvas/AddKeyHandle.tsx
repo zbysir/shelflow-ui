@@ -57,23 +57,19 @@ export default function AddKeyHandle(
         }
     }
 
-
-    return <div className="">
-        <div className="flex items-center space-x-2"
-        >
+    return <div className="py-1.5">
+        <div className="flex items-center space-x-2">
             <Input
                 className="flex-1 bg-accent border-0 px-3 py-1.5"
                 placeholder="Add key"
                 value={inputAnchor.key}
                 onChange={(e) => {
-                    console.log(e.target.value)
                     const data: INodeParams = {
                         ...inputAnchor,
                         key: e.target.value
                     }
                     setInputAnchor(data)
-                }
-                }
+                }}
             />
             <Select
                 defaultValue={"any"}

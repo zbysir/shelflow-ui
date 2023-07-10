@@ -50,6 +50,10 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        neuter: {
+          DEFAULT: "hsl(var(--neuter))",
+          foreground: "hsl(var(--neuter-foreground))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

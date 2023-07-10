@@ -38,18 +38,18 @@ function NodeStatusIcon(props: NodeStatusProps) {
         success: "bg-green-600",
         running: "bg-green-600 animate-pulse duration-1000",
         failed: "bg-destructive",
-        [""]: "bg-[#C7C7C7]"
+        [""]: "bg-secondary-foreground/40"
     }
     const status = props.status || ''
     return <div className={`w-3 h-3 ${cla[status]} rounded-xl`}></div>
 }
 
-export default function CanvasNode({data}: { data: INodeData }) {
+function CanvasNode({data}: { data: INodeData }) {
     const {enqueueSnackbar} = useSnackbar();
     const {updateNodeData, runResult, onlyDeleteEdge} = useContext(flowContext)
     const [cardKey, setCardKey] = React.useState(Date.now())
 
-    const nodeStyle = runResult[data.id]
+    const nodeStatus = runResult[data.id]
     const addAnchor = (item: INodeParams, key = 'input_anchors') => {
         const newData = {...data}
         if (item.key && item.type) {
@@ -100,7 +100,7 @@ export default function CanvasNode({data}: { data: INodeData }) {
         <CardHeader className='p-0 cursor-move'>
             <div className="bg-[#e8e8e8] relative p-1.5 rounded-t-lg">
                 <div className={"flex items-center space-x-1.5"}>
-                    <NodeStatusIcon status={nodeStyle?.status}/>
+                    <NodeStatusIcon status={nodeStatus?.status}/>
                     <LabelComp name={data.name} className={"text-sm"}/>
                 </div>
             </div>
@@ -138,17 +138,19 @@ export default function CanvasNode({data}: { data: INodeData }) {
                 }}
             ></AddKeyHandle>}
             {
-                nodeStyle?.error ?
-                    <>
-                        <Separator></Separator>
-                        <p className="text-xs font-medium text-destructive">
-                            {nodeStyle.error}
-                        </p>
-                    </> : null
+                nodeStatus?.error ?
+                    <div className={""}>
+                        <Separator className={"my-1.5"}></Separator>
+                        <div className="text-xs font-medium text-destructive ">
+                            {nodeStatus.error}
+                        </div>
+                    </div> : null
             }
         </CardContent>
     </Card>
 }
+
+export default React.memo(CanvasNode)
 
 CanvasNode.propTypes = {
     data: PropTypes.object

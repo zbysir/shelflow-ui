@@ -19,5 +19,5 @@ export default function LabelText({name, defaultValue, className}: Props) {
     } else {
         text = defaultValue || ''
     }
-    return <p className={className}>{text}</p>
+    return <p className={`text-neuter-foreground ${className}`}>{text}</p>
 }

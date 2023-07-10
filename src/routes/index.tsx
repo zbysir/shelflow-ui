@@ -12,15 +12,15 @@ const router = createBrowserRouter([
                 path: "/",
                 element: <Flows/>,
             },
-            {
-                path: "/canvas",
-                element: <Canvas/>,
-            },
-            {
-                path: '/canvas/:id',
-                element: <Canvas/>
-            },
         ],
+    },
+    {
+        path: "/canvas",
+        element: <Canvas/>,
+    },
+    {
+        path: '/canvas/:id',
+        element: <Canvas/>
     },
 ], {
     basename: import.meta.env.BASE_URL

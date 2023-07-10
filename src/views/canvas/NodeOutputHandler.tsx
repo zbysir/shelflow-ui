@@ -54,21 +54,19 @@ const NodeOutputHandler = ({outputAnchor, data}: { outputAnchor: INodeParams, da
                                 key={outputAnchor.key}
                                 id={outputAnchor.key}
                                 isValidConnection={(connection) => isValidConnection(connection, outputAnchor, 'source', reactFlowInstance)}
-                                style={{
-                                    height: 10,
-                                    width: 10,
-                                    // top: position
-                                }}
-                            />
+                                className={"flex justify-center items-center bg-transparent w-auto h-auto p-1"}
+                            >
+                                <div className={"border-secondary-foreground border-2 h-1.5 w-1.5 rounded-xl pointer-events-none"}></div>
+                            </Handle>
                         </TooltipTrigger>
                         <TooltipContent side="right" align="center">
                             {outputAnchor.type}
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-                <div className="p-2 text-end">
+                <div className="text-end text-xs text-secondary-foreground">
                     <LabelComp
-                        className="mr-2"
+                        className="pr-3"
                         name={outputAnchor.name}
                         defaultValue={outputAnchor.key}></LabelComp>
                 </div>

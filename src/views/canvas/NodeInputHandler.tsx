@@ -1,37 +1,26 @@
 import PropTypes from 'prop-types'
 import {Handle, Position, useUpdateNodeInternals} from 'reactflow'
-import {useState, useEffect, useRef, useContext} from 'react'
+import {ReactNode, useContext, useEffect, useMemo, useRef, useState} from 'react'
 
 import {flowContext} from "@/store/context/ReactFlowContext";
 import {isValidConnection} from '@/utils/genericHelper'
 
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip"
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,} from "@/components/ui/tooltip"
 
 // ui-components
 import InputComp from '../ui-components/input/Index'
 import TextAreaComp from '../ui-components/textarea/Textarea'
 import {Switch} from "@/components/ui/switch"
 
-import {Maximize, Trash2, MoreVertical, ArrowRightLeft} from 'lucide-react'
+import {Maximize, MoreHorizontal, Trash2} from 'lucide-react'
 
 //  labelComp
 import LabelComp from '../ui-components/label/Index'
 //  type
-import {INodeParams, INodeData} from '@/custom_types/index'
-
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import {INodeData, INodeParams} from '@/custom_types/index'
+import {Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger} from "@/components/ui/menubar.tsx";
+import {Input} from "@/components/ui/input.tsx";
+import {ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger} from "@/components/ui/context-menu.tsx";
 
 
 interface Props {
@@ -42,23 +31,33 @@ interface Props {
 }
 
 function MoreDropDown({isDel, className, deleteInputAnchor, swapNode}: Props) {
-    return <DropdownMenu>
-        <DropdownMenuTrigger>
-            <MoreVertical className={className}></MoreVertical>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-            <DropdownMenuItem
-                className="text-sm"
-                onClick={() => swapNode()}>
-                <ArrowRightLeft className="w-4 mr-2"></ArrowRightLeft>
-                Swap Block
-            </DropdownMenuItem>
-            {isDel && <DropdownMenuItem
-                onClick={() => deleteInputAnchor()}
-                className="text-sm text-red-500">
-                <Trash2 className="w-4 mr-2"></Trash2> Delete</DropdownMenuItem>}
-        </DropdownMenuContent>
-    </DropdownMenu>
+    return <Menubar className={"p-0 h-auto"}>
+        <MenubarMenu>
+            <MenubarTrigger className={"p-0"}>
+                <MoreHorizontal className={`w-4 h-4 ${className}`}></MoreHorizontal>
+
+            </MenubarTrigger>
+
+            <MenubarContent>
+                <MenubarItem
+                    onClick={() => swapNode()}>
+                    Swap
+                </MenubarItem>
+                <MenubarItem
+                    onClick={() => deleteInputAnchor()}
+                    className={"text-destructive focus:text-destructive space-x-1 pl-1"}
+                >
+                    <Trash2 className={"w-3 h-3"}></Trash2>
+                    <div>Delete</div>
+                </MenubarItem>
+            </MenubarContent>
+        </MenubarMenu>
+    </Menubar>
+}
+
+const showDisplay = (type: string) => {
+    const newType = type.split('/')[0]
+    return newType
 }
 
 function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
@@ -77,10 +76,7 @@ function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
     const onExpandDialogClicked = () => {
         setShowExpandDialog(true)
     }
-    const showDisplay = (type: string) => {
-        const newType = type.split('/')[0]
-        return newType
-    }
+
     const displayType = showDisplay(inputParam.display_type || inputParam.type);
     const changeInputParamValue = (v: any) => {
         changeParam && changeParam({...inputParam, value: v})
@@ -112,7 +108,19 @@ function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
     useEffect(() => {
         updateNodeInternals(data.id)
     }, [data.id, position, updateNodeInternals])
-    return <div className="relative" ref={ref}>
+
+    const onMenuClick = function (action: string) {
+        switch (action) {
+            case 'delete':
+                deleteInputAnchor()
+                break
+            case 'swap':
+                swapNodeHandle()
+                break
+        }
+    }
+
+    return <div className="flex flex-col relative py-1.5" ref={ref}>
         {inputParam && inputParam.input_type === 'anchor' && (
             <>
                 <TooltipProvider>
@@ -125,78 +133,192 @@ function NodeInputHandler({data, inputParam, deleteInputAnchor, changeParam}: {
                                 id={inputParam.key}
                                 isConnectable={true}
                                 isValidConnection={(connection) => isValidConnection(connection, inputParam, 'target', reactFlowInstance)}
-                                style={{
-                                    height: 10,
-                                    width: 10,
-                                    // top: position
-                                }}
-                            />
+                                className={"flex justify-center items-center bg-transparent w-auto h-auto p-1"}
+                            >
+                                <div
+                                    className={"border-secondary-foreground border-2 h-1.5 w-1.5 rounded-xl pointer-events-none"}></div>
+                            </Handle>
                         </TooltipTrigger>
                         <TooltipContent side="left" align="center">
                             {inputParam.type}
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-                <div className="p-2">
-                    <div className="flex items-center justify-between  group">
-                        <LabelComp name={inputParam.name} defaultValue={inputParam.key} className="ml-2"></LabelComp>
-                        {inputParam.dynamic && <MoreDropDown
-                            className="group-hover:opacity-100 opacity-0"
-                            isDel={inputParam.dynamic}
-                            deleteInputAnchor={deleteInputAnchor}
-                            swapNode={() => swapNodeHandle()}></MoreDropDown>}
-                    </div>
+                <div>
+                    <NodeContextMenu onMenuClick={onMenuClick} inputParam={inputParam}>
+                        <div className="flex items-center justify-between group text-xs text-secondary-foreground">
+                            <LabelComp name={inputParam.name} defaultValue={inputParam.key}
+                                       className="pl-3"></LabelComp>
+                        </div>
+                    </NodeContextMenu>
                 </div>
             </>
         )}
         {inputParam && inputParam.input_type !== 'anchor' &&
-            <>
-                <div className="p-2">
-                    <div className="flex items-center justify-between mb-2 group">
-                        <LabelComp name={inputParam.name} defaultValue={inputParam.key}></LabelComp>
-                        {inputParam.dynamic && <MoreDropDown
-                            className="group-hover:opacity-100 opacity-0"
-                            isDel={inputParam.dynamic}
-                            deleteInputAnchor={deleteInputAnchor}
-                            swapNode={() => swapNodeHandle()}></MoreDropDown>}
-                        {['code', 'textarea'].includes(displayType) &&
-                            <Maximize
-                                onClick={onExpandDialogClicked}
-                                className="w-5 h-4  cursor-pointer hover:bg-secondary"/>}
-
-                    </div>
-                    {(() => {
-                        switch (displayType) {
-                            case 'text':
-                            case 'number':
-                            case 'password':
-                            default:
-                                return <InputComp
-                                    displayType={displayType}
-                                    inputParam={inputParam}
-                                    onChange={(newValue) => changeInputParamValue(newValue)}
-                                    value={inputParam.value ?? inputParam.value ?? ''}
-                                />
-                            case 'textarea':
-                            case 'code':
-                                return <TextAreaComp
-                                    inputParam={inputParam}
-                                    onChange={(newValue) => changeInputParamValue(newValue)}
-                                    value={inputParam.value ?? inputParam.value ?? ''}
-                                    showDlg={showExpandDialog}
-                                    onDialogCancel={() => {
-                                        setShowExpandDialog(false)
-                                    }}
-                                ></TextAreaComp>
-                            case 'bool':
-                                return <Switch checked={inputParam.value as boolean}
-                                               onCheckedChange={(newValue) => changeInputParamValue(newValue)}
-                                ></Switch>
-                        }
-                    })()}
-                </div>
-            </>}
+            <NodeInputItem
+                inputParam={inputParam}
+                onChangeInputParamValue={changeInputParamValue}
+                onDeleteInputAnchor={deleteInputAnchor}
+                onExpandDialogClicked={onExpandDialogClicked} onSwapNodeHandle={swapNodeHandle}/>}
     </div>
+}
+
+interface NodeInputItemProps {
+    inputParam: INodeParams
+    onDeleteInputAnchor: () => void
+    onSwapNodeHandle: () => void
+    onExpandDialogClicked: () => void
+    onChangeInputParamValue: (v: any) => void
+    hideTitle?: boolean
+}
+
+interface NodeContextMenu {
+    inputParam: INodeParams
+    onMenuClick: (action: string) => void
+    children?: ReactNode
+}
+
+function NodeContextMenu({inputParam, onMenuClick, children}: NodeContextMenu) {
+    const actions: { name: string, value: string ,className?:string}[] = []
+    const displayType = showDisplay(inputParam.display_type) || inputParam.type
+
+
+    switch (displayType) {
+        case 'code':
+        case 'textarea':
+        case 'bool':
+        case 'string':
+        case 'number':
+        case 'int':
+        case 'input':
+            actions.push({name: "Swap", value: "swap"})
+            break
+    }
+    if (inputParam.dynamic) {
+        actions.push({name: "Delete", value: 'delete', className:"text-destructive"})
+    }
+
+    return <ContextMenu>
+        <ContextMenuTrigger asChild>
+            {children}
+        </ContextMenuTrigger>
+        {actions.length > 0 ? <ContextMenuContent>
+            {actions.map(i => <ContextMenuItem onClick={() => onMenuClick(i.value)}><span className={i.className}>{i.name}</span></ContextMenuItem>)}
+        </ContextMenuContent> : null
+        }
+    </ContextMenu>
+}
+
+function NodeInputItem(
+    {
+        inputParam,
+        onDeleteInputAnchor,
+        onSwapNodeHandle,
+        onChangeInputParamValue,
+        hideTitle
+    }: NodeInputItemProps) {
+    const displayType = showDisplay(inputParam.display_type || inputParam.type)
+    const [showExpandDialog, setShowExpandDialog] = useState(false)
+
+    const onMenuClick = function (action: string) {
+        switch (action) {
+            case 'delete':
+                onDeleteInputAnchor()
+                break
+            case 'swap':
+                onSwapNodeHandle()
+                break
+        }
+    }
+
+    const labelLine = useMemo(() => {
+        return <div className="flex items-center justify-between group text-xs text-secondary-foreground">
+            {hideTitle ? null :
+                <NodeContextMenu onMenuClick={onMenuClick} inputParam={inputParam}>
+                    <div className={"flex-1"}>
+                        <LabelComp name={inputParam.name} defaultValue={inputParam.key}
+                                   className={"flex-1 block pb-1.5"}></LabelComp>
+                    </div>
+                </NodeContextMenu>
+            }
+
+            {displayType == 'code' || displayType == 'textarea' ?
+                <Maximize
+                    onClick={() => setShowExpandDialog(true)}
+                    className="w-4 h-4 cursor-pointer hover:bg-secondary"/> : null
+            }
+        </div>
+    }, [inputParam, displayType])
+
+    switch (displayType) {
+        // 上下布局
+        case 'code':
+        case 'textarea':
+            return <div className={"flex flex-col"}>
+
+                {labelLine}
+
+                <TextAreaComp
+                    inputParam={inputParam}
+                    onChange={onChangeInputParamValue}
+                    value={inputParam.value ?? inputParam.value ?? ''}
+                    showDlg={showExpandDialog}
+                    onDialogCancel={() => {
+                        setShowExpandDialog(false)
+                    }}
+                ></TextAreaComp>
+            </div>
+        case 'text':
+        case 'password':
+        default:
+            return <div className={"flex flex-col space-y-1.5"}>
+                {labelLine}
+                <InputComp
+                    displayType={displayType}
+                    inputParam={inputParam}
+                    onChange={onChangeInputParamValue}
+                    value={inputParam.value ?? inputParam.value ?? ''}
+                />
+            </div>
+        case 'bool':
+            // 左右布局
+            return <div className={"flex space-x-3 h-8 text-xs text-secondary-foreground items-center "}>
+                {hideTitle ? null :
+                    <NodeContextMenu onMenuClick={onMenuClick} inputParam={inputParam}>
+                        <div>
+
+                        <LabelComp name={inputParam.name} defaultValue={inputParam.key}></LabelComp>
+                        </div>
+                    </NodeContextMenu>
+                }
+
+                <div className={"flex items-center bg-input border-0 px-3 h-full rounded-md flex-1"}>
+                    <Switch checked={inputParam.value as boolean}
+                            onCheckedChange={onChangeInputParamValue}
+                    ></Switch>
+                </div>
+            </div>
+        case 'number':
+        case 'int':
+            return <div className={"flex space-x-3 h-8 text-xs text-secondary-foreground items-center "}>
+                {hideTitle ? null :
+                    <NodeContextMenu onMenuClick={onMenuClick} inputParam={inputParam}>
+<div>
+                        <LabelComp name={inputParam.name} defaultValue={inputParam.key}></LabelComp>
+</div>
+                    </NodeContextMenu>
+                }
+
+                <Input
+                    className={"flex-1 bg-input border-0 px-3 h-8 rounded-md"}
+                    value={inputParam.value || ''}
+                    placeholder={inputParam?.placeholder}
+                    type={displayType}
+                    onChange={(e) => {
+                        onChangeInputParamValue(e.target.value)
+                    }}></Input>
+            </div>
+    }
 }
 
 NodeInputHandler.propTypes = {

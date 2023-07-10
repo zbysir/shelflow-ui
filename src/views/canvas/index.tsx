@@ -1,13 +1,16 @@
 import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
-import {useParams, useNavigate} from 'react-router-dom';
+import {Link, useNavigate, useParams} from 'react-router-dom';
 // react-flow
 import ReactFlow, {
     addEdge,
-    Background, Controls, useEdgesState, useNodesState,
-    ReactFlowJsonObject,
-    Node,
+    Background,
+    Connection,
+    Controls,
     Edge,
-    Connection
+    Node,
+    ReactFlowJsonObject,
+    useEdgesState,
+    useNodesState
 } from 'reactflow'
 
 import 'reactflow/dist/style.css';
@@ -16,25 +19,24 @@ import './overview.css';
 //  shadcnUI
 import {Button} from "@/components/ui/button"
 import {Input} from '@/components/ui/input'
-import {Loader2} from 'lucide-react'
+import {ArrowLeft, Check, Loader2} from 'lucide-react'
 //  hooks
 import useApi from "@/hooks/useApi";
 // Api
 import api from "@/api/index";
 //  customNode
-import CanvasNode from './CanvasNode';
-import AddNode from "./AddNode";
-import ChatBox from "@/views/chat/Chat";
+import GeneralNode from './CanvasNode';
 // utils
 import {edgeToData, flowDetail, getUniqueNodeId, initNode} from '@/utils/genericHelper'
 //  custom types
-import {FlowData, INodeParams, NodeAnchor} from "@/custom_types";
+import {FlowData, INodeParams} from "@/custom_types";
 // context
 import {flowContext} from "@/store/context/ReactFlowContext";
 import {useSnackbar} from "notistack";
+import {useToast} from "@/components/ui/use-toast"
 
 const nodeTypes = {
-    customNode: CanvasNode,
+    customNode: GeneralNode,
 };
 
 
@@ -57,7 +59,7 @@ const OverviewFlow = () => {
     const editFlowApi = useApi(api.editFlow)
     const getCompsApi = useApi(api.getComps)
     const runFlowApiHook = useApi(api.runFlow)
-
+    const {toast} = useToast()
 
     const {
         reactFlowInstance,
@@ -148,26 +150,44 @@ const OverviewFlow = () => {
         console.log('saveFlow:', reactFlowInstance)
         if (reactFlowInstance) {
             let flow = reactFlowInstance.toObject();
-            console.log(flow);
             // return
             flow = edgeToData(flow);
-            if (params.id) {
-                const data = {
-                    ...detail,
-                    graph: flow
-                }
-                await editFlowApi.request(data)
-                console.log('editFlowApi', editFlowApi)
-            } else {
-                const data = {
-                    name: 'first demo',
-                    description: 'first demo',
-                    graph: flow
+            try {
+                if (params.id) {
+                    const data = {
+                        ...detail,
+                        graph: flow
+                    }
+                    await editFlowApi.request(data)
+                    console.log('editFlowApi', editFlowApi)
+                } else {
+                    const data = {
+                        name: 'first demo',
+                        description: 'first demo',
+                        graph: flow
+                    }
+
+                    await addFlowApi.request(data)
                 }
 
-                await addFlowApi.request(data)
+                toast({
+                    title: <div className={"flex space-x-2 text-green-600 items-center"}>
+                        <Check className={"w-3.5 h-3.5"}></Check>
+                        <div>Save Success</div>
+                    </div>,
+                    description: "",
+                })
+            }catch (e) {
+                toast({
+                    title: <div className={"flex space-x-2 text-destructive items-center"}>
+                        <Check className={"w-3.5 h-3.5"}></Check>
+                        <div>{e.data.msg}</div>
+                    </div>,
+                    description: "",
+                })
             }
         }
+
     }
 
     const runFlow = async () => {
@@ -224,18 +244,21 @@ const OverviewFlow = () => {
     }
 
     const onNodesDelete = (nodes: Node[]) => {
-        if(delNode){
+        if (delNode) {
             deleteNode(delNode.id)
         }
     }
 
     // // =========|| useEffect ||======== //
+
+    // 加载组件
     useEffect(() => {
         console.log('env:', import.meta.env.MODE, import.meta.env.VITE_API_HOST);
         getCompsApi.request()
     }, [])
 
 
+    // 加载 flow
     useEffect(() => {
         if (params.id) {
             getFlowApi.request(params.id)
@@ -254,29 +277,18 @@ const OverviewFlow = () => {
         },
         [getFlowApi.data, getFlowApi.error])
 
-    useEffect(() => {
-        if (addFlowApi.data) {
-            enqueueSnackbar('success', {variant: 'success'})
-            navigate(`/canvas/${addFlowApi.data}`, {replace: true})
-        } else if (addFlowApi.error) {
-            enqueueSnackbar(addFlowApi.error.msg, {variant: 'error'})
-        }
-    }, [addFlowApi.data, addFlowApi.error])
-
-    useEffect(() => {
-        if (editFlowApi.data) {
-            enqueueSnackbar('success', {variant: 'success'})
-        } else if (editFlowApi.error) {
-            enqueueSnackbar(editFlowApi.error.msg, {variant: 'error'})
-        }
-    }, [editFlowApi.data, editFlowApi.error])
-
     return <div className="h-full">
         <header
-            className="shadow-md"
+            className="flex items-center border border-b h-12 px-4"
         >
-            <nav className="flex items-center justify-between p-4">
-                <div>
+            <nav className="flex flex-1 items-center justify-between">
+                <div className={"flex items-center space-x-4"}>
+                    <Link to={"/"}>
+                        <Button size={"sm"} variant={"secondary"} className={"shadow-xl"}>
+                            <ArrowLeft className={"w-3 h-3"}></ArrowLeft>
+                        </Button>
+                    </Link>
+
                     <Input value={detail.name || ''}
                            placeholder="flow name"
                            onChange={(e) => {
@@ -288,6 +300,7 @@ const OverviewFlow = () => {
                     <Button
                         disabled={runLoading}
                         variant="outline"
+                        size={"sm"}
                         onClick={runFlow}>
                         {runLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
                         Run
@@ -295,6 +308,7 @@ const OverviewFlow = () => {
                     <Button
                         disabled={editFlowApi.loading || addFlowApi.loading}
                         className="ml-2"
+                        size={"sm"}
                         onClick={onSave}>
                         {(editFlowApi.loading || addFlowApi.loading) &&
                             <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
@@ -304,8 +318,14 @@ const OverviewFlow = () => {
 
             </nav>
         </header>
-        <div>
-            <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+        <main className={"flex"}>
+            {/*left*/}
+            <div className={"flex flex-col w-[250px] border-r"}>
+
+            </div>
+
+            {/*body*/}
+            <div className="flex-1 reactflow-wrapper bg-secondary" ref={reactFlowWrapper}>
                 <ReactFlow
                     nodes={nodes}
                     edges={edges}
@@ -330,11 +350,11 @@ const OverviewFlow = () => {
                         transform: 'translate(-50%, -50%)'
                     }}/>
                     <Background color="#aaa" gap={16}/>
-                    {getCompsApi.data && <AddNode comps={getCompsApi.data}></AddNode>}
-                    <ChatBox></ChatBox>
+                    {/*{getCompsApi.data && <AddNode comps={getCompsApi.data}></AddNode>}*/}
+                    {/*<ChatBox></ChatBox>*/}
                 </ReactFlow>
             </div>
-        </div>
+        </main>
 
     </div>
 

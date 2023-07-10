@@ -57,6 +57,7 @@ export interface Graph {
 export interface FlowData {
     id: string | number;
     name: string;
+    updated_at: string;
     description?: string;
     graph: Graph;
 }

@@ -18,7 +18,9 @@ const InputComp = ({
                        Props) => {
     const [myValue, setMyValue] = useState(value ?? '')
     return <>
-        <Input value={myValue}
+        <Input
+            className={"bg-input border-0 px-3 h-8 rounded-md nodrag"}
+            value={myValue}
                placeholder={inputParam?.placeholder}
                type={displayType}
                onChange={(e) => {

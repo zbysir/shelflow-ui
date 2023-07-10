@@ -1,14 +1,9 @@
 import {useState} from 'react'
 import {INodeParams} from "@/custom_types";
 import {Input} from "@/components/ui/input";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select"
 import {Check} from 'lucide-react'
+import {Button} from "@/components/ui/button.tsx";
 
 interface Option {
     label: string;
@@ -63,12 +58,12 @@ export default function AddKeyHandle(
     }
 
 
-    return <div className="p-2">
+    return <div className="">
         <div className="flex items-center space-x-2"
         >
             <Input
-                className="w-32"
-                placeholder="Key"
+                className="flex-1 bg-accent border-0 px-3 py-1.5"
+                placeholder="Add key"
                 value={inputAnchor.key}
                 onChange={(e) => {
                     console.log(e.target.value)
@@ -81,15 +76,16 @@ export default function AddKeyHandle(
                 }
             />
             <Select
-                    onValueChange={(v: string) => {
-                        const data: INodeParams = {
-                            ...inputAnchor,
-                            type: v
-                        }
-                        setInputAnchor(data)
-                    }}>
+                defaultValue={"any"}
+                onValueChange={(v: string) => {
+                    const data: INodeParams = {
+                        ...inputAnchor,
+                        type: v
+                    }
+                    setInputAnchor(data)
+                }}>
                 <SelectTrigger
-                    className="w-[115px]">
+                    className=" px-3 py-1.5">
                     <SelectValue
                         placeholder="type"
                     />
@@ -103,9 +99,11 @@ export default function AddKeyHandle(
                 </SelectContent>
             </Select>
 
-            <Check
-                className="flex-none cursor-pointer"
-                onClick={saveHandle}></Check>
+            <Button className={"px-1"} size={"sm"} variant={"ghost"}>
+                <Check
+                    className="w-4 h-4 flex-none cursor-pointer"
+                    onClick={saveHandle}></Check>
+            </Button>
         </div>
 
     </div>

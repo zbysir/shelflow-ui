@@ -20,6 +20,7 @@ export default function TextAreaComp({
     const [myValue, setMyValue] = useState(value ?? '')
     return <>
         <Textarea
+            className={"bg-input"}
             value={value}
             onChange={(e) => {
                 setMyValue(e.target.value)

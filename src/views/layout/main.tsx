@@ -1,41 +1,64 @@
 import {Link, Outlet} from "react-router-dom";
+import {Flame, Github, Library, Workflow} from "lucide-react";
+import {ReactNode} from "react";
 
-import {Accordion, AccordionContent, AccordionItem, AccordionTrigger,} from "@/components/ui/accordion"
-import {Workflow} from "lucide-react";
+interface MenuItemProps {
+    active: boolean
+    title: string
+    icon: ReactNode
+    link: string
+}
+
+function MenuItem(props: MenuItemProps) {
+    return <div>
+        <Link to={props.link}>
+            <div
+                className={`flex space-x-2.5 items-center py-2.5 pl-6 hover:bg-accent  rounded-md ${props.active ? 'text-primary' : 'text-muted-foreground hover:text-secondary-foreground'}`}>
+                {props.icon}
+                <div className={`flex-1 `}>{props.title}</div>
+                {props.active ? <div className="h-5 w-1 bg-primary rounded-tl-md rounded-bl-md"></div> : null}
+            </div>
+        </Link>
+    </div>
+}
 
 export default function MainLayout() {
-    return <div className="flex">
-        <div className="w-60 px-5">
-            <div className="h-14 flex items-center border-b-gray border-b">
-                <a href="/" className="flex items-center">
-                    <Workflow className="w-6 h-6"></Workflow>
-                    <h1 className="font-bold inline-block ml-1">WriteFlow</h1>
-                </a>
+    return <div className="flex ">
+        {/* left */}
+        <div className="flex flex-col justify-between w-60 pl-8 bg-secondary">
+            <div className={"flex flex-col"}>
+                {/* logo */}
+                <div className="h-12 flex items-center">
+                    <a href="/" className="flex items-center space-x-2">
+                        <Workflow className="w-4 h-4"></Workflow>
+                        <h1 className="font-medium inline-block">WriteFlow</h1>
+                    </a>
+                </div>
+                <div className="mt-3 text-sm">
+                    <MenuItem
+                        active={true}
+                        icon={<Flame strokeWidth={1.5} className={"w-4"}></Flame>}
+                        link={"/"}
+                        title={"Flow"}
+                    ></MenuItem>
+                    <MenuItem
+                        active={false}
+                        icon={<Library strokeWidth={1.5} className={"w-4"}/>}
+                        link={"/library"}
+                        title={"Library"}
+                    ></MenuItem>
+                </div>
             </div>
-            <div className="mt-3 text-sm">
-                <Link to={"/"} className={"p-3 block font-medium hover:bg-slate-500/10 rounded"}>Flows</Link>
-                <Accordion type="multiple" className={""}>
-                    <AccordionItem value="Library">
-                        <AccordionTrigger className={"p-3 font-medium hover:bg-slate-500/10 rounded"}>
-                            Library
-                        </AccordionTrigger>
-                        <AccordionContent>
-                            <Link to={"/library/book"} className={"pl-5 p-3 block hover:bg-slate-500/10 rounded"}> Book </Link>
-                        </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="Setting">
-                        <AccordionTrigger className={"p-3 font-medium hover:bg-slate-500/10 rounded"}>
-                            Setting
-                        </AccordionTrigger>
-                        <AccordionContent>
-                            <Link to={"/setting/user"} className={"pl-5 p-3 block hover:bg-slate-500/10 rounded"}> User </Link>
-                        </AccordionContent>
-                    </AccordionItem>
-                </Accordion>
+
+            <div className={"flex  pb-4"}>
+                <a href="https://github.com/zbysir/writeflow-ui"
+                   target="_blank"><Github className={"w-4"} strokeWidth={1.5}></Github></a>
             </div>
 
         </div>
-        <div className="flex-1">
+
+        {/* body */}
+        <div className="flex-1 bg-background">
             <Outlet/>
         </div>
     </div>

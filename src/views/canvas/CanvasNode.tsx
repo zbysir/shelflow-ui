@@ -7,64 +7,13 @@ import LabelComp from '../ui-components/label/Index'
 
 import {INodeData, INodeParams, NodeAnchor} from '@/custom_types/index'
 import {useSnackbar} from 'notistack';
-import {flowContext, NodeStatus} from "@/store/context/ReactFlowContext";
+import {flowContext} from "@/store/context/ReactFlowContext";
 import React, {useContext} from "react";
 import {buildEdgeId} from "@/utils/genericHelper";
 
 
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
+import {Card, CardContent, CardHeader,} from "@/components/ui/card"
 import {Separator} from "@/components/ui/separator"
-import {Loader} from 'lucide-react'
-
-export interface NodeStyle {
-    borderColor?: string
-    borderWidth?: number
-    running?: boolean,
-    header?: {
-        color?: string,
-        background?: string,
-    },
-    errorMsg?: string
-}
-
-export const getNodeRunStatusStyle = (runStatus: Record<string, NodeStatus>, nodeId: string): NodeStyle => {
-    const s = runStatus[nodeId]
-
-    const ns: NodeStyle = {}
-    if (!s) {
-        return ns
-    }
-    // ns.borderWidth = 2
-    switch (s.status) {
-        case 'success':
-            ns.borderColor = "#388e3c"
-            ns.header = {
-                color: "#fff",
-                background: "#388e3c"
-            }
-            break
-        case 'running':
-            ns.borderColor = "#00e676"
-            ns.header = {
-                color: "#fff",
-                background: "#00e676"
-            }
-            ns.running = true
-            break
-        case 'failed':
-            ns.borderColor = "red"
-            ns.errorMsg = s.error
-            break
-    }
-    return ns
-}
 
 const showResult = (result: any) => {
     const type = typeof result;
@@ -79,12 +28,28 @@ const showResult = (result: any) => {
             return result
     }
 }
+
+interface NodeStatusProps {
+    status: "" | "success" | "running" | "failed"
+}
+
+function NodeStatusIcon(props: NodeStatusProps) {
+    const cla: Record<NodeStatusProps["status"], string> = {
+        success: "bg-green-600",
+        running: "bg-green-600 animate-pulse duration-1000",
+        failed: "bg-destructive",
+        [""]: "bg-[#C7C7C7]"
+    }
+    const status = props.status || ''
+    return <div className={`w-3 h-3 ${cla[status]} rounded-xl`}></div>
+}
+
 export default function CanvasNode({data}: { data: INodeData }) {
     const {enqueueSnackbar} = useSnackbar();
     const {updateNodeData, runResult, onlyDeleteEdge} = useContext(flowContext)
     const [cardKey, setCardKey] = React.useState(Date.now())
 
-    const nodeStyle = getNodeRunStatusStyle(runResult, data.id)
+    const nodeStyle = runResult[data.id]
     const addAnchor = (item: INodeParams, key = 'input_anchors') => {
         const newData = {...data}
         if (item.key && item.type) {
@@ -131,29 +96,27 @@ export default function CanvasNode({data}: { data: INodeData }) {
     return <Card id={data.id}
                  key={cardKey}
                  className="border border-solid shadow-md
-                 border-color hover:shadow-xl w-[300px]  dark:bg-secondary"
-                 style={{borderColor: nodeStyle.borderColor}}>
-        <CardHeader className='p-0'>
-            <div className="bg-gray-100 relative p-2 dark:bg-background rounded-t-lg"
-                 style={nodeStyle.header}>
-                <LabelComp name={data.name}></LabelComp>
-                <div className="absolute bottom-2 right-0">
-                    {
-                        nodeStyle.running ? <Loader className="animate-spin"></Loader> : null
-                    }
+                 border-gray-300 hover:shadow-xl w-60 dark:bg-secondary">
+        <CardHeader className='p-0 cursor-move'>
+            <div className="bg-[#e8e8e8] relative p-1.5 rounded-t-lg">
+                <div className={"flex items-center space-x-1.5"}>
+                    <NodeStatusIcon status={nodeStyle?.status}/>
+                    <LabelComp name={data.name} className={"text-sm"}/>
                 </div>
             </div>
         </CardHeader>
-        <CardContent className="p-0">
-            {data.input_params && data.input_params.map((inputParam, index) => (
-                <NodeInputHandler
-                    key={index} inputParam={inputParam} data={data}
-                    changeParam={(param, type) => changeParam(index, param, type)}
-                    deleteInputAnchor={() => {
-                        delAnchor(inputParam.key, 'input_params')
-                    }}
-                />
-            ))}
+        <CardContent className="flex flex-col px-3 pt-0.5 pb-1.5 nodrag">
+            {
+                data.input_params && data.input_params.map((inputParam, index) => (
+                    <NodeInputHandler
+                        key={index} inputParam={inputParam} data={data}
+                        changeParam={(param, type) => changeParam(index, param, type)}
+                        deleteInputAnchor={() => {
+                            delAnchor(inputParam.key, 'input_params')
+                        }}
+                    />
+                ))
+            }
             {data.dynamic_input && <AddKeyHandle
                 onSelect={(x: INodeParams) => {
                     addAnchor(x, 'input_params')
@@ -164,7 +127,7 @@ export default function CanvasNode({data}: { data: INodeData }) {
                 <p>
                     {showResult(runResult[data.id]?.result?.default) || <span>run your flow to see data</span>}
                 </p>
-            </div> : <Separator></Separator>
+            </div> : null
             }
             {data.output_anchors && data.output_anchors.map((outputAnchor, index) => (
                 <NodeOutputHandler key={index} outputAnchor={outputAnchor} data={data}/>
@@ -175,14 +138,12 @@ export default function CanvasNode({data}: { data: INodeData }) {
                 }}
             ></AddKeyHandle>}
             {
-                nodeStyle.errorMsg ?
+                nodeStyle?.error ?
                     <>
                         <Separator></Separator>
-                        <div className="p-2">
-                            <p className="text-start font-medium" style={{'color': '#d04e4e'}}>
-                                {nodeStyle.errorMsg}
-                            </p>
-                        </div>
+                        <p className="text-xs font-medium text-destructive">
+                            {nodeStyle.error}
+                        </p>
                     </> : null
             }
         </CardContent>

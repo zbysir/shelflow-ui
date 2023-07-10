@@ -8,30 +8,16 @@ import {FlowData} from "@/custom_types";
 
 
 import {Button} from "@/components/ui/button"
-import {Loader2, BadgeX, Edit, Sun, Github, Moon, Laptop, Workflow} from "lucide-react"
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import {
-    Menubar,
-    MenubarContent,
-    MenubarItem,
-    MenubarMenu,
-    MenubarSeparator,
-    MenubarShortcut,
-    MenubarTrigger,
-} from "@/components/ui/menubar"
-import {Separator} from "@/components/ui/separator"
+import {Delete, Edit, Laptop, Loader2, LogOut, Moon, Star, Sun, Trash2, Truck} from "lucide-react"
+import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
+import {Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger,} from "@/components/ui/menubar"
 import Pagination from '../ui-components/pagination/Pagination'
-import {useNavigate, useSearchParams} from "react-router-dom";
-
+import {Link, useNavigate, useSearchParams} from "react-router-dom";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
+import * as dayjs from "dayjs";
 
 const Flows = () => {
+
     const getFlowListApi = useApi(api.getFlowList)
     const [pageSize, setPageSize] = useState(20);
     const [curPage, setCurPage] = useState(1);
@@ -98,45 +84,71 @@ const Flows = () => {
         getFlowList(p)
     }, [])
 
-
-    return <div className="min-h-full bg-secondary">
-        <header className="bg-background">
-            <nav className="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8"
+    return <div className="min-h-full ">
+        <header className="h-12">
+            <nav className="mx-auto flex max-w-7xl items-center justify-between"
                  aria-label="Global">
-                <div className="flex lg:flex-1">
-                    <a href="/" className="flex items-center">
-                        <Workflow className="w-6 h-6"></Workflow>
-                        <h1 className="font-bold inline-block ml-1">WriteFlow</h1>
-                    </a>
+                <div className={"flex flex-1 items-center justify-end space-x-1"}>
+
+                    <Menubar>
+                        <MenubarMenu>
+                            <MenubarTrigger>
+                                <Sun className={"w-4"}></Sun>
+                            </MenubarTrigger>
+                            <MenubarContent>
+                                <MenubarItem
+                                    className={"space-x-1 pl-1"}
+                                    onClick={() => changeMode('light')}>
+                                    <Sun className="w-3 h-3"></Sun>
+                                    <div>Light</div>
+                                </MenubarItem>
+                                <MenubarItem
+                                    className={"space-x-1 pl-1"}
+                                    onClick={() => changeMode('dark')}>
+                                    <Moon className="w-3 h-3"></Moon>
+                                    <div>Dark</div>
+                                </MenubarItem>
+                                <MenubarItem className={"space-x-1 pl-1"}>
+                                    <Laptop className="w-3 h-3"></Laptop>
+                                    <div>System</div>
+                                </MenubarItem>
+                            </MenubarContent>
+                        </MenubarMenu>
+
+                        <MenubarMenu>
+                            <MenubarTrigger>
+                                <div className={"flex space-x-2 items-center"}>
+                                    <div>bysir</div>
+                                    <Avatar className={"w-6 h-6"}>
+                                        <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn"/>
+                                        <AvatarFallback>CN</AvatarFallback>
+                                    </Avatar>
+                                </div>
+                            </MenubarTrigger>
+                            <MenubarContent>
+                                <MenubarItem
+                                    onClick={() => changeMode('light')}
+                                    className={"space-x-1 pl-1"}
+                                >
+                                    <LogOut className={"w-3 h-3"}></LogOut>
+                                    <div>Logout</div>
+                                </MenubarItem>
+                            </MenubarContent>
+                        </MenubarMenu>
+                    </Menubar>
                 </div>
-                <Menubar>
-                    <MenubarMenu>
-                        <MenubarTrigger>
-                            <a href="https://github.com/zbysir/writeflow-ui"
-                               target="_blank"><Github></Github></a></MenubarTrigger>
-                    </MenubarMenu>
-                    <MenubarMenu>
-                        <MenubarTrigger><Sun></Sun></MenubarTrigger>
-                        <MenubarContent>
-                            <MenubarItem
-                                onClick={() => changeMode('light')}><Sun
-                                className="w-4 h-4 mr-2"></Sun> Light</MenubarItem>
-                            <MenubarItem
-                                onClick={() => changeMode('dark')}><Moon
-                                className="w-4 h-4 mr-2"></Moon> Dark</MenubarItem>
-                            <MenubarItem><Laptop className="w-4 h-4 mr-2"></Laptop>System</MenubarItem>
-                        </MenubarContent>
-                    </MenubarMenu>
-                </Menubar>
+
+
             </nav>
         </header>
-        <main className="p-6">
-            <div className="mx-auto max-w-7xl py-6 px-6 lg:px-8 bg-seco">
-                <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-3xl font-bold tracking-tight">flows</h2>
-                    <a href="/canvas">
-                        <Button>Add New</Button>
-                    </a>
+        <main className="px-6">
+            <div className="mx-auto max-w-7xl px-2">
+                {/* header */}
+                <div className="flex items-center justify-between mb-4 h-16">
+                    <h2 className="text-lg font-medium ">Flows</h2>
+                    <Link to={"/canvas"}>
+                        <Button size={"sm"}>New</Button>
+                    </Link>
                 </div>
                 {getFlowListApi.loading && <div
                     className="flex items-center justify-center h-64"
@@ -144,37 +156,62 @@ const Flows = () => {
                 {
                     !getFlowListApi.loading && getFlowListApi.data &&
                     <>
-                        <div className="grid lg:grid-cols-3 gap-4 md:grid-cols-2 sm:grid-cols-1 xl:grid-cols-4">
+                        <div className="grid lg:grid-cols-3 gap-6 md:grid-cols-2 sm:grid-cols-1 xl:grid-cols-4">
                             {list.list.map((item: FlowData, index: number) => (
                                 <Card
                                     key={index}
                                     className="border border-solid
-                                border-color
-                            cursor-pointer
-                            group
-                            hover:shadow-xl"
-
+                                        border-color
+                                    group
+                                    hover:shadow-xl"
                                 >
                                     <CardHeader>
-                                        <CardTitle>{item.name || 'demo'}
-
+                                        <CardTitle>
+                                            <div className={"flex justify-between items-center"}>
+                                                <div>
+                                                    {item.name || '--'}
+                                                </div>
+                                                <Star className={"w-3.5 opacity-30 group-hover:opacity-100"}></Star>
+                                            </div>
                                         </CardTitle>
-                                        <CardDescription>{item.description || 'description'}</CardDescription>
+                                        {item.description ?
+                                            <CardDescription className={"text-xs"}>{item.description || ''}</CardDescription> : null}
                                     </CardHeader>
-                                    <Separator></Separator>
                                     <CardContent>
-                                        <div className="flex pt-2 justify-between">
-                                            <Button variant="ghost">
-                                                <BadgeX className="text-gray-400"></BadgeX>
-                                                <span className="ml-1">Delete</span>
-                                            </Button>
-                                            <a href={'/canvas/' + item.id}>
-                                                <Button variant="ghost"
-                                                >
-                                                    <Edit className="text-gray-400"></Edit>
-                                                    <span className="ml-1">Edit</span>
-                                                </Button>
-                                            </a>
+                                        <div
+                                            className={"flex justify-end items-center text-muted-foreground space-x-1"}>
+                                            <Edit className={"w-3"}></Edit>
+                                            <div
+                                                className={"text-xs"}>{dayjs(item.updated_at).format('YYYY-MM-DD HH:mm:ss')}</div>
+                                        </div>
+                                        <div className="flex pt-2 justify-end space-x-3">
+                                            <Button variant="default" size={"sm"}> Play </Button>
+                                            <Link to={'/canvas/' + item.id}>
+                                                <Button variant="secondary" size={"sm"}> Edit </Button>
+                                            </Link>
+                                            <Menubar className={"p-0 h-auto"}>
+                                                <MenubarMenu >
+                                                    <MenubarTrigger className={"p-0"}>
+                                                        <Button variant="secondary" size={"sm"}> ... </Button>
+                                                    </MenubarTrigger>
+
+                                                    <MenubarContent>
+                                                        <MenubarItem
+                                                            onClick={() => changeMode('light')}
+                                                        >
+                                                            Duplicate
+                                                        </MenubarItem>
+                                                        <MenubarItem
+                                                            onClick={() => changeMode('light')}
+                                                            className={"text-destructive focus:text-destructive space-x-1 pl-1"}
+                                                        >
+                                                            <Trash2 className={"w-3 h-3"}></Trash2>
+                                                            <div>Delete</div>
+                                                        </MenubarItem>
+                                                    </MenubarContent>
+                                                </MenubarMenu>
+
+                                            </Menubar>
                                         </div>
                                     </CardContent>
                                 </Card>

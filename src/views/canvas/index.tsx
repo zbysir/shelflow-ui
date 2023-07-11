@@ -252,7 +252,6 @@ const OverviewFlow = () => {
     // // =========|| useEffect ||======== //
 
 
-
     // 加载 flow
     useEffect(() => {
         if (params.id) {
@@ -313,9 +312,9 @@ const OverviewFlow = () => {
 
             </nav>
         </header>
-        <main className={"flex flex-1"}>
+        <main className={"flex flex-1 min-h-[0]"}>
             {/*left*/}
-            <div className={"w-[250px] h-full border-r"}>
+            <div className={"w-[250px] border-r"}>
                 <LeftPlan></LeftPlan>
             </div>
 
@@ -373,7 +372,7 @@ function LeftPlan() {
             <TabsTrigger className={"flex-1"} value="chat">Chat</TabsTrigger>
             <TabsTrigger className={"flex-1"} value="setting">Setting</TabsTrigger>
         </TabsList>
-        <TabsContent className={"flex-1 "} value="add">
+        <TabsContent className={"flex-1 h-full overflow-auto"} value="add">
             {/*<div className={"bg-gray-600 h-[1000px]"}></div>*/}
             {getCompsApi.data && <ComponentList comps={getCompsApi.data}></ComponentList>}
         </TabsContent>

@@ -19,28 +19,26 @@ const ComponentList = ({comps}: { comps: Cate[] }) => {
     }
 
     return <>
-        <div className="h-full overflow-auto">
-            {comps && comps.map((item: Cate, index: number) => (
-                <PlanMenuItem title={item.category.name['zh-CN']}>
-                    {item.children && item.children.map((child, i) => (
-                        <Button
-                            className={"w-full text-left"}
-                            draggable
-                            onDragStart={(event) => onDragStart(event, child)}
-                            variant="ghost" key={i}>
-                            <div className={"w-full flex flex-col justify-start space-y-0.5"}>
-                                <div className={"text-xs"}>
-                                    {child.data.name['zh-CN']}
-                                </div>
-                                {child.data.description?.['zh-CN'] ? <div
-                                    className={"text-xs text-muted-foreground"}> {child.data.description['zh-CN']} </div> : null}
+        {comps && comps.map((item: Cate, index: number) => (
+            <PlanMenuItem title={item.category.name['zh-CN']}>
+                {item.children && item.children.map((child, i) => (
+                    <Button
+                        className={"w-full text-left"}
+                        draggable
+                        onDragStart={(event) => onDragStart(event, child)}
+                        variant="ghost" key={i}>
+                        <div className={"w-full flex flex-col justify-start space-y-0.5"}>
+                            <div className={"text-xs"}>
+                                {child.data.name['zh-CN']}
                             </div>
+                            {child.data.description?.['zh-CN'] ? <div
+                                className={"text-xs text-muted-foreground"}> {child.data.description['zh-CN']} </div> : null}
+                        </div>
 
-                        </Button>
-                    ))}
-                </PlanMenuItem>
-            ))}
-        </div>
+                    </Button>
+                ))}
+            </PlanMenuItem>
+        ))}
     </>
 }
 

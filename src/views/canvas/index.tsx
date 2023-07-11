@@ -34,11 +34,12 @@ import {FlowData, INodeParams} from "@/custom_types";
 import {flowContext} from "@/store/context/ReactFlowContext";
 import {useSnackbar} from "notistack";
 import {useToast} from "@/components/ui/use-toast"
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs.tsx";
+import ComponentList from "@/views/canvas/ComponentList.tsx";
 
 const nodeTypes = {
     customNode: GeneralNode,
 };
-
 
 const OverviewFlow = () => {
     const params = useParams();
@@ -57,7 +58,6 @@ const OverviewFlow = () => {
     const getFlowApi = useApi(api.getFlow)
     const addFlowApi = useApi(api.addFlow)
     const editFlowApi = useApi(api.editFlow)
-    const getCompsApi = useApi(api.getComps)
     const runFlowApiHook = useApi(api.runFlow)
     const {toast} = useToast()
 
@@ -177,7 +177,7 @@ const OverviewFlow = () => {
                     </div>,
                     description: "",
                 })
-            }catch (e) {
+            } catch (e) {
                 toast({
                     title: <div className={"flex space-x-2 text-destructive items-center"}>
                         <Check className={"w-3.5 h-3.5"}></Check>
@@ -251,11 +251,6 @@ const OverviewFlow = () => {
 
     // // =========|| useEffect ||======== //
 
-    // 加载组件
-    useEffect(() => {
-        console.log('env:', import.meta.env.MODE, import.meta.env.VITE_API_HOST);
-        getCompsApi.request()
-    }, [])
 
 
     // 加载 flow
@@ -277,11 +272,11 @@ const OverviewFlow = () => {
         },
         [getFlowApi.data, getFlowApi.error])
 
-    return <div className="h-full">
+    return <div className="h-screen flex flex-col">
         <header
-            className="flex items-center border border-b h-12 px-4"
+            className="flex items-center border border-b h-12 px-4 flex-shrink-0 "
         >
-            <nav className="flex flex-1 items-center justify-between">
+            <nav className="flex flex-1 items-center  justify-between">
                 <div className={"flex items-center space-x-4"}>
                     <Link to={"/"}>
                         <Button size={"sm"} variant={"secondary"} className={"shadow-xl"}>
@@ -318,10 +313,10 @@ const OverviewFlow = () => {
 
             </nav>
         </header>
-        <main className={"flex"}>
+        <main className={"flex flex-1"}>
             {/*left*/}
-            <div className={"flex flex-col w-[250px] border-r"}>
-
+            <div className={"w-[250px] h-full border-r"}>
+                <LeftPlan></LeftPlan>
             </div>
 
             {/*body*/}
@@ -357,8 +352,41 @@ const OverviewFlow = () => {
         </main>
 
     </div>
-
-
 };
+
+// 通用的错误提示，可以返回值
+function UseApi() {
+    const {toast} = useToast()
+    toast({title: "xx"})
+}
+
+function LeftPlan() {
+    const getCompsApi = useApi(api.getComps)
+    // 加载组件
+    useEffect(() => {
+        getCompsApi.request()
+    }, [])
+
+    return <Tabs defaultValue="add" className="w-full p-4 h-full flex flex-col  ">
+        <TabsList className={"flex p-0.5"}>
+            <TabsTrigger className={"flex-1"} value="add">Add</TabsTrigger>
+            <TabsTrigger className={"flex-1"} value="chat">Chat</TabsTrigger>
+            <TabsTrigger className={"flex-1"} value="setting">Setting</TabsTrigger>
+        </TabsList>
+        <TabsContent className={"flex-1 "} value="add">
+            {/*<div className={"bg-gray-600 h-[1000px]"}></div>*/}
+            {getCompsApi.data && <ComponentList comps={getCompsApi.data}></ComponentList>}
+        </TabsContent>
+        <TabsContent className={"flex-1"} value="chat"></TabsContent>
+        <TabsContent className={"flex-1"} value="setting"></TabsContent>
+    </Tabs>
+}
+
+function PlanMenuItem({title, children}: { title: string, children?: React.ReactNode }) {
+    return <div>
+        <h3 className={"font-medium"}>{title}</h3>
+        {children}
+    </div>
+}
 
 export default OverviewFlow;

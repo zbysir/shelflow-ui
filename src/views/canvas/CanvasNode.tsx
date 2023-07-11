@@ -93,10 +93,10 @@ function CanvasNode({data}: { data: INodeData }) {
             setCardKey(Date.now())
         }
     }
-    return <Card id={data.id}
-                 key={cardKey}
-                 className="border border-solid shadow-md
-                 border-secondary-foreground/50 hover:shadow-xl w-60 dark:bg-secondary">
+    return <Card
+        id={data.id}
+        key={cardKey}
+        className="border border-solid shadow-md border-secondary-foreground/30 hover:shadow-xl w-60 dark:bg-secondary">
         <CardHeader className='p-0 cursor-move'>
             <div className="bg-neuter relative p-1.5 rounded-t-lg">
                 <div className={"flex items-center space-x-1.5"}>

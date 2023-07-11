@@ -84,7 +84,7 @@ const Flows = () => {
         getFlowList(p)
     }, [])
 
-    return <div className="min-h-full ">
+    return <div className="min-h-full">
         <header className="h-12">
             <nav className="mx-auto flex max-w-7xl items-center justify-between"
                  aria-label="Global">

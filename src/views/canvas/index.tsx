@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
+import React, {ReactNode, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {Link, useNavigate, useParams} from 'react-router-dom';
 // react-flow
 import ReactFlow, {
@@ -174,10 +174,10 @@ const OverviewFlow = () => {
                     title: <div className={"flex space-x-2 text-green-600 items-center"}>
                         <Check className={"w-3.5 h-3.5"}></Check>
                         <div>Save Success</div>
-                    </div>,
+                    </div> as ReactNode,
                     description: "",
                 })
-            } catch (e) {
+            } catch (e: any) {
                 toast({
                     title: <div className={"flex space-x-2 text-destructive items-center"}>
                         <Check className={"w-3.5 h-3.5"}></Check>
@@ -312,6 +312,7 @@ const OverviewFlow = () => {
 
             </nav>
         </header>
+        {/* min-h-0 to fix https://juejin.cn/post/6931638878512087053 */}
         <main className={"flex flex-1 min-h-[0]"}>
             {/*left*/}
             <div className={"w-[250px] border-r"}>

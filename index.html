@@ -25,6 +25,10 @@
     const html = document.documentElement;
     html.setAttribute('class', theme);
     html.setAttribute('style', `color-scheme: ${theme}`);
+    __REACT_DEVTOOLS_GLOBAL_HOOK__ = {inject: function (i) {
+            console.log('i', i)
+            __REACT_DEVTOOLS_GLOBAL_HOOK__.renderers.set(1,i )
+        },renderers:new Map(),supportsFiber:true}
 </script>
 <body>
 <div id="root"></div>
